@@ -19,6 +19,19 @@ function! s:repl_cleanup()
   call jobstop(s:id_job)
   let s:id_window = v:false
   let s:id_job = v:false
+  echom 'Repl: Closed'
+endfunction
+
+function! s:repl_setup_buffer()
+  setlocal nonumber nornu nobuflisted
+  nnoremap <buffer> i <NOP>
+  nnoremap <buffer> a <NOP>
+  nnoremap <buffer> o <NOP>
+  nnoremap <buffer> I <NOP>
+  nnoremap <buffer> A <NOP>
+  nnoremap <buffer> O <NOP>
+  nnoremap <buffer> q :q<CR>
+  autocmd WinClosed <buffer> call s:repl_cleanup()
 endfunction
 
 function! s:repl_open()
@@ -35,9 +48,9 @@ function! s:repl_open()
   endif
   let s:id_job = termopen(command)
   let s:id_window = win_getid()
-  setlocal nonumber nornu nobuflisted
-  autocmd QuitPre <buffer> call s:repl_cleanup()
+  call s:repl_setup_buffer()
   call win_gotoid(current_window_id)
+  echom 'Repl: Opened'
 endfunction
 
 function! s:repl_close()
@@ -75,3 +88,6 @@ command! ReplOpen call s:repl_open()
 command! ReplClose call s:repl_close()
 command! ReplToggle call s:repl_toggle()
 command! -range ReplSend <line1>,<line2>call s:repl_send()
+nnoremap <script> <silent> <Plug>ReplSendLine
+      \ :ReplSend<CR>
+      \ :silent! call repeat#set("\<Plug>ReplSendLine", v:count)<CR>hj
