@@ -10,7 +10,7 @@
 let g:repl_filetype_commands = {
       \ 'python': 'python',
       \ }
-let g:repl_defaults = '/bin/bash'
+let g:repl_default = '/bin/bash'
 
 let s:id_window = v:false
 let s:id_job = v:false
@@ -40,7 +40,7 @@ function! s:repl_open()
     return
   endif
   let current_window_id = win_getid()
-  let command = get(g:repl_filetype_commands, &filetype, g:repl_defaults)
+  let command = get(g:repl_filetype_commands, &filetype, g:repl_default)
   if &columns >= 160
     vert new
   else
