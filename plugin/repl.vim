@@ -12,7 +12,6 @@
 let s:default_commands = {
       \ 'python': 'python',
       \ }
-let s:repl_default = '/bin/bash'
 let s:id_window = v:false
 let s:id_job = v:false
 
@@ -30,7 +29,7 @@ function! s:configure_constants()
         \ )
 
   if !exists('g:repl_default')
-    let g:repl_default = s:repl_default
+    let g:repl_default = &shell
   elseif type(g:repl_default) != v:t_string
     throw 'g:repl_default must be a String'
   endif
