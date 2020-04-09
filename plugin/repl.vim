@@ -131,9 +131,9 @@ command! -range ReplSend <line1>,<line2>call s:repl_send()
 
 nnoremap <script> <silent> <Plug>ReplSendLine
       \ :ReplSend<CR>
-      \ :silent! call repeat#set("\<Plug>ReplSendLine", v:count)<CR>hj
+      \ :call repeat#set("\<Plug>ReplSendLine", v:count)<CR>hj
 
 " visual selection sets up normal mode command for repetition
 vnoremap <script> <silent> <Plug>ReplSendVisual
       \ :ReplSend<CR>
-      \ :silent! call repeat#set("\<Plug>ReplSendLine", v:count)<CR>gv<esc>j
+      \ :call repeat#set("\<Plug>ReplSendLine", v:count)<CR>gv<esc>j
