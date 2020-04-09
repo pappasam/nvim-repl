@@ -1,4 +1,4 @@
-*repl.txt* A simple, functional Neovim repl manager
+*repl.txt* A Neovim repl manager
 
 Author: Samuel Roeca
 
