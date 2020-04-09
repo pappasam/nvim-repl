@@ -7,6 +7,15 @@
 " License:        MIT
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Setup:
+
+if exists("g:loaded_repl")
+  finish
+endif
+let g:loaded_repl = v:true
+let s:save_cpo = &cpo
+set cpo&vim
+
 " Script Local: state variables
 
 let s:default_commands = {
@@ -47,7 +56,7 @@ function! s:repl_cleanup()
   call jobstop(s:id_job)
   let s:id_window = v:false
   let s:id_job = v:false
-  echom 'Repl: Closed'
+  echom 'Repl: closed!'
 endfunction
 
 function! s:repl_setup_buffer()
@@ -62,13 +71,16 @@ function! s:repl_setup_buffer()
   autocmd WinClosed <buffer> call s:repl_cleanup()
 endfunction
 
-function! s:repl_open()
+function! s:repl_open(...)
   if s:id_window != v:false
-    echom 'Terminal already open, aborting'
+    echom 'Repl: already open. To close existing repl, run ":ReplClose"'
     return
   endif
   let current_window_id = win_getid()
-  let command = get(g:repl_filetype_commands, &filetype, g:repl_default)
+  let func_args = a:000
+  let command = len(func_args) == 0 ?
+        \ get(g:repl_filetype_commands, &filetype, g:repl_default) :
+        \ func_args[0]
   if &columns >= 160
     vert new
   else
@@ -78,7 +90,7 @@ function! s:repl_open()
   let s:id_window = win_getid()
   call s:repl_setup_buffer()
   call win_gotoid(current_window_id)
-  echom 'Repl: Opened'
+  echom 'Repl: opened!'
 endfunction
 
 function! s:repl_close()
@@ -108,7 +120,7 @@ endfunction
 
 function! s:repl_send() range
   if s:id_window == v:false
-    echom 'Repl not open. Run ":ReplOpen" to begin'
+    echom 'Repl: no repl currently open. Run ":ReplOpen" first'
     return
   endif
   let buflines = getbufline(bufnr('%'), a:firstline, a:lastline)
@@ -122,7 +134,8 @@ endfunction
 
 " Global: commands
 
-command! ReplOpen call s:repl_open()
+command! -nargs=? Repl call s:repl_open(<f-args>)
+command! -nargs=? ReplOpen call s:repl_open(<f-args>)
 command! ReplClose call s:repl_close()
 command! ReplToggle call s:repl_toggle()
 command! -range ReplSend <line1>,<line2>call s:repl_send()
@@ -137,3 +150,8 @@ nnoremap <script> <silent> <Plug>ReplSendLine
 vnoremap <script> <silent> <Plug>ReplSendVisual
       \ :ReplSend<CR>
       \ :call repeat#set("\<Plug>ReplSendLine", v:count)<CR>gv<esc>j
+
+" Teardown:
+
+let &cpo = s:save_cpo
+unlet s:save_cpo

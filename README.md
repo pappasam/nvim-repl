@@ -60,11 +60,11 @@ Use `g:repl_default` to set the default repl if no configured repl is found in `
 
 ## Commands
 
-`:ReplOpen` open the repl for the current filetype
+`:Repl` or `:ReplOpen`: open the repl. Takes the name of an executable repl as an optional argument. If no argument is provided, defaults to either the filetype-associated repl or the configured default repl.
 
-`:ReplClose` close the repl, if open
+`:ReplClose`: close the repl, if open.
 
-`:ReplToggle` if repl is open, close. If repl is closed, open
+`:ReplToggle`: if repl is open, close it. If repl is closed, open it using either the filetype-associated repl or the configured default repl.
 
 ## Notes
 
