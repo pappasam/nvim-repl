@@ -33,10 +33,11 @@ From within Neovim, type:
 
 Two pluggable mappings are provided. They rely on the latest version of Tim Pope's vim-repeat: https://github.com/tpope/vim-repeat.
 
-- `<Plug>ReplSendLine` send the current line to the repl. Only mappable in normal mode.
-- `<Plug>ReplSendVisual`: send the visual selection to the repl. Only mappable in visual mode.
+`<Plug>ReplSendLine` send the current line to the repl. Only mappable in normal mode.
 
-The user should map these pluggable mappings. Our recommended mappings:
+`<Plug>ReplSendVisual` send the visual selection to the repl. Only mappable in visual mode.
+
+The user should map these pluggable mappings. Example mappings:
 
 ```vim
 nnoremap <leader><leader>e :ReplToggle<CR>
@@ -59,11 +60,11 @@ Use `g:repl_default` to set the default repl if no configured repl is found in `
 
 ## Commands
 
-Creating commands is super easy, but this plugin does come with some command implementations to get you started:
+`:ReplOpen` open the repl for the current filetype
 
-- `:ReplOpen`: open the repl for the current filetype
-- `:ReplClose`: close the repl, if open
-- `:ReplToggle`: if repl is open, close. If repl is closed, open
+`:ReplClose` close the repl, if open
+
+`:ReplToggle` if repl is open, close. If repl is closed, open
 
 ## Notes
 
