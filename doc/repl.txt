@@ -1,0 +1,87 @@
+*repl.txt* A simple, functional Neovim repl manager
+
+Author: Samuel Roeca
+
+Table of Contents
+
+1. Introduction ... |repl_intro|
+2. Configuration .. |repl_configuration|
+3. Commands ....... |repl_commands|
+4. Mappings ....... |repl_mappings|
+5. Credits ........ |repl_credits|
+
+==============================================================================
+                                                                   *repl_intro*
+1. INTRODUCTION~
+
+nvim-repl makes it easy to create, use, and remove an interactive repl within
+Neovim. It uses a Neovim-specific api and is only intended to be used with the
+latest version of Neovim.
+
+Two pluggable mappings are provided. They rely on the latest version of Tim
+Pope's vim-repeat: https://github.com/tpope/vim-repeat.
+
+==============================================================================
+                                                           *repl_configuration*
+2. CONFIGURATION~
+
+*g:repl_filetype_commands*
+Type: Dictionary[String, String]
+Default: defined in plugin/repl.vim
+
+Map a filetype to a repl starting command using this configuration variable.
+Eg, if you automatically want to run a "python" repl for python filetypes and
+a "node" repl for javascript filetypes, your configuration might look like
+this: >
+
+  let g:repl_filetype_commands = {
+      \ 'javascript': 'node',
+      \ 'python': 'python',
+      \ }
+<
+*g:repl_default*
+Type: String
+Default: &shell
+
+The default repl selected. Used when no configured repl is found for a
+particular filetype.
+
+==============================================================================
+                                                                *repl_commands*
+3. COMMANDS~
+
+*:ReplOpen* open the repl for the current filetype.
+*:ReplClose* close the repl, if open.
+*:ReplToggle* if repl is open, close. If repl is closed, open.
+
+==============================================================================
+                                                                *repl_mappings*
+4. MAPPINGS~
+
+Two pluggable mappings are provided. They rely on the latest version of Tim
+Pope's vim-repeat: https://github.com/tpope/vim-repeat.
+
+<Plug>*ReplSendLine* send the current line to the repl. Only mappable in
+  normal mode.
+<Plug>*ReplSendVisual* send the visual selection to the repl. Only mappable in
+  visual mode.
+
+The user should map these pluggable mappings. Our recommended mappings: >
+
+  nnoremap <leader><leader>e :ReplToggle<CR>
+  nmap <leader>e <Plug>ReplSendLine
+  vmap <leader>e <Plug>ReplSendVisual
+<
+
+Note: as always, pluggable mappings require a recursive mapping. Eg, don't try
+to "nnoremap" a pluggable mapping. It won't work.
+
+==============================================================================
+                                                                 *repl_credits*
+5. CREDITS~
+
+This plugin was inspired by vim-slime: https://github.com/jpalardy/vim-slime.
+Samuel Roeca heavily modified that program to the point where it has become
+its own plugin.
+
+vim:tw=78:ts=8:ft=help:norl:
