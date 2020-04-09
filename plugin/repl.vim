@@ -79,8 +79,16 @@ function! s:repl_reset_visual_position()
 endfunction
 
 function! s:repl_send() range
-  let buflines = getbufline(bufnr('%'), a:firstline, a:lastline) + ['']
-  call chansend(s:id_job, buflines)
+  if s:id_window == v:false
+    echom 'Repl not open. Run ":ReplOpen" to begin'
+    return
+  endif
+  let buflines = getbufline(bufnr('%'), a:firstline, a:lastline)
+  let buflines_chansend =
+        \ a:lastline == line('$') && match(buflines[-1], '^\s\+') == 0 ?
+        \ buflines + ['', ''] :
+        \ buflines + ['']
+  call chansend(s:id_job, buflines_chansend)
   call s:repl_reset_visual_position()
 endfunction
 
@@ -88,6 +96,12 @@ command! ReplOpen call s:repl_open()
 command! ReplClose call s:repl_close()
 command! ReplToggle call s:repl_toggle()
 command! -range ReplSend <line1>,<line2>call s:repl_send()
+
 nnoremap <script> <silent> <Plug>ReplSendLine
       \ :ReplSend<CR>
       \ :silent! call repeat#set("\<Plug>ReplSendLine", v:count)<CR>hj
+
+" Visual selection sets up normal mode command for repetition
+vnoremap <script> <silent> <Plug>ReplSendVisual
+      \ :ReplSend<CR>
+      \ :silent! call repeat#set("\<Plug>ReplSendLine", v:count)<CR>gv<esc>j
