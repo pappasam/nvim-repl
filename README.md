@@ -1,10 +1,8 @@
 # nvim-repl
 
-nvim-repl makes it easy to create, use, and remove an [interactive repl](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim. To keep things simple, there can only be 1 nvim-repl-managed repl open at any given time. You can either create it, send lines to it, or close it. Using it should be a pleasure!
+Create, use, and remove an [interactive repl](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim.
 
-This plugin uses a Neovim-specific api and is only intended to be used with the latest version of Neovim.
-
-Two pluggable mappings are provided. They rely on the latest version of Tim Pope's [vim-repeat](https://github.com/tpope/vim-repeat).
+This plugin uses a Neovim-specific api and is only intended to be used with the latest version of Neovim. 2 pluggable mappings are provided; they rely on the latest version of Tim Pope's [vim-repeat](https://github.com/tpope/vim-repeat).
 
 ## Installation
 
