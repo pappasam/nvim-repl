@@ -7,10 +7,16 @@
 " License:        MIT
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Script Local: state variables
+
 let s:default_commands = {
       \ 'python': 'python',
       \ }
 let s:repl_default = '/bin/bash'
+let s:id_window = v:false
+let s:id_job = v:false
+
+" Global: user configuration
 
 function! s:configure_constants()
   if !exists('g:repl_filetype_commands')
@@ -36,8 +42,7 @@ catch /.*/
   throw printf('nvim-repl: %s', v:exception)
 endtry
 
-let s:id_window = v:false
-let s:id_job = v:false
+" Script Local: helper functions
 
 function! s:repl_cleanup()
   call jobstop(s:id_job)
@@ -116,16 +121,20 @@ function! s:repl_send() range
   call s:repl_reset_visual_position()
 endfunction
 
+" Global: commands
+
 command! ReplOpen call s:repl_open()
 command! ReplClose call s:repl_close()
 command! ReplToggle call s:repl_toggle()
 command! -range ReplSend <line1>,<line2>call s:repl_send()
 
+" Global: pluggable mappings
+
 nnoremap <script> <silent> <Plug>ReplSendLine
       \ :ReplSend<CR>
       \ :silent! call repeat#set("\<Plug>ReplSendLine", v:count)<CR>hj
 
-" Visual selection sets up normal mode command for repetition
+" visual selection sets up normal mode command for repetition
 vnoremap <script> <silent> <Plug>ReplSendVisual
       \ :ReplSend<CR>
       \ :silent! call repeat#set("\<Plug>ReplSendLine", v:count)<CR>gv<esc>j
