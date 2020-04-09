@@ -7,10 +7,34 @@
 " License:        MIT
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-let g:repl_filetype_commands = {
+let s:default_commands = {
       \ 'python': 'python',
       \ }
-let g:repl_default = '/bin/bash'
+let s:repl_default = '/bin/bash'
+
+function! s:configure_constants()
+  if !exists('g:repl_filetype_commands')
+    let g:repl_filetype_commands = {}
+  elseif type(g:repl_filetype_commands) != v:t_dict
+    throw 'g:repl_filetype_commands must be Dict'
+  endif
+  let g:repl_filetype_commands = extend(
+        \ s:default_commands,
+        \ g:repl_filetype_commands,
+        \ )
+
+  if !exists('g:repl_default')
+    let g:repl_default = s:repl_default
+  elseif type(g:repl_default) != v:t_string
+    throw 'g:repl_default must be a String'
+  endif
+endfunction
+
+try
+  call s:configure_constants()
+catch /.*/
+  throw printf('nvim-repl: %s', v:exception)
+endtry
 
 let s:id_window = v:false
 let s:id_job = v:false
