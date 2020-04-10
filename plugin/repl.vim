@@ -16,15 +16,11 @@ let g:loaded_repl = v:true
 let s:save_cpo = &cpo
 set cpo&vim
 
-" Script Local: state variables
-
 let s:default_commands = {
       \ 'python': 'python',
       \ }
-let s:id_window = v:false
-let s:id_job = v:false
 
-" Global: user configuration
+" User configuration
 
 function! s:configure_constants()
   if !exists('g:repl_filetype_commands')
@@ -44,109 +40,15 @@ function! s:configure_constants()
   endif
 endfunction
 
-" Script Local: helper functions
+" Commands
 
-function! s:repl_cleanup()
-  call jobstop(s:id_job)
-  let s:id_window = v:false
-  let s:id_job = v:false
-  echom 'Repl: closed!'
-endfunction
+command! -nargs=? Repl call repl#open(<f-args>)
+command! -nargs=? ReplOpen call repl#open(<f-args>)
+command! ReplClose call repl#close()
+command! ReplToggle call repl#toggle()
+command! -range ReplSend <line1>,<line2>call repl#send()
 
-function! s:repl_setup_buffer()
-  setlocal nonumber nornu nobuflisted
-  nnoremap <buffer> i <NOP>
-  nnoremap <buffer> a <NOP>
-  nnoremap <buffer> o <NOP>
-  nnoremap <buffer> I <NOP>
-  nnoremap <buffer> A <NOP>
-  nnoremap <buffer> O <NOP>
-  nnoremap <buffer> q :q<CR>
-  autocmd WinClosed <buffer> call s:repl_cleanup()
-endfunction
-
-function! s:repl_open(...)
-  if s:id_window != v:false
-    echom 'Repl: already open. To close existing repl, run ":ReplClose"'
-    return
-  endif
-  let current_window_id = win_getid()
-  let func_args = a:000
-  let command = len(func_args) == 0 ?
-        \ get(g:repl_filetype_commands, &filetype, g:repl_default) :
-        \ func_args[0]
-  if &columns >= 160
-    vert new
-  else
-    split new
-  endif
-  let s:id_job = termopen(command)
-  let s:id_window = win_getid()
-  call s:repl_setup_buffer()
-  call win_gotoid(current_window_id)
-  echom 'Repl: opened!'
-endfunction
-
-function! s:repl_close()
-  let current_window_id = win_getid()
-  call win_gotoid(s:id_window)
-  quit
-  call win_gotoid(current_window_id)
-endfunction
-
-function! s:repl_toggle()
-  if s:id_window == v:false
-    call s:repl_open()
-  else
-    call s:repl_close()
-  endif
-endfunction
-
-function! s:repl_reset_visual_position()
-  set lazyredraw
-  let current_window_id = win_getid()
-  call win_gotoid(s:id_window)
-  normal! G
-  call win_gotoid(current_window_id)
-  set nolazyredraw
-  redraw
-endfunction
-
-function! s:repl_send() range
-  if s:id_window == v:false
-    echom 'Repl: no repl currently open. Run ":ReplOpen" first'
-    return
-  endif
-  let buflines_raw = getbufline(bufnr('%'), a:firstline, a:lastline)
-  " handle cleaned, single empty lines correctly in Python / indented languages
-  let buflines_clean = []
-  let bufline_prev = a:firstline == 1 ?
-        \ '' :
-        \ getbufline(bufnr('%'), a:firstline - 1)[0]
-  for bufline_raw in buflines_raw
-    let bufline_clean = bufline_raw == '' && bufline_prev != '' ?
-          \ matchstr(bufline_prev, '^\s\+') . bufline_raw :
-          \ bufline_raw
-    let buflines_clean = buflines_clean + [bufline_clean]
-    let bufline_prev = bufline_raw
-  endfor
-  let buflines_chansend =
-        \ a:lastline == line('$') && match(buflines_clean[-1], '^\s\+') == 0 ?
-        \ buflines_clean + ['', ''] :
-        \ buflines_clean + ['']
-  call chansend(s:id_job, buflines_chansend)
-  call s:repl_reset_visual_position()
-endfunction
-
-" Global: commands
-
-command! -nargs=? Repl call s:repl_open(<f-args>)
-command! -nargs=? ReplOpen call s:repl_open(<f-args>)
-command! ReplClose call s:repl_close()
-command! ReplToggle call s:repl_toggle()
-command! -range ReplSend <line1>,<line2>call s:repl_send()
-
-" Global: pluggable mappings
+" Pluggable mappings
 
 nnoremap <script> <silent> <Plug>ReplSendLine
       \ :ReplSend<CR>
@@ -157,7 +59,7 @@ vnoremap <script> <silent> <Plug>ReplSendVisual
       \ :ReplSend<CR>
       \ :call repeat#set("\<Plug>ReplSendLine", v:count)<CR>gv<esc>j
 
-" Finish:
+" Finish
 
 try
   call s:configure_constants()
