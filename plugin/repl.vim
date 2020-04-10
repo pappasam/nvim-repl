@@ -117,11 +117,23 @@ function! s:repl_send() range
     echom 'Repl: no repl currently open. Run ":ReplOpen" first'
     return
   endif
-  let buflines = getbufline(bufnr('%'), a:firstline, a:lastline)
+  let buflines_raw = getbufline(bufnr('%'), a:firstline, a:lastline)
+  " handle cleaned, single empty lines correctly in Python / indented languages
+  let buflines_clean = []
+  let bufline_prev = a:firstline == 1 ?
+        \ '' :
+        \ getbufline(bufnr('%'), a:firstline - 1)[0]
+  for bufline_raw in buflines_raw
+    let bufline_clean = bufline_raw == '' && bufline_prev != '' ?
+          \ matchstr(bufline_prev, '^\s\+') . bufline_raw :
+          \ bufline_raw
+    let buflines_clean = buflines_clean + [bufline_clean]
+    let bufline_prev = bufline_raw
+  endfor
   let buflines_chansend =
-        \ a:lastline == line('$') && match(buflines[-1], '^\s\+') == 0 ?
-        \ buflines + ['', ''] :
-        \ buflines + ['']
+        \ a:lastline == line('$') && match(buflines_clean[-1], '^\s\+') == 0 ?
+        \ buflines_clean + ['', ''] :
+        \ buflines_clean + ['']
   call chansend(s:id_job, buflines_chansend)
   call s:repl_reset_visual_position()
 endfunction
