@@ -16,6 +16,22 @@ let g:loaded_repl = v:true
 let s:save_cpo = &cpo
 set cpo&vim
 
+function! s:warning(msg)
+  echohl WarningMsg
+  echom 'repl: ' . a:msg
+  echohl None
+endfunction
+
+function! s:exists(name)
+  let _exists = exists(a:name)
+  if _exists
+    call s:warning(printf('cannot define "%s"; already defined', a:name))
+  endif
+  return _exists
+endfunction
+
+" Configuration:
+
 let s:default_commands = {
       \ 'python': 'python',
       \ }
@@ -42,11 +58,21 @@ endfunction
 
 " Commands
 
-command! -nargs=? Repl call repl#open(<f-args>)
-command! -nargs=? ReplOpen call repl#open(<f-args>)
-command! ReplClose call repl#close()
-command! ReplToggle call repl#toggle()
-command! -range ReplSend <line1>,<line2>call repl#send()
+if !s:exists(':Repl')
+  command! -nargs=? Repl call repl#open(<f-args>)
+endif
+if !s:exists(':ReplOpen')
+  command! -nargs=? ReplOpen call repl#open(<f-args>)
+endif
+if !s:exists('ReplClose')
+  command! ReplClose call repl#close()
+endif
+if !s:exists(':ReplToggle')
+  command! ReplToggle call repl#toggle()
+endif
+if !s:exists(':ReplSend')
+  command! -range ReplSend <line1>,<line2>call repl#send()
+endif
 
 " Pluggable mappings
 
@@ -64,9 +90,8 @@ vnoremap <script> <silent> <Plug>ReplSendVisual
 try
   call s:configure_constants()
 catch /.*/
-  throw printf('nvim-repl: %s', v:exception)
+  call s:warning(v:exception)
 finally
-  " Teardown:
   let &cpo = s:save_cpo
   unlet s:save_cpo
 endtry
