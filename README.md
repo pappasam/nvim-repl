@@ -2,7 +2,9 @@
 
 Create, use, and remove an [interactive repl](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim.
 
-This plugin uses a Neovim-specific api and is only intended to be used with the latest version of Neovim. 2 pluggable mappings are provided; they rely on the latest version of Tim Pope's [vim-repeat](https://github.com/tpope/vim-repeat).
+This plugin uses a Neovim-specific api and is only intended to be used with the latest version of Neovim (0.5.0+).
+
+2 pluggable mappings are provided; they rely on the latest version of Tim Pope's [vim-repeat](https://github.com/tpope/vim-repeat).
 
 ## Installation
 
