@@ -44,12 +44,6 @@ function! s:configure_constants()
   endif
 endfunction
 
-try
-  call s:configure_constants()
-catch /.*/
-  throw printf('nvim-repl: %s', v:exception)
-endtry
-
 " Script Local: helper functions
 
 function! s:repl_cleanup()
@@ -151,7 +145,14 @@ vnoremap <script> <silent> <Plug>ReplSendVisual
       \ :ReplSend<CR>
       \ :call repeat#set("\<Plug>ReplSendLine", v:count)<CR>gv<esc>j
 
-" Teardown:
+" Finish:
 
-let &cpo = s:save_cpo
-unlet s:save_cpo
+try
+  call s:configure_constants()
+catch /.*/
+  throw printf('nvim-repl: %s', v:exception)
+finally
+  " Teardown:
+  let &cpo = s:save_cpo
+  unlet s:save_cpo
+endtry
