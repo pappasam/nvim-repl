@@ -59,10 +59,10 @@ endfunction
 " Commands
 
 if !s:exists(':Repl')
-  command! -nargs=? Repl call repl#open(<f-args>)
+  command! -nargs=? -complete=shellcmd Repl call repl#open(<f-args>)
 endif
 if !s:exists(':ReplOpen')
-  command! -nargs=? ReplOpen call repl#open(<f-args>)
+  command! -nargs=? -complete=shellcmd ReplOpen call repl#open(<f-args>)
 endif
 if !s:exists('ReplClose')
   command! ReplClose call repl#close()
