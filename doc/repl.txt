@@ -38,7 +38,7 @@ this: >
       \ 'javascript': 'node',
       \ 'python': 'python',
       \ }
-<
+
 *g:repl_default*
 Type: String
 Default: &shell
@@ -77,7 +77,7 @@ The user should map these pluggable mappings. Our recommended mappings: >
   nnoremap <leader><leader>e :ReplToggle<CR>
   nmap <leader>e <Plug>ReplSendLine
   vmap <leader>e <Plug>ReplSendVisual
-<
+
 
 Note: as always, pluggable mappings require a recursive mapping. Eg, don't try
 to "nnoremap" a pluggable mapping. It won't work.
