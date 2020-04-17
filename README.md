@@ -37,7 +37,7 @@ From within Neovim, type:
 
 ## Key mappings
 
-Two pluggable mappings are provided. They rely on the latest version of Tim Pope's vim-repeat: https://github.com/tpope/vim-repeat.
+Two pluggable mappings are provided. They rely on the latest version of Tim Pope's vim-repeat.
 
 `<Plug>ReplSendLine` send the current line to the repl. Only mappable in normal mode.
 

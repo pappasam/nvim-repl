@@ -19,7 +19,7 @@ Neovim. It uses a Neovim-specific api and is only intended to be used with the
 latest version of Neovim (0.5.0+).
 
 Two pluggable mappings are provided. They rely on the latest version of Tim
-Pope's vim-repeat: https://github.com/tpope/vim-repeat.
+Pope's vim-repeat: https://github.com/tpope/vim-repeat .
 
 ==============================================================================
                                                            *repl_configuration*
@@ -68,7 +68,7 @@ particular filetype.
 4. MAPPINGS~
 
 Two pluggable mappings are provided. They rely on the latest version of Tim
-Pope's vim-repeat: https://github.com/tpope/vim-repeat.
+Pope's vim-repeat.
 
 <Plug>*ReplSendLine* send the current line to the repl. Only mappable in
   normal mode.
@@ -81,7 +81,6 @@ The user should map these pluggable mappings. Our recommended mappings: >
   nmap <leader>e <Plug>ReplSendLine
   vmap <leader>e <Plug>ReplSendVisual
 
-
 Note: as always, pluggable mappings require a recursive mapping. Eg, don't try
 to "nnoremap" a pluggable mapping. It won't work.
 
@@ -89,7 +88,7 @@ to "nnoremap" a pluggable mapping. It won't work.
                                                                  *repl_credits*
 5. CREDITS~
 
-This plugin was inspired by vim-slime: https://github.com/jpalardy/vim-slime.
+This plugin was inspired by vim-slime: https://github.com/jpalardy/vim-slime .
 Samuel Roeca heavily modified that program to the point where it has become
 its own plugin.
 
