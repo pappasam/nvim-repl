@@ -73,6 +73,9 @@ endif
 if !s:exists(':ReplSend')
   command! -range ReplSend <line1>,<line2>call repl#send()
 endif
+if !s:exists('ReplClear')
+  command! ReplClear call repl#clear()
+endif
 
 " Pluggable mappings
 

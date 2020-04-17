@@ -59,6 +59,8 @@ particular filetype.
 *:ReplToggle*
   if repl is open, close it. If repl is closed, open it using either the
   filetype-associated repl or the configured default repl.
+*:ReplClose*
+  clear the repl, if open.
 
 ==============================================================================
                                                                 *repl_mappings*
