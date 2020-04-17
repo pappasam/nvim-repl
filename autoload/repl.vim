@@ -96,6 +96,7 @@ function! repl#send() range
     let bl_curr = buflines[count]
     let bl_next = buflines[count + 1]
     let ws_prev = matchstr(bl_prev, '^\s\+')
+    let ws_curr = matchstr(bl_curr, '^\s\+')
     let ws_next = matchstr(bl_next, '^\s\+')
     if bl_curr == ''
       let ws_add = bl_next == '' ? ws_prev : ws_next
@@ -103,7 +104,13 @@ function! repl#send() range
     else
       let bl_clean = bl_curr
     endif
-    let buflines_clean = buflines_clean + [bl_clean]
+    " If the previous line is more indented, add extra indent before. Will
+    " change value of some multi-line strings but will generally offer
+    " better-support for Python / indented languages without introducing
+    " code-based bugs to non-indentation-based languages
+    let buflines_clean = len(ws_curr) < len(ws_prev) ?
+          \ buflines_clean + ['', bl_clean] :
+          \ buflines_clean + [bl_clean]
     let count = count + 1
   endwhile
   let buflines_chansend =
