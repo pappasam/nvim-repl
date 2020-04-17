@@ -59,8 +59,9 @@ particular filetype.
 *:ReplToggle*
   if repl is open, close it. If repl is closed, open it using either the
   filetype-associated repl or the configured default repl.
-*:ReplClose*
-  clear the repl, if open.
+*:ReplClear*
+  clear on open repl's screen. Similar to the bash command clear(1). Note:
+  only works if the repl supports "<C-l>" as a screen-clearning mechanism.
 
 ==============================================================================
                                                                 *repl_mappings*
