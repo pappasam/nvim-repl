@@ -16,16 +16,10 @@ let g:loaded_repl = v:true
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:warning(msg)
-  echohl WarningMsg
-  echom 'repl: ' . a:msg
-  echohl None
-endfunction
-
 function! s:exists(name)
   let _exists = exists(a:name)
   if _exists
-    call s:warning(printf('cannot define "%s"; already defined', a:name))
+    call repl#warning(printf('cannot define "%s"; already defined', a:name))
   endif
   return _exists
 endfunction
@@ -93,7 +87,7 @@ vnoremap <script> <silent> <Plug>ReplSendVisual
 try
   call s:configure_constants()
 catch /.*/
-  call s:warning(v:exception)
+  call repl#warning(v:exception)
 finally
   let &cpo = s:save_cpo
   unlet s:save_cpo

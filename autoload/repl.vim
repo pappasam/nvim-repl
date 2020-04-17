@@ -10,11 +10,17 @@
 let s:id_window = v:false
 let s:id_job = v:false
 
+function! repl#warning(msg)
+  echohl WarningMsg
+  echom 'repl: ' . a:msg
+  echohl None
+endfunction
+
 function! s:cleanup()
   call jobstop(s:id_job)
   let s:id_window = v:false
   let s:id_job = v:false
-  echom 'Repl: closed!'
+  echom 'repl: closed!'
 endfunction
 
 function! s:setup()
@@ -34,7 +40,7 @@ endfunction
 
 function! repl#open(...)
   if s:id_window != v:false
-    echom 'Repl: already open. To close existing repl, run ":ReplClose"'
+    call repl#warning('already open. To close existing repl, run ":ReplClose"')
     return
   endif
   let current_window_id = win_getid()
@@ -51,7 +57,7 @@ function! repl#open(...)
   let s:id_window = win_getid()
   call s:setup()
   call win_gotoid(current_window_id)
-  echom 'Repl: opened!'
+  echom 'repl: opened!'
 endfunction
 
 function! repl#close()
@@ -71,7 +77,7 @@ endfunction
 
 function! repl#send() range
   if s:id_window == v:false
-    echom 'Repl: no repl currently open. Run ":ReplOpen" first'
+    call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
   let buflines_raw = getbufline(bufnr('%'), a:firstline, a:lastline)
@@ -110,7 +116,7 @@ endfunction
 
 function! repl#clear()
   if s:id_window == v:false
-    echom 'Repl: no repl currently open. Run ":ReplOpen" first'
+    call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
   call chansend(s:id_job, "\<c-l>")
