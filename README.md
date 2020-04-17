@@ -72,6 +72,8 @@ Use `g:repl_default` to set the default repl if no configured repl is found in `
 
 `:ReplToggle`: if repl is open, close it. If repl is closed, open it using either the filetype-associated repl or the configured default repl.
 
+`:ReplClear`: clear the repl, if open.
+
 ## Notes
 
 This plugin prioritizes simplicity and ease of use on a POSIX-compliant system. Support for Windows and other non-Unix derivatives is out of scope.

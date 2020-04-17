@@ -107,3 +107,11 @@ function! repl#send() range
   call chansend(s:id_job, buflines_chansend)
   call s:repl_reset_visual_position()
 endfunction
+
+function! repl#clear()
+  if s:id_window == v:false
+    echom 'Repl: no repl currently open. Run ":ReplOpen" first'
+    return
+  endif
+  call chansend(s:id_job, "\<c-l>")
+endfunction
