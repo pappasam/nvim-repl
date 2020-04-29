@@ -16,8 +16,8 @@ let g:loaded_repl = v:true
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:exists(name)
-  let _exists = exists(a:name)
+function! s:cmd_exists(name)
+  let _exists = exists(a:name) == 2
   if _exists
     call repl#warning(printf('cannot define "%s"; already defined', a:name))
   endif
@@ -52,22 +52,22 @@ endfunction
 
 " Commands
 
-if !s:exists(':Repl')
+if !s:cmd_exists(':Repl')
   command! -nargs=? -complete=shellcmd Repl call repl#open(<f-args>)
 endif
-if !s:exists(':ReplOpen')
+if !s:cmd_exists(':ReplOpen')
   command! -nargs=? -complete=shellcmd ReplOpen call repl#open(<f-args>)
 endif
-if !s:exists('ReplClose')
+if !s:cmd_exists('ReplClose')
   command! ReplClose call repl#close()
 endif
-if !s:exists(':ReplToggle')
+if !s:cmd_exists(':ReplToggle')
   command! ReplToggle call repl#toggle()
 endif
-if !s:exists(':ReplSend')
+if !s:cmd_exists(':ReplSend')
   command! -range ReplSend <line1>,<line2>call repl#send()
 endif
-if !s:exists('ReplClear')
+if !s:cmd_exists('ReplClear')
   command! ReplClear call repl#clear()
 endif
 
