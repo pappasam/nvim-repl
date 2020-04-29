@@ -16,10 +16,9 @@ let g:loaded_repl = v:true
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:command_exists(name)
-  let _exists = exists(a:name)
-  " Returning 2 implies that this command exactly matches another command
-  if _exists == 2
+function! s:cmd_exists(name)
+  let _exists = exists(a:name) == 2
+  if _exists
     call repl#warning(printf('cannot define "%s"; already defined', a:name))
   endif
   return _exists
@@ -53,22 +52,22 @@ endfunction
 
 " Commands
 
-if !s:command_exists(':Repl')
+if !s:cmd_exists(':Repl')
   command! -nargs=? -complete=shellcmd Repl call repl#open(<f-args>)
 endif
-if !s:command_exists(':ReplOpen')
+if !s:cmd_exists(':ReplOpen')
   command! -nargs=? -complete=shellcmd ReplOpen call repl#open(<f-args>)
 endif
-if !s:command_exists(':ReplClose')
+if !s:cmd_exists('ReplClose')
   command! ReplClose call repl#close()
 endif
-if !s:command_exists(':ReplToggle')
+if !s:cmd_exists(':ReplToggle')
   command! ReplToggle call repl#toggle()
 endif
-if !s:command_exists(':ReplSend')
+if !s:cmd_exists(':ReplSend')
   command! -range ReplSend <line1>,<line2>call repl#send()
 endif
-if !s:command_exists(':ReplClear')
+if !s:cmd_exists('ReplClear')
   command! ReplClear call repl#clear()
 endif
 
