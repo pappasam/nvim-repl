@@ -78,6 +78,26 @@ Use `g:repl_default` to set the default repl if no configured repl is found in `
 
 This plugin prioritizes simplicity and ease of use on a POSIX-compliant system. Support for Windows and other non-Unix derivatives is out of scope.
 
+## FAQ
+
+### Getting strange errors with Python, please help!
+
+One such error might be an `IndentError`. This has to do with quirks related to the default Python interpreter. To get around this, I suggest using [bpython](https://github.com/bpython/bpython) as your default interpreter for Python files. To do this, do the following.
+
+`pip install bpython`
+
+In your ` This has to do with quirks related to the default Python interpreter. To get around this, I suggest using [bpython](https://github.com/bpython/bpython) as your default interpreter for Python files. To do this, do the following.
+
+`pip install bpython`
+
+In your vimrc:
+
+```vim
+let g:repl_filetype_commands = {
+      \ 'python': 'bpython -q',
+      \ }
+```
+
 ## Written by
 
 Samuel Roeca _samuel.roeca@gmail.com_
