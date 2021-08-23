@@ -84,11 +84,9 @@ This plugin prioritizes simplicity and ease of use on a POSIX-compliant system. 
 
 One such error might be an `IndentError`. This has to do with quirks related to the default Python interpreter. To get around this, I suggest using [bpython](https://github.com/bpython/bpython) as your default interpreter for Python files. To do this, do the following.
 
-`pip install bpython`
-
-In your ` This has to do with quirks related to the default Python interpreter. To get around this, I suggest using [bpython](https://github.com/bpython/bpython) as your default interpreter for Python files. To do this, do the following.
-
-`pip install bpython`
+```shell
+pip install bpython
+```
 
 In your vimrc:
 
