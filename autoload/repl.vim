@@ -48,10 +48,14 @@ function! repl#open(...)
   let command = len(func_args) == 0 ?
         \ get(g:repl_filetype_commands, &filetype, g:repl_default) :
         \ func_args[0]
-  if &columns >= 160
-    vert new
-  else
-    split new
+  " default value for win position and w/h
+  let g:repl_position = get(g:, 'repl_position', 0)
+  let g:repl_height = get(g:, 'repl_height', '')
+  let g:repl_width = get(g:, 'repl_width', '')
+  if g:repl_position == 0
+    execute g:repl_height."split new"
+  elseif g:repl_position == 1
+    execute "vert ".g:repl_width."new"
   endif
   let s:id_job = termopen(command)
   let s:id_window = win_getid()

@@ -64,6 +64,20 @@ let g:repl_filetype_commands = {
 
 Use `g:repl_default` to set the default repl if no configured repl is found in `g:repl_filetype_commands`. Defaults to `&shell`.
 
+Use `g:repl_position` to set the repl window position.
+- 0 split bottom (default)
+- 1 split right
+
+If split right is prefered, then add below line to configuration.
+
+```vim
+let g:repl_position = 1
+```
+
+Use `g:repl_height` to set repl window's height (number of lines) if `g:repl_position` set 0. Default will split equally
+
+Use `g:repl_width` to set repl window's width (number of columns) if `g:repl_position` set 1. Default will vsplit equally.
+
 ## Commands
 
 `:Repl` or `:ReplOpen`: open the repl. Takes the name of an executable repl as an optional argument. If no argument is provided, defaults to either the filetype-associated repl or the configured default repl.
