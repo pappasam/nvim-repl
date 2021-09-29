@@ -4,7 +4,7 @@ Create, use, and remove an [interactive repl](https://en.wikipedia.org/wiki/Read
 
 This plugin uses a Neovim-specific api and is only intended to be used with the latest version of Neovim (0.5.0+). To see if your Neovim is compatible, run:
 
-```
+```bash
 nvim --version
 ```
 
@@ -53,7 +53,7 @@ vmap <leader>e <Plug>ReplSendVisual
 
 ## Configurations
 
-Use `g:repl_filetype_commands` to map Neovim filetypes to repls. Eg, if you automatically want to run a "python" repl for python filetypes and a "node" repl for javascript filetypes, your configuration might look like this:
+Use `g:repl_filetype_commands` to map Neovim filetypes to repls. Eg, if you automatically want to run a "python" repl for python filetypes and a "node" repl for JavaScript filetypes, your configuration might look like this:
 
 ```vim
 let g:repl_filetype_commands = {
@@ -64,13 +64,16 @@ let g:repl_filetype_commands = {
 
 Use `g:repl_default` to set the default repl if no configured repl is found in `g:repl_filetype_commands`. Defaults to `&shell`.
 
-Use `g:repl_split` to set the repl window position.
+Use `g:repl_split` to set the repl window position. `vertical` and `horizontal` respect the user-configured global splitright and splitbottom settings.
+
 - `'bottom'`
 - `'top'`
 - `'left'`
-- `'right'` (default)
+- `'right'`
+- `'horizontal'`
+- `'vertical'` (default)
 
-If split bottom is prefered, then add below line to configuration.
+If split bottom is preferred, then add below line to configuration.
 
 ```vim
 let g:repl_split = 'bottom'
@@ -96,7 +99,7 @@ This plugin prioritizes simplicity and ease of use on a POSIX-compliant system. 
 
 ## FAQ
 
-### Getting strange errors with Python, please help!
+### Getting strange errors with Python, please help
 
 One such error might be an `IndentError`. This has to do with quirks related to the default Python interpreter. To get around this, I suggest using [bpython](https://github.com/bpython/bpython) as your default interpreter for Python files. To do this, do the following.
 
@@ -114,4 +117,4 @@ let g:repl_filetype_commands = {
 
 ## Written by
 
-Samuel Roeca _samuel.roeca@gmail.com_
+[Samuel Roeca](https://samroeca.com/)

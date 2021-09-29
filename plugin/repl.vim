@@ -30,6 +30,15 @@ let s:default_commands = {
       \ 'python': 'python',
       \ }
 
+let s:allowed_split_values = [
+      \ 'vertical',
+      \ 'horizontal',
+      \ 'top',
+      \ 'left',
+      \ 'right',
+      \ 'bottom',
+      \ ]
+
 " User configuration
 
 function! s:configure_constants()
@@ -47,6 +56,25 @@ function! s:configure_constants()
     let g:repl_default = &shell
   elseif type(g:repl_default) != v:t_string
     throw 'g:repl_default must be a String'
+  endif
+
+  if !exists('g:repl_split')
+    let g:repl_split = 'vertical'
+  elseif index(s:allowed_split_values, g:repl_split) == -1
+    throw 'g:repl_split is not in allowed values '
+          \ . join(s:allowed_split_values, ', ')
+  endif
+
+  if !exists('g:repl_height')
+    let g:repl_height = ''
+  elseif type(g:repl_height) != v:t_number
+    throw 'g:repl_height is configured and is not a number'
+  endif
+
+  if !exists('g:repl_width')
+    let g:repl_width = ''
+  elseif type(g:repl_width) != v:t_number
+    throw 'g:repl_width is configured and is not a number'
   endif
 endfunction
 

@@ -48,15 +48,20 @@ particular filetype.
 
 *g:repl_split*
 Type: String
-Default: 'right'
+Default: 'vertical'
 
-Set the split position of repl window. Default will split right.
+Set the split position of repl window. Default will split vertically. Vertical
+and horizontal respect the user-configured global splitright and splitbottom
+settings.
+
 Available options: >
 
   - 'bottom'
   - 'top'
   - 'left'
   - 'right'
+  - 'horizontal'
+  - 'vertical'
 
 *g:repl_height*
 Type: Number
