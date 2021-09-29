@@ -46,6 +46,30 @@ Default: &shell
 The default repl selected. Used when no configured repl is found for a
 particular filetype.
 
+*g:repl_split*
+Type: String
+Default: 'right'
+
+Set the split position of repl window. Default will split right.
+Available options: >
+
+  - 'bottom'
+  - 'top'
+  - 'left'
+  - 'right'
+
+*g:repl_height*
+Type: Number
+Default: ''
+
+Set repl window's height (number of lines) if `g:repl_split` set 'bottom'/'top'.
+
+*g:repl_width*
+Type: Number
+Default: ''
+
+Set repl window's width (number of columns) if `g:repl_split` set 'left'/'right'.
+
 ==============================================================================
                                                                 *repl_commands*
 3. COMMANDS~
