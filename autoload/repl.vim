@@ -49,21 +49,21 @@ function! repl#open(...)
         \ get(g:repl_filetype_commands, &filetype, g:repl_default) :
         \ func_args[0]
   " default value for win position and w/h
-  let g:repl_position = get(g:, 'repl_position', 3)
+  let g:repl_split = get(g:, 'repl_split', 'right')
   let g:repl_height = get(g:, 'repl_height', '')
   let g:repl_width = get(g:, 'repl_width', '')
-  if g:repl_position == 0
+  if g:repl_split == 'bottom'
     setlocal splitbelow
-    execute g:repl_height."split new"
-  elseif g:repl_position == 1
+    execute g:repl_height.'split new'
+  elseif g:repl_split == 'top'
     setlocal nosplitbelow
-    execute g:repl_height."split new"
-  elseif g:repl_position == 2
+    execute g:repl_height.'split new'
+  elseif g:repl_split == 'left'
     setlocal nosplitright
-    execute "vert ".g:repl_width."new"
-  elseif g:repl_position == 3
+    execute 'vert '.g:repl_width.'new'
+  elseif g:repl_split == 'right'
     setlocal splitright
-    execute "vert ".g:repl_width."new"
+    execute 'vert '.g:repl_width.'new'
   endif
   let s:id_job = termopen(command)
   let s:id_window = win_getid()
