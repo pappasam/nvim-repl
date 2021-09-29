@@ -48,22 +48,26 @@ particular filetype.
 
 *g:repl_position*
 Type: Number
-Default: 0
+Default: 3
 
-Set the position of repl window. Set `0` to split bottom and set `1` to split
-right.
+Set the position of repl window.  Default split right. >
+
+  - 0: split bottom
+  - 1: split top
+  - 2: split left
+  - 3: split right
 
 *g:repl_height*
 Type: Number
 Default: ''
 
-Set repl window's height (number of lines) if `g:repl_position` set 0.
+Set repl window's height (number of lines) if `g:repl_position` set 0/1.
 
 *g:repl_width*
 Type: Number
 Default: ''
 
-Set repl window's width (number of columns) if `g:repl_position` set 1.
+Set repl window's width (number of columns) if `g:repl_position` set 2/3.
 
 ==============================================================================
                                                                 *repl_commands*
