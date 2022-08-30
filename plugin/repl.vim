@@ -95,6 +95,9 @@ endif
 if !s:cmd_exists(':ReplSend')
   command! -range ReplSend <line1>,<line2>call repl#send()
 endif
+if !s:cmd_exists(':ReplRunCell')
+  command! ReplRunCell call repl#run_cell()
+endif
 if !s:cmd_exists('ReplClear')
   command! ReplClear call repl#clear()
 endif
