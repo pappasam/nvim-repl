@@ -110,9 +110,9 @@ function! repl#send() range
     let ws_next = matchstr(bl_next, '^\s\+')
     if bl_curr == ''
       let ws_add = bl_next == '' ? ws_prev : ws_next
-      let bl_clean = ws_add . bl_curr
+      let bl_clean = ws_add . bl_curr . "\r\n"
     else
-      let bl_clean = bl_curr
+      let bl_clean = bl_curr . "\r\n"
     endif
     " If the previous line is more indented, add extra indent before. Will
     " change value of some multi-line strings but will generally offer
@@ -127,7 +127,7 @@ function! repl#send() range
         \ a:lastline == line('$') && match(buflines_clean[-1], '^\s\+') == 0 ?
         \ buflines_clean + ['', ''] :
         \ buflines_clean + ['']
-  call chansend(s:id_job, buflines_chansend)
+  call chansend(s:id_job, buflines_chansend + ["\r\n"])
   call s:repl_reset_visual_position()
 endfunction
 
