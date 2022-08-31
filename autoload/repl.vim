@@ -172,7 +172,7 @@ function! repl#run_cell()
   while l:cur_line_num > 0 && !l:find_begin_line
     let l:cur_line = getline(l:cur_line_num)
     "[TODO) I want to pattern '\s*#\s*%%', but failed???
-    if l:cur_line =~ "\s*# %%.*"
+    if l:cur_line =~ "^\\s*#\\s*%%.*"
       let l:cell_begin_line_num = l:cur_line_num
       let l:find_begin_line = 1
     endif
@@ -187,7 +187,7 @@ function! repl#run_cell()
   while l:cur_line_num <= line('$') && !l:find_end_line
     let l:cur_line = getline(l:cur_line_num)
     "[TODO) I want to pattern '\s*#\s*%%', but failed???
-    if l:cur_line =~ "\s*# %%.*"
+    if l:cur_line =~ "^\\s*#\\s*%%.*"
       let l:cell_end_line_num = l:cur_line_num - 1
       let l:find_end_line = 1
     endif
