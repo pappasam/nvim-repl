@@ -45,9 +45,18 @@ function! repl#open(...)
   endif
   let current_window_id = win_getid()
   let func_args = a:000
-  let command = len(func_args) == 0 ?
-        \ get(g:repl_filetype_commands, &filetype, g:repl_default) :
-        \ func_args[0]
+
+  if len(func_args) == 1
+    let command = func_args[0]
+  else "The num of args is 0 or 2
+    let command = get(g:repl_filetype_commands, &filetype, g:repl_default)
+    if len(func_args) == 2 && func_args[0] == 'env'
+      " [TODO) I only use conda to manage my virual env, others should be
+      " another command
+      let command = 'conda activate '. func_args[1].' & '. command
+    endif
+  endif
+
   if g:repl_split == 'vertical'
     execute 'vertical ' . g:repl_width . 'split new'
   elseif g:repl_split == 'left'
@@ -110,9 +119,9 @@ function! repl#send() range
     let ws_next = matchstr(bl_next, '^\s\+')
     if bl_curr == ''
       let ws_add = bl_next == '' ? ws_prev : ws_next
-      let bl_clean = ws_add . bl_curr . "\r\n"
+      let bl_clean = ws_add . bl_curr
     else
-      let bl_clean = bl_curr . "\r\n"
+      let bl_clean = bl_curr
     endif
     " If the previous line is more indented, add extra indent before. Will
     " change value of some multi-line strings but will generally offer
@@ -138,43 +147,23 @@ function! repl#send_block(firstline_num, lastline_num)
     return
   endif
   let buflines_raw = getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
-  let buflines_header = a:firstline_num == 1 ?
-        \ [''] :
-        \ getbufline(bufnr('%'), a:firstline_num - 1)
-  let buflines_footer = a:lastline_num == line('$') ?
-        \ [''] :
-        \ getbufline(bufnr('%'), a:lastline_num + 1)
-  let buflines = buflines_header + buflines_raw + buflines_footer
-  let buflines_clean = []
-  " [0, 1, 2, 3, 4, 5]: starts at '1', ends at '4'
-  let count = 1
-  while count <= len(buflines_raw)
-    let bl_prev = buflines[count - 1]
-    let bl_curr = buflines[count]
-    let bl_next = buflines[count + 1]
-    let ws_prev = matchstr(bl_prev, '^\s\+')
-    let ws_curr = matchstr(bl_curr, '^\s\+')
-    let ws_next = matchstr(bl_next, '^\s\+')
-    if bl_curr == ''
-      let ws_add = bl_next == '' ? ws_prev : ws_next
-      let bl_clean = ws_add . bl_curr . "\r\n"
-    else
-      let bl_clean = bl_curr . "\r\n"
-    endif
-    " If the previous line is more indented, add extra indent before. Will
-    " change value of some multi-line strings but will generally offer
-    " better-support for Python / indented languages without introducing
-    " code-based bugs to non-indentation-based languages
-    let buflines_clean = len(ws_curr) < len(ws_prev) ?
-          \ buflines_clean + ['', bl_clean] :
-          \ buflines_clean + [bl_clean]
-    let count = count + 1
-  endwhile
-  let buflines_chansend =
-        \ a:lastline == line('$') && match(buflines_clean[-1], '^\s\+') == 0 ?
-        \ buflines_clean + ['', ''] :
-        \ buflines_clean + ['']
+  let buflines_chansend = buflines_raw + [""]
+  " let buflines_chansend = []
+  " for line in buflines_raw
+  "   if line != ""
+    " [TODO) here should be indent line with the space nums of first line
+    " let buflines_chansend += [line, "\n"] 
+    " let buflines_chansend += [line] 
+    " endif
+  " endfor
+  " echo 'buflines_chansend' buflines_chansend 
   call chansend(s:id_job, buflines_chansend)
+
+  "Func: Adjust the cursor location to the last of the output
+  let current_window_id = win_getid()
+  call win_gotoid(s:id_window)
+  call cursor(line('$'), 0)
+  call win_gotoid(current_window_id)
 endfunction
 
 function! repl#run_cell()
@@ -212,6 +201,7 @@ function! repl#run_cell()
   endif
 
   call repl#send_block(l:cell_begin_line_num, l:cell_end_line_num)
+  " call repl#SendLines(l:cell_begin_line_num, l:cell_end_line_num)
   " echom l:cell_begin_line_num l:cell_end_line_num
   echom 'repl: run cell successly!'
 endfunction

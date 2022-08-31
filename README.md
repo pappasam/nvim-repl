@@ -62,6 +62,11 @@ let g:repl_filetype_commands = {
     \ }
 ```
 
+**notice: ipython config**
+
+- You should `pip install ipython` firstly, then `let g:repl_filetype_commands = {'python': 'ipython'}`
+- If the code in your ipython shell has error indent, please try `let g:repl_filetype_commands = {'python': 'ipython --no-autoindent'}`
+
 Use `g:repl_default` to set the default repl if no configured repl is found in `g:repl_filetype_commands`. Defaults to `&shell`.
 
 Use `g:repl_split` to set the repl window position. `vertical` and `horizontal` respect the user-configured global splitright and splitbottom settings.
@@ -85,7 +90,10 @@ Use `g:repl_width` to set repl window's width (number of columns) if `g:repl_spl
 
 ## Commands
 
-`:Repl` or `:ReplOpen`: open the repl. Takes the name of an executable repl as an optional argument. If no argument is provided, defaults to either the filetype-associated repl or the configured default repl.
+`:Repl` or `:ReplOpen`:
+
+- open the repl. Takes the name of an executable repl as an optional argument. If no argument is provided, defaults to either the filetype-associated repl or the configured default repl.
+- python virual env integrated(only support for [conda](https://www.anaconda.com/)): `:Repl env $env_name`
 
 `:ReplClose`: close the repl, if open.
 
@@ -118,3 +126,4 @@ let g:repl_filetype_commands = {
 ## Written by
 
 [Samuel Roeca](https://samroeca.com/)
+[A Cup of Air](https://acupofair.github.io/)
