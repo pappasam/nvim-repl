@@ -1,4 +1,6 @@
-# nvim-repl
+<h1 align="center">
+nvim-repl
+</h1>
 
 Create, use, and remove an [interactive repl](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim.
 
@@ -10,7 +12,7 @@ nvim --version
 
 2 pluggable mappings are provided; they rely on the latest version of Tim Pope's [vim-repeat](https://github.com/tpope/vim-repeat).
 
-## :tea:: Installation
+## :tea: Installation
 
 If using [vim-plug](https://github.com/junegunn/vim-plug), place the following line in the Plugin section of your init.vim / vimrc:
 
@@ -29,7 +31,7 @@ I personally use [vim-packager](https://github.com/kristijanhusak/vim-packager),
 
 ## :toolbox: Usage
 
-<video src="https://www.youtube.com/watch?v=9mOrLLx5zGc" controls="controls" muted="muted" height="640px"></video>
+![demo](images/nvim-repl-demo.gif)
 
 - `:Repl` or `:ReplOpen`
   - _without arg_: open the default shell which is configured by filetype
