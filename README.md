@@ -10,7 +10,7 @@ nvim --version
 
 2 pluggable mappings are provided; they rely on the latest version of Tim Pope's [vim-repeat](https://github.com/tpope/vim-repeat).
 
-## Installation
+## :tea:: Installation
 
 If using [vim-plug](https://github.com/junegunn/vim-plug), place the following line in the Plugin section of your init.vim / vimrc:
 
@@ -27,7 +27,20 @@ Then run the Ex command:
 
 I personally use [vim-packager](https://github.com/kristijanhusak/vim-packager), so if you'd like to go down the "package" rabbit hole, I suggest giving that a try.
 
-## Full Documentation
+## :toolbox: Usage
+
+<video src="https://www.youtube.com/watch?v=9mOrLLx5zGc" controls="controls" muted="muted" height="640px"></video>
+
+- `:Repl` or `:ReplOpen`
+  - _without arg_: open the default shell which is configured by filetype
+  - `:Repl env $env_name`:open a python shell with the enviorment of $env_name, only support for [conda](https://www.anaconda.com/)
+  - `:Repl arg`: open the default shell and exec the `arg` command
+- `:ReplClose`: close the repl, if open.
+- `:ReplToggle`: if repl is open, close it. If repl is closed, open it using either the filetype-associated repl or the configured default repl.
+- `:ReplClear`: clear the repl, if open.
+- `:ReplRunCell`: will run the cell under the cursor and the cursor will jump to next cell
+
+## :book:Full Documentation
 
 From within Neovim, type:
 
@@ -35,7 +48,7 @@ From within Neovim, type:
 :help repl
 ```
 
-## Key mappings
+## :keyboard:Key mappings
 
 Two pluggable mappings are provided. They rely on the latest version of Tim Pope's vim-repeat.
 
@@ -46,26 +59,26 @@ Two pluggable mappings are provided. They rely on the latest version of Tim Pope
 The user should map these pluggable mappings. Example mappings:
 
 ```vim
-nnoremap <leader><leader>e :ReplToggle<CR>
-nmap <leader>e <Plug>ReplSendLine
-vmap <leader>e <Plug>ReplSendVisual
+nnoremap <leader>rt :ReplToggle<CR>
+nnoremap <leader>rc :ReplRunCell<CR>
+nmap <leader>rr <Plug>ReplSendLine
+vmap <leader>rr <Plug>ReplSendVisual
 ```
 
-## Configurations
+## :gear:Configurations
 
-Use `g:repl_filetype_commands` to map Neovim filetypes to repls. Eg, if you automatically want to run a "python" repl for python filetypes and a "node" repl for JavaScript filetypes, your configuration might look like this:
+Use `g:repl_filetype_commands` to map Neovim filetypes to repls. Eg, if you automatically want to run a "ipython" repl for python filetypes and a "node" repl for JavaScript filetypes, your configuration might look like this:
 
 ```vim
 let g:repl_filetype_commands = {
     \ 'javascript': 'node',
-    \ 'python': 'python',
+    \ 'python': 'ipython --no-autoindent',
     \ }
 ```
 
-**notice: ipython config**
+**:warning:notice: ipython config**
 
 - You should `pip install ipython` firstly, then `let g:repl_filetype_commands = {'python': 'ipython'}`
-- If the code in your ipython shell has error indent, please try `let g:repl_filetype_commands = {'python': 'ipython --no-autoindent'}`
 
 Use `g:repl_default` to set the default repl if no configured repl is found in `g:repl_filetype_commands`. Defaults to `&shell`.
 
@@ -88,24 +101,7 @@ Use `g:repl_height` to set repl window's height (number of lines) if `g:repl_spl
 
 Use `g:repl_width` to set repl window's width (number of columns) if `g:repl_split` set `'left'`/`'right'`. Default will vsplit equally.
 
-## Commands
-
-`:Repl` or `:ReplOpen`:
-
-- open the repl. Takes the name of an executable repl as an optional argument. If no argument is provided, defaults to either the filetype-associated repl or the configured default repl.
-- python virual env integrated(only support for [conda](https://www.anaconda.com/)): `:Repl env $env_name`
-
-`:ReplClose`: close the repl, if open.
-
-`:ReplToggle`: if repl is open, close it. If repl is closed, open it using either the filetype-associated repl or the configured default repl.
-
-`:ReplClear`: clear the repl, if open.
-
-## Notes
-
-This plugin prioritizes simplicity and ease of use on a POSIX-compliant system. Support for Windows and other non-Unix derivatives is out of scope.
-
-## FAQ
+## :question:FAQ
 
 ### Getting strange errors with Python, please help
 
@@ -123,7 +119,7 @@ let g:repl_filetype_commands = {
       \ }
 ```
 
-## Written by
+## :small_airplane:Written by
 
-[Samuel Roeca](https://samroeca.com/)
-[A Cup of Air](https://acupofair.github.io/)
+- [Samuel Roeca](https://samroeca.com/)
+- [A Cup of Air](https://acupofair.github.io/)
