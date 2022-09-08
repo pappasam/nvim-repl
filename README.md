@@ -34,9 +34,9 @@ I personally use [vim-packager](https://github.com/kristijanhusak/vim-packager),
 ![demo](images/nvim-repl-demo.gif)
 
 - `:Repl` or `:ReplOpen`
-  - _without arg_: open the default shell which is configured by filetype
-  - `:Repl env $env_name`:open a python shell with the enviorment of $env_name, only support for [conda](https://www.anaconda.com/)
-  - `:Repl arg`: open the default shell and exec the `arg` command
+- _without arg_: open the default shell which is configured by filetype
+- `:Repl env $env_name`:open a python shell with the enviorment of $env_name, only support for [conda](https://www.anaconda.com/)
+- `:Repl arg`: open the default shell and exec the `arg` command
 - `:ReplClose`: close the repl, if open.
 - `:ReplToggle`: if repl is open, close it. If repl is closed, open it using either the filetype-associated repl or the configured default repl.
 - `:ReplClear`: clear the repl, if open.
@@ -71,57 +71,58 @@ vmap <leader>rr <Plug>ReplSendVisual
 
 Use `g:repl_filetype_commands` to map Neovim filetypes to repls. Eg, if you automatically want to run a "ipython" repl for python filetypes and a "node" repl for JavaScript filetypes, your configuration might look like this:
 
-```vim
+````vim
 let g:repl_filetype_commands = {
-    \ 'javascript': 'node',
-    \ 'python': 'ipython --no-autoindent',
-    \ }
-```
+  \ 'javascript': 'node',
+  \ 'python': 'ipython --no-autoindent',
+  \ }
+  ```
 
-**:warning:notice: ipython config**
+  **:warning:notice: ipython config**
 
-- You should `pip install ipython` firstly, then `let g:repl_filetype_commands = {'python': 'ipython'}`
+  - You should `pip install ipython` firstly, then `let g:repl_filetype_commands = {'python': 'ipython'}`
 
-Use `g:repl_default` to set the default repl if no configured repl is found in `g:repl_filetype_commands`. Defaults to `&shell`.
+  Use `g:repl_default` to set the default repl if no configured repl is found in `g:repl_filetype_commands`. Defaults to `&shell`.
 
-Use `g:repl_split` to set the repl window position. `vertical` and `horizontal` respect the user-configured global splitright and splitbottom settings.
+  Use `g:repl_split` to set the repl window position. `vertical` and `horizontal` respect the user-configured global splitright and splitbottom settings.
 
-- `'bottom'`
-- `'top'`
-- `'left'`
-- `'right'`
-- `'horizontal'`
-- `'vertical'` (default)
+  - `'bottom'`
+  - `'top'`
+  - `'left'`
+  - `'right'`
+  - `'horizontal'`
+  - `'vertical'` (default)
 
-If split bottom is preferred, then add below line to configuration.
+  If split bottom is preferred, then add below line to configuration.
 
-```vim
-let g:repl_split = 'bottom'
-```
+  ```vim
+  let g:repl_split = 'bottom'
+  ```
 
-Use `g:repl_height` to set repl window's height (number of lines) if `g:repl_split` set `'bottom'`/`'top'`. Default will split equally.
+  Use `g:repl_height` to set repl window's height (number of lines) if `g:repl_split` set `'bottom'`/`'top'`. Default will split equally.
 
-Use `g:repl_width` to set repl window's width (number of columns) if `g:repl_split` set `'left'`/`'right'`. Default will vsplit equally.
+  Use `g:repl_width` to set repl window's width (number of columns) if `g:repl_split` set `'left'`/`'right'`. Default will vsplit equally.
 
 ## :question:FAQ
 
 ### Getting strange errors with Python, please help
 
-One such error might be an `IndentError`. This has to do with quirks related to the default Python interpreter. To get around this, I suggest using [bpython](https://github.com/bpython/bpython) as your default interpreter for Python files. To do this, do the following.
+  One such error might be an `IndentError`. This has to do with quirks related to the default Python interpreter. To get around this, I suggest using [bpython](https://github.com/bpython/bpython) as your default interpreter for Python files. To do this, do the following.
 
-```shell
-pip install bpython
-```
+  ```shell
+  pip install bpython
+  ```
 
-In your vimrc:
+  In your vimrc:
 
-```vim
-let g:repl_filetype_commands = {
-      \ 'python': 'bpython -q',
-      \ }
-```
+  ```vim
+  let g:repl_filetype_commands = {
+    \ 'python': 'bpython -q',
+    \ }
+    ```
 
 ## :small_airplane:Written by
 
-- [Samuel Roeca](https://samroeca.com/)
-- [A Cup of Air](https://acupofair.github.io/)
+    - [Samuel Roeca](https://samroeca.com/)
+    - [A Cup of Air](https://acupofair.github.io/)
+````
