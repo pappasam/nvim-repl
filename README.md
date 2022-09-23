@@ -123,5 +123,5 @@ let g:repl_filetype_commands = {
 
 ## :small_airplane:Written by
 
-    - [Samuel Roeca](https://samroeca.com/)
-    - [A Cup of Air](https://acupofair.github.io/)
+- [Samuel Roeca](https://samroeca.com/)
+- [A Cup of Air](https://acupofair.github.io/)
