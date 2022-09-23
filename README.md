@@ -71,12 +71,12 @@ vmap <leader>rr <Plug>ReplSendVisual
 
 Use `g:repl_filetype_commands` to map Neovim filetypes to repls. Eg, if you automatically want to run a "ipython" repl for python filetypes and a "node" repl for JavaScript filetypes, your configuration might look like this:
 
-````vim
+```vim
 let g:repl_filetype_commands = {
   \ 'javascript': 'node',
   \ 'python': 'ipython --no-autoindent',
   \ }
-  ```
+```
 
   **:warning:notice: ipython config**
 
@@ -119,10 +119,9 @@ let g:repl_filetype_commands = {
   let g:repl_filetype_commands = {
     \ 'python': 'bpython -q',
     \ }
-    ```
+  ```
 
 ## :small_airplane:Written by
 
     - [Samuel Roeca](https://samroeca.com/)
     - [A Cup of Air](https://acupofair.github.io/)
-````
