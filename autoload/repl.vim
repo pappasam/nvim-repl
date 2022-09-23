@@ -99,45 +99,10 @@ function! repl#send() range
     call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
-  let buflines_raw = getbufline(bufnr('%'), a:firstline, a:lastline)
-  let buflines_header = a:firstline == 1 ?
-        \ [''] :
-        \ getbufline(bufnr('%'), a:firstline - 1)
-  let buflines_footer = a:lastline == line('$') ?
-        \ [''] :
-        \ getbufline(bufnr('%'), a:lastline + 1)
-  let buflines = buflines_header + buflines_raw + buflines_footer
-  let buflines_clean = []
-  " [0, 1, 2, 3, 4, 5]: starts at '1', ends at '4'
-  let count = 1
-  while count <= len(buflines_raw)
-    let bl_prev = buflines[count - 1]
-    let bl_curr = buflines[count]
-    let bl_next = buflines[count + 1]
-    let ws_prev = matchstr(bl_prev, '^\s\+')
-    let ws_curr = matchstr(bl_curr, '^\s\+')
-    let ws_next = matchstr(bl_next, '^\s\+')
-    if bl_curr == ''
-      let ws_add = bl_next == '' ? ws_prev : ws_next
-      let bl_clean = ws_add . bl_curr
-    else
-      let bl_clean = bl_curr
-    endif
-    " If the previous line is more indented, add extra indent before. Will
-    " change value of some multi-line strings but will generally offer
-    " better-support for Python / indented languages without introducing
-    " code-based bugs to non-indentation-based languages
-    let buflines_clean = len(ws_curr) < len(ws_prev) ?
-          \ buflines_clean + ['', bl_clean] :
-          \ buflines_clean + [bl_clean]
-    let count = count + 1
-  endwhile
-  let buflines_chansend =
-        \ a:lastline == line('$') && match(buflines_clean[-1], '^\s\+') == 0 ?
-        \ buflines_clean + ['', ''] :
-        \ buflines_clean + ['']
-  call chansend(s:id_job, buflines_chansend)
-  call s:repl_reset_visual_position()
+  call repl#send_block(a:firstline, a:lastline)
+  " call repl#SendLines(l:cell_begin_line_num, l:cell_end_line_num)
+  " echom l:cell_begin_line_num l:cell_end_line_num
+  echom 'repl: run range successly!'
 endfunction
 
 function! repl#send_block(firstline_num, lastline_num)
@@ -147,15 +112,16 @@ function! repl#send_block(firstline_num, lastline_num)
     return
   endif
   let buflines_raw = getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
-  let buflines_chansend = buflines_raw + [""]
-  " let buflines_chansend = []
-  " for line in buflines_raw
-  "   if line != ""
+  let buflines_chansend = []
+  for line in buflines_raw
+    " remove the empty line
+    if line != ""
     " [TODO) here should be indent line with the space nums of first line
     " let buflines_chansend += [line, "\n"] 
-    " let buflines_chansend += [line] 
-    " endif
-  " endfor
+    let buflines_chansend += [line] 
+    endif
+  endfor
+  let buflines_chansend += ["", "\n"] 
   " echo 'buflines_chansend' buflines_chansend 
   call chansend(s:id_job, buflines_chansend)
 
