@@ -102,7 +102,7 @@ function! repl#send() range
   call repl#send_block(a:firstline, a:lastline)
   " call repl#SendLines(l:cell_begin_line_num, l:cell_end_line_num)
   " echom l:cell_begin_line_num l:cell_end_line_num
-  echom 'repl: run range successly!'
+  " echom 'repl: run range successly!'
 endfunction
 
 function! repl#send_block(firstline_num, lastline_num)
@@ -169,7 +169,7 @@ function! repl#run_cell()
   call repl#send_block(l:cell_begin_line_num, l:cell_end_line_num)
   " call repl#SendLines(l:cell_begin_line_num, l:cell_end_line_num)
   " echom l:cell_begin_line_num l:cell_end_line_num
-  echom 'repl: run cell successly!'
+  " echom 'repl: run cell successly!'
 endfunction
 
 function! repl#clear()
