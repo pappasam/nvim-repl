@@ -91,6 +91,8 @@ Set repl window's width (number of columns) if `g:repl_split` set 'left'/'right'
 *:ReplClear*
   clear on open repl's screen. Similar to the bash command clear(1). Note:
   only works if the repl supports "<C-l>" as a screen-clearning mechanism.
+*:ReplRunCell*
+  run the cell starting with '# %%', and jump the cursor the next cell
 
 ==============================================================================
                                                                 *repl_mappings*

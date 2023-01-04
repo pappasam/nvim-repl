@@ -76,15 +76,16 @@ function! s:configure_constants()
   elseif type(g:repl_width) != v:t_number
     throw 'g:repl_width is configured and is not a number'
   endif
+
 endfunction
 
 " Commands
 
 if !s:cmd_exists(':Repl')
-  command! -nargs=? -complete=shellcmd Repl call repl#open(<f-args>)
+  command! -nargs=* -complete=shellcmd Repl call repl#open(<f-args>)
 endif
 if !s:cmd_exists(':ReplOpen')
-  command! -nargs=? -complete=shellcmd ReplOpen call repl#open(<f-args>)
+  command! -nargs=* -complete=shellcmd ReplOpen call repl#open(<f-args>)
 endif
 if !s:cmd_exists('ReplClose')
   command! ReplClose call repl#close()
@@ -94,6 +95,9 @@ if !s:cmd_exists(':ReplToggle')
 endif
 if !s:cmd_exists(':ReplSend')
   command! -range ReplSend <line1>,<line2>call repl#send()
+endif
+if !s:cmd_exists(':ReplRunCell')
+  command! ReplRunCell call repl#run_cell()
 endif
 if !s:cmd_exists('ReplClear')
   command! ReplClear call repl#clear()
