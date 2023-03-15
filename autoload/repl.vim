@@ -119,6 +119,12 @@ function! repl#send_block(firstline_num, lastline_num)
       let buflines_chansend += [line]
     endif
   endfor
+  "if the last line of cell is start with space, ipython will not run the
+  "cell, need add a new line behind to run the cell
+  if buflines_chansend[-1] =~ "^\\s.*"
+    let buflines_chansend += [""]
+  endif
+
   call chansend(s:id_job, buflines_chansend)
 
   "Func: Adjust the cursor location to the last of the output
