@@ -106,23 +106,19 @@ function! repl#send() range
 endfunction
 
 function! repl#send_block(firstline_num, lastline_num)
-  " echo "print" a:firstline_num a:lastline_num
+  "If there is no repl window opened, create one
   if s:id_window == v:false
-    call repl#warning('no repl currently open. Run ":ReplOpen" first')
-    return
+    call repl#open()
   endif
+
   let buflines_raw = getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
   let buflines_chansend = []
   for line in buflines_raw
-    " remove the empty line
-    if line != ""
-    " [TODO) here should be indent line with the space nums of first line
-    " let buflines_chansend += [line, "\n"] 
-    let buflines_chansend += [line] 
+    " remove the empty line and #%% line
+    if line != "" && line !~ "^\\s*#\\s*%%.*"
+      let buflines_chansend += [line]
     endif
   endfor
-  let buflines_chansend += ["", "\n"] 
-  " echo 'buflines_chansend' buflines_chansend 
   call chansend(s:id_job, buflines_chansend)
 
   "Func: Adjust the cursor location to the last of the output
@@ -137,7 +133,6 @@ function! repl#run_cell()
   let l:find_begin_line = 0
   while l:cur_line_num > 0 && !l:find_begin_line
     let l:cur_line = getline(l:cur_line_num)
-    "[TODO) I want to pattern '\s*#\s*%%', but failed???
     if l:cur_line =~ "^\\s*#\\s*%%.*"
       let l:cell_begin_line_num = l:cur_line_num
       let l:find_begin_line = 1
@@ -152,7 +147,6 @@ function! repl#run_cell()
   let l:find_end_line = 0
   while l:cur_line_num <= line('$') && !l:find_end_line
     let l:cur_line = getline(l:cur_line_num)
-    "[TODO) I want to pattern '\s*#\s*%%', but failed???
     if l:cur_line =~ "^\\s*#\\s*%%.*"
       let l:cell_end_line_num = l:cur_line_num - 1
       let l:find_end_line = 1
@@ -167,9 +161,10 @@ function! repl#run_cell()
   endif
 
   call repl#send_block(l:cell_begin_line_num, l:cell_end_line_num)
-  " call repl#SendLines(l:cell_begin_line_num, l:cell_end_line_num)
-  " echom l:cell_begin_line_num l:cell_end_line_num
-  " echom 'repl: run cell successly!'
+
+  "emulate the <enter> key in ipython
+  call chansend(s:id_job, ["\<CR>"])
+
 endfunction
 
 function! repl#clear()
