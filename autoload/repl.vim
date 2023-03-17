@@ -100,9 +100,6 @@ function! repl#send() range
     return
   endif
   call repl#send_block(a:firstline, a:lastline)
-  " call repl#SendLines(l:cell_begin_line_num, l:cell_end_line_num)
-  " echom l:cell_begin_line_num l:cell_end_line_num
-  " echom 'repl: run range successly!'
 endfunction
 
 function! repl#send_block(firstline_num, lastline_num)
@@ -119,11 +116,9 @@ function! repl#send_block(firstline_num, lastline_num)
       let buflines_chansend += [line]
     endif
   endfor
-  "if the last line of cell is start with space, ipython will not run the
-  "cell, need add a new line behind to run the cell
-  if buflines_chansend[-1] =~ "^\\s.*"
-    let buflines_chansend += [""]
-  endif
+
+  " Always add new line to ensure that a a sent block is run
+  let buflines_chansend += [""]
 
   call chansend(s:id_job, buflines_chansend)
 
