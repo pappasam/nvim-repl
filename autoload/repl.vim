@@ -117,8 +117,14 @@ function! repl#send_block(firstline_num, lastline_num)
     endif
   endfor
 
-  " Always add new line to ensure that a a sent block is run
-  let buflines_chansend += [""]
+  " Add new line(s) to ensure that a a sent block is run
+  if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
+    " If last line has leading whitespace, add 2 extra lines
+    let buflines_chansend += ["", ""]
+  else
+    " Otherwise, we only need 1
+    let buflines_chansend += [""]
+  endif
 
   call chansend(s:id_job, buflines_chansend)
 
