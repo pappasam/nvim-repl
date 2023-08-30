@@ -58,13 +58,19 @@ Two pluggable mappings are provided. They rely on the latest version of Tim Pope
 
 `<Plug>ReplSendVisual` send the visual selection to the repl. Only mappable in visual mode.
 
-The user should map these pluggable mappings. Example mappings:
+The user should map these pluggable mappings. Example mappings in config using vim filetype :
 
 ```vim
 nnoremap <leader>rt :ReplToggle<CR>
 nnoremap <leader>rc :ReplRunCell<CR>
 nmap <leader>rr <Plug>ReplSendLine
 vmap <leader>rr <Plug>ReplSendVisual
+```
+or use lua format:
+```lua
+["<leader>rt"] = { "<cmd>ReplToggle<cr>", desc = "Toggle nvim-repl" },
+["<leader>rr"] = { "<cmd>ReplSend<cr>", desc = "nvim-repl send current line" },
+["<leader>rc"] = { "<cmd>ReplRunCell<cr>", desc = "nvim-repl run cell" },
 ```
 
 ## :gear:Configurations
