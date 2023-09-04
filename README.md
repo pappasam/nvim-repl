@@ -66,12 +66,6 @@ nnoremap <leader>rc :ReplRunCell<CR>
 nmap <leader>rr <Plug>ReplSendLine
 vmap <leader>rr <Plug>ReplSendVisual
 ```
-or use lua format:
-```lua
-["<leader>rt"] = { "<cmd>ReplToggle<cr>", desc = "Toggle nvim-repl" },
-["<leader>rr"] = { "<cmd>ReplSend<cr>", desc = "nvim-repl send current line" },
-["<leader>rc"] = { "<cmd>ReplRunCell<cr>", desc = "nvim-repl run cell" },
-```
 
 ## :gear:Configurations
 
@@ -100,7 +94,6 @@ let g:repl_filetype_commands = {
   - `'vertical'` (default)
 
   If split bottom is preferred, then add below line to configuration.
-
   ```vim
   let g:repl_split = 'bottom'
   ```
@@ -108,6 +101,25 @@ let g:repl_filetype_commands = {
   Use `g:repl_height` to set repl window's height (number of lines) if `g:repl_split` set `'bottom'`/`'top'`. Default will split equally.
 
   Use `g:repl_width` to set repl window's width (number of columns) if `g:repl_split` set `'left'`/`'right'`. Default will vsplit equally.
+
+### the sample example for [lazyvim](https://github.com/folke/lazy.nvim)
+
+```lua
+{
+  "ACupofAir/nvim-repl",
+  init = function()
+    vim.g["repl_filetype_commands"] = {
+      javascript = "node",
+      python = "ipython --no-autoindent"
+    }
+  end,
+  keys = {
+    { "<leader>rt", "<cmd>ReplToggle<cr>", desc = "Toggle nvim-repl" },
+    { "<leader>rc", "<cmd>ReplRunCell<cr>", desc = "nvim-repl run cell" },
+  },
+}
+```
+
 
 ## :question:FAQ
 
