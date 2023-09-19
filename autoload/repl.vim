@@ -53,22 +53,22 @@ function! repl#open(...)
     if len(func_args) == 2 && func_args[0] == 'env'
       " [TODO) I only use conda to manage my virual env, others should be
       " another command
-      let command = 'conda activate '. func_args[1].' & '. command
+      let command = 'conda activate ' .. func_args[1] .. ' & ' .. command
     endif
   endif
 
   if g:repl_split == 'vertical'
-    execute 'vertical ' . g:repl_width . 'split new'
+    execute 'vertical ' . g:repl_width .. 'split new'
   elseif g:repl_split == 'left'
-    execute 'leftabove vertical ' . g:repl_width . 'split new'
+    execute 'leftabove vertical ' .. g:repl_width .. 'split new'
   elseif g:repl_split == 'right'
-    execute 'rightbelow vertical ' . g:repl_width . 'split new'
+    execute 'rightbelow vertical ' .. g:repl_width .. 'split new'
   elseif g:repl_split == 'horizontal'
-    execute g:repl_height . 'split new'
+    execute g:repl_height .. 'split new'
   elseif g:repl_split == 'bottom'
-    execute 'rightbelow ' . g:repl_height . 'split new'
+    execute 'rightbelow ' .. g:repl_height .. 'split new'
   elseif g:repl_split == 'top'
-    execute 'leftabove ' . g:repl_height . 'split new'
+    execute 'leftabove ' .. g:repl_height .. 'split new'
   else
     throw 'Something went wrong, file issue with https://github.com/pappasam/nvim-repl...'
   endif

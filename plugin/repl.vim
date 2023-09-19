@@ -62,7 +62,7 @@ function! s:configure_constants()
     let g:repl_split = 'vertical'
   elseif index(s:allowed_split_values, g:repl_split) == -1
     throw 'g:repl_split is not in allowed values '
-          \ . join(s:allowed_split_values, ', ')
+          \ .. join(s:allowed_split_values, ', ')
   endif
 
   if !exists('g:repl_height')
@@ -76,7 +76,6 @@ function! s:configure_constants()
   elseif type(g:repl_width) != v:t_number
     throw 'g:repl_width is configured and is not a number'
   endif
-
 endfunction
 
 " Commands
