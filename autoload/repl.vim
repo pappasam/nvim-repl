@@ -38,6 +38,27 @@ function! s:repl_reset_visual_position()
   redraw
 endfunction
 
+" https://stackoverflow.com/a/61486601
+function! s:get_visual_selection(mode)
+  let [line_start, column_start] = getpos("'<")[1:2]
+  let [line_end, column_end] = getpos("'>")[1:2]
+  let lines = getline(line_start, line_end)
+  if a:mode ==# 'v'
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+  elseif a:mode == "\<c-v>"
+    let new_lines = []
+    let i = 0
+    for line in lines
+      let lines[i] = line[column_start - 1: column_end - (&selection == 'inclusive' ? 1 : 2)]
+      let i = i + 1
+    endfor
+  else
+    return []
+  endif
+  return lines
+endfunction
+
 function! repl#open(...)
   if s:id_window != v:false
     call repl#warning('already open. To close existing repl, run ":ReplClose"')
@@ -99,21 +120,22 @@ function! repl#toggle()
   endif
 endfunction
 
-function! repl#send() range
+function! repl#send(mode) range
   if s:id_window == v:false
     call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
-  call repl#send_block(a:firstline, a:lastline)
+  call repl#send_block(a:firstline, a:lastline, a:mode)
 endfunction
 
-function! repl#send_block(firstline_num, lastline_num)
+function! repl#send_block(firstline_num, lastline_num, mode)
   "If there is no repl window opened, create one
   if s:id_window == v:false
     call repl#open()
   endif
-
-  let buflines_raw = getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
+  let buflines_raw = a:mode ==# 'v' || a:mode == "\<c-v>"
+        \ ? s:get_visual_selection(a:mode)
+        \ : getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
   let buflines_chansend = []
   for line in buflines_raw
     " remove the empty line and #%% line
@@ -172,7 +194,7 @@ function! repl#run_cell()
     call cursor(l:cell_end_line_num + 1, 0)
   endif
 
-  call repl#send_block(l:cell_begin_line_num, l:cell_end_line_num)
+  call repl#send_block(l:cell_begin_line_num, l:cell_end_line_num, mode())
 
   "emulate the <enter> key in ipython
   call chansend(s:id_job, ["\<CR>"])

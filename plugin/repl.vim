@@ -93,7 +93,10 @@ if !s:cmd_exists(':ReplToggle')
   command! ReplToggle call repl#toggle()
 endif
 if !s:cmd_exists(':ReplSend')
-  command! -range ReplSend <line1>,<line2>call repl#send()
+  command! -range ReplSend <line1>,<line2>call repl#send(mode())
+endif
+if !s:cmd_exists(':ReplSendVisual')
+  command! -range ReplSendVisual <line1>,<line2>call repl#send(visualmode())
 endif
 if !s:cmd_exists(':ReplRunCell')
   command! ReplRunCell call repl#run_cell()
@@ -110,7 +113,7 @@ nnoremap <script> <silent> <Plug>ReplSendLine
 
 " visual selection sets up normal mode command for repetition
 vnoremap <script> <silent> <Plug>ReplSendVisual
-      \ :ReplSend<CR>
+      \ :ReplSendVisual<CR>
       \ :call repeat#set("\<Plug>ReplSendLine", v:count)<CR>gv<esc>j
 
 " Finish
