@@ -46,6 +46,7 @@ function! s:get_visual_selection(mode)
   if a:mode ==# 'v'
     let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
     let lines[0] = lines[0][column_start - 1:]
+  elseif a:mode ==# 'V'
   elseif a:mode == "\<c-v>"
     let new_lines = []
     let i = 0
@@ -133,7 +134,7 @@ function! repl#send_block(firstline_num, lastline_num, mode)
   if s:id_window == v:false
     call repl#open()
   endif
-  let buflines_raw = a:mode ==# 'v' || a:mode == "\<c-v>"
+  let buflines_raw = a:mode ==? 'v' || a:mode == "\<c-v>"
         \ ? s:get_visual_selection(a:mode)
         \ : getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
   let buflines_chansend = []
