@@ -18,8 +18,9 @@ nvim-repl makes it easy to create, use, and remove an interactive repl within
 Neovim. It uses a Neovim-specific api and is only intended to be used with the
 latest version of Neovim (0.5.0+).
 
-Two pluggable mappings are provided. They rely on the latest version of Tim
-Pope's vim-repeat: https://github.com/tpope/vim-repeat .
+Two pluggable mappings are provided. They rely on Tim Pope's vim-repeat:
+https://github.com/tpope/vim-repeat , which is included in this plugin for
+your convenience.
 
 ==============================================================================
                                                            *repl_configuration*
@@ -98,8 +99,7 @@ Set repl window's width (number of columns) if `g:repl_split` set 'left'/'right'
                                                                 *repl_mappings*
 4. MAPPINGS~
 
-Two pluggable mappings are provided. They rely on the latest version of Tim
-Pope's vim-repeat.
+Two pluggable mappings are provided.
 
 <Plug>*ReplSendLine* send the current line to the repl. Only mappable in
   normal mode.
