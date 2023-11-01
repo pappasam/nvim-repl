@@ -93,10 +93,10 @@ if !s:cmd_exists(':ReplToggle')
   command! ReplToggle call repl#toggle()
 endif
 if !s:cmd_exists(':ReplSend')
-  command! -range ReplSend <line1>,<line2>call repl#send(mode())
+  command! -range ReplSend call repl#send(mode())
 endif
 if !s:cmd_exists(':ReplSendVisual')
-  command! -range ReplSendVisual <line1>,<line2>call repl#send(visualmode())
+  command! -range ReplSendVisual call repl#send(visualmode())
 endif
 if !s:cmd_exists(':ReplRunCell')
   command! ReplRunCell call repl#run_cell()
@@ -107,14 +107,8 @@ endif
 
 " Pluggable mappings
 
-nnoremap <script> <silent> <Plug>ReplSendLine
-      \ :ReplSend<CR>
-      \ :call repeat#set("\<Plug>ReplSendLine", v:count)<CR>hj
-
-" visual selection sets up normal mode command for repetition
-vnoremap <script> <silent> <Plug>ReplSendVisual
-      \ :ReplSendVisual<CR>
-      \ :call repeat#set("\<Plug>ReplSendLine", v:count)<CR>gv<esc>j
+nnoremap <script> <silent> <Plug>ReplSendLine <Cmd>call repl#repeat_opfunc_noop()<CR><Cmd>ReplSend<CR>jg@l<Cmd>call repl#repeat_opfunc_curline()<CR>
+xnoremap <script> <silent> <Plug>ReplSendVisual <Cmd>call repl#repeat_opfunc_noop()<CR>:ReplSendVisual<CR><Esc>jg@l<Cmd>call repl#repeat_opfunc_curline()<CR>
 
 " Finish
 

@@ -8,7 +8,7 @@ This plugin uses a Neovim-specific api and is only intended to be used with the 
 nvim --version
 ```
 
-2 pluggable mappings are provided; they are compatible with Tim Pope's [vim-repeat](https://github.com/tpope/vim-repeat), which is vendored with this package for your convenience.
+2 dot-repeatable pluggable mappings are provided.
 
 ## :tea: Installation
 
@@ -69,16 +69,16 @@ From within Neovim, type:
 
 Two pluggable mappings are provided.
 
-- `<Plug>ReplSendLine` send the current line to the repl. Only mappable in normal mode.
-- `<Plug>ReplSendVisual` send the visual selection to the repl. Only mappable in visual mode.
+- `<Plug>ReplSendLine` send the current line to the repl.
+- `<Plug>ReplSendVisual` send the visual selection to the repl.
 
-The user should map these pluggable mappings. Example mappings in config using vim filetype :
+The user should map these pluggable mappings. Example mappings in config using vim filetype:
 
 ```vim
 nnoremap <leader>rt :ReplToggle<CR>
 nnoremap <leader>rc :ReplRunCell<CR>
 nmap <leader>rr <Plug>ReplSendLine
-vmap <leader>rr <Plug>ReplSendVisual
+xmap <leader>rr <Plug>ReplSendVisual
 ```
 
 ## :gear: Configurations
