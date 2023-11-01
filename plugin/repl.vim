@@ -92,12 +92,6 @@ endif
 if !s:cmd_exists(':ReplToggle')
   command! ReplToggle call repl#toggle()
 endif
-if !s:cmd_exists(':ReplSend')
-  command! -range ReplSend call repl#send(mode())
-endif
-if !s:cmd_exists(':ReplSendVisual')
-  command! -range ReplSendVisual call repl#send(visualmode())
-endif
 if !s:cmd_exists(':ReplRunCell')
   command! ReplRunCell call repl#run_cell()
 endif
@@ -107,8 +101,8 @@ endif
 
 " Pluggable mappings
 
-nnoremap <script> <silent> <Plug>ReplSendLine <Cmd>call repl#repeat_opfunc_noop()<CR><Cmd>ReplSend<CR>jg@l<Cmd>call repl#repeat_opfunc_curline()<CR>
-xnoremap <script> <silent> <Plug>ReplSendVisual <Cmd>call repl#repeat_opfunc_noop()<CR>:ReplSendVisual<CR><Esc>jg@l<Cmd>call repl#repeat_opfunc_curline()<CR>
+nnoremap <script> <silent> <Plug>ReplSendLine <Cmd>execute 'set operatorfunc=repl#repeat_noop'<CR><Cmd>call repl#send(mode())<CR>j0g@l<Cmd>execute 'set operatorfunc=repl#repeat_curline'<CR>
+xnoremap <script> <silent> <Plug>ReplSendVisual :<C-u>call repl#send(visualmode())<CR>
 
 " Finish
 

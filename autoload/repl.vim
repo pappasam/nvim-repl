@@ -118,17 +118,9 @@ function! repl#toggle()
   endif
 endfunction
 
-function! repl#repeat_opfunc_curline(...)
-  set operatorfunc=repl#repeat_curline
-endfunction
-
-function! repl#repeat_opfunc_noop(...)
-  set operatorfunc=repl#repeat_noop
-endfunction
-
 function! repl#repeat_curline(...)
   call repl#send_block(line('.'), line('.'), 'n')
-  normal! j
+  normal! j0
 endfunction
 
 function! repl#repeat_noop(...)
@@ -167,8 +159,6 @@ function! repl#send_block(firstline_num, lastline_num, mode)
     " Otherwise, we only need 1
     let buflines_chansend += [""]
   endif
-
-  echom buflines_chansend
 
   call chansend(s:id_job, buflines_chansend)
 

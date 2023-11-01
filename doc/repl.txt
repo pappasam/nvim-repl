@@ -18,10 +18,6 @@ nvim-repl makes it easy to create, use, and remove an interactive repl within
 Neovim. It uses a Neovim-specific api and is only intended to be used with the
 latest version of Neovim (0.5.0+).
 
-Two pluggable mappings are provided. They rely on Tim Pope's vim-repeat:
-https://github.com/tpope/vim-repeat , which is included in this plugin for
-your convenience.
-
 ==============================================================================
                                                            *repl_configuration*
 2. CONFIGURATION~
@@ -101,16 +97,14 @@ Set repl window's width (number of columns) if `g:repl_split` set 'left'/'right'
 
 Two pluggable mappings are provided.
 
-<Plug>*ReplSendLine* send the current line to the repl. Only mappable in
-  normal mode.
-<Plug>*ReplSendVisual* send the visual selection to the repl. Only mappable in
-  visual mode.
+<Plug>*ReplSendLine* send the current line to the repl.
+<Plug>*ReplSendVisual* send the visual selection to the repl.
 
 The user should map these pluggable mappings. Our recommended mappings: >
 
-  nnoremap <leader><leader>e :ReplToggle<CR>
+  nnoremap <leader><leader>e <Cmd>ReplToggle<CR>
   nmap <leader>e <Plug>ReplSendLine
-  vmap <leader>e <Plug>ReplSendVisual
+  xmap <leader>e <Plug>ReplSendVisual
 
 Note: as always, pluggable mappings require a recursive mapping. Eg, don't try
 to "nnoremap" a pluggable mapping. It won't work.
@@ -120,6 +114,7 @@ to "nnoremap" a pluggable mapping. It won't work.
 5. CREDITS~
 
 This plugin was inspired by vim-slime: https://github.com/jpalardy/vim-slime .
+
 Samuel Roeca heavily modified that program to the point where it has become
 its own plugin.
 

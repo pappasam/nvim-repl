@@ -8,8 +8,6 @@ This plugin uses a Neovim-specific api and is only intended to be used with the 
 nvim --version
 ```
 
-2 dot-repeatable pluggable mappings are provided.
-
 ## :tea: Installation
 
 If using [vim-plug](https://github.com/junegunn/vim-plug), place the following line in the Plugin section of your init.vim / vimrc:
@@ -69,14 +67,14 @@ From within Neovim, type:
 
 Two pluggable mappings are provided.
 
-- `<Plug>ReplSendLine` send the current line to the repl.
+- `<Plug>ReplSendLine` dot-repeatable command to send the current line to the repl.
 - `<Plug>ReplSendVisual` send the visual selection to the repl.
 
 The user should map these pluggable mappings. Example mappings in config using vim filetype:
 
 ```vim
-nnoremap <leader>rt :ReplToggle<CR>
-nnoremap <leader>rc :ReplRunCell<CR>
+nnoremap <leader>rt <Cmd>ReplToggle<CR>
+nnoremap <leader>rc <Cmd>ReplRunCell<CR>
 nmap <leader>rr <Plug>ReplSendLine
 xmap <leader>rr <Plug>ReplSendVisual
 ```
