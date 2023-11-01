@@ -135,6 +135,12 @@ let g:repl_filetype_commands = {
   \ }
 ```
 
+### Escape doesn't work in Terminal mode
+
+If you find yourself in Terminal mode, use `<C-\><C-n>` instead of `<Esc>` to return to Normal mode.
+
+Type `:help Terminal-mode` and `:help CTRL-\_CTRL-N` for more information.
+
 ## :small_airplane: Written by
 
 - [Samuel Roeca](https://samroeca.com/)
