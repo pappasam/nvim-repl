@@ -10,20 +10,6 @@ nvim --version
 
 ## :tea: Installation
 
-If using [vim-plug](https://github.com/junegunn/vim-plug), place the following line in the Plugin section of your init.vim / vimrc:
-
-```vim
-Plug 'pappasam/nvim-repl'
-```
-
-Then run the Ex command:
-
-```vim
-:PlugInstall
-```
-
-I personally use [vim-packager](https://github.com/kristijanhusak/vim-packager), so if you'd like to go down the "package" rabbit hole, I suggest giving that a try.
-
 If you use [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
@@ -41,6 +27,8 @@ If you use [lazy.nvim](https://github.com/folke/lazy.nvim):
   },
 }
 ```
+
+For other package management tools, please consult their documentation.
 
 ## :toolbox: Usage
 
