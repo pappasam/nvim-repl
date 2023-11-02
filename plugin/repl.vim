@@ -93,7 +93,7 @@ if !s:cmd_exists(':ReplToggle')
   command! ReplToggle call repl#toggle()
 endif
 if !s:cmd_exists(':ReplRunCell')
-  command! ReplRunCell call repl#runcell()
+  command! ReplRunCell call repl#sendcell()
 endif
 if !s:cmd_exists('ReplClear')
   command! ReplClear call repl#clear()
@@ -102,6 +102,7 @@ endif
 " Pluggable mappings
 
 nnoremap <script> <silent> <Plug>ReplSendLine <Cmd>execute 'set operatorfunc=repl#noop'<CR><Cmd>call repl#sendline()<CR>g@l<Cmd>execute 'set operatorfunc=repl#sendline'<CR>
+nnoremap <script> <silent> <Plug>ReplSendCell <Cmd>execute 'set operatorfunc=repl#noop'<CR><Cmd>call repl#sendcell()<CR>g@l<Cmd>execute 'set operatorfunc=repl#sendcell'<CR>
 xnoremap <script> <silent> <Plug>ReplSendVisual <Cmd>execute 'set operatorfunc=repl#noop'<CR>:<C-u>call repl#sendvisual(visualmode())<CR>g@l<Cmd>execute 'set operatorfunc=repl#sendline'<CR>
 
 " Finish

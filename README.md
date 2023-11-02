@@ -53,18 +53,19 @@ From within Neovim, type:
 
 ## :keyboard: Key mappings
 
-Two pluggable, dot-repeatable mappings are provided.
+Several pluggable, dot-repeatable mappings are provided.
 
 - `<Plug>ReplSendLine` send the current line to the repl.
+- `<Plug>ReplSendCell` send the current cell to the repl.
 - `<Plug>ReplSendVisual` send the visual selection to the repl.
 
 The user should map these pluggable mappings. Example mappings in config using vim filetype:
 
 ```vim
-nnoremap <leader>rt <Cmd>ReplToggle<CR>
-nnoremap <leader>rc <Cmd>ReplRunCell<CR>
-nmap <leader>rr <Plug>ReplSendLine
-xmap <leader>rr <Plug>ReplSendVisual
+nnoremap <Leader>rt <Cmd>ReplToggle<CR>
+nmap     <Leader>rc <Plug>ReplSendCell
+nmap     <Leader>rr <Plug>ReplSendLine
+xmap     <Leader>r  <Plug>ReplSendVisual
 ```
 
 ## :gear: Configurations

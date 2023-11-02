@@ -174,7 +174,7 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
   call win_gotoid(current_window_id)
 endfunction
 
-function! repl#runcell()
+function! repl#sendcell(...)
   let l:cur_line_num = line('.')
   let l:find_begin_line = 0
   while l:cur_line_num > 0 && !l:find_begin_line
@@ -188,7 +188,6 @@ function! repl#runcell()
   if !l:find_begin_line
     let l:cell_begin_line_num = 1
   endif
-
   let l:cur_line_num = line('.') + 1
   let l:find_end_line = 0
   while l:cur_line_num <= line('$') && !l:find_end_line
@@ -205,12 +204,8 @@ function! repl#runcell()
   else
     call cursor(l:cell_end_line_num + 1, 0)
   endif
-
   call repl#sendblock(l:cell_begin_line_num, l:cell_end_line_num, mode())
-
-  "emulate the <enter> key in ipython
-  call chansend(s:id_job, ["\<CR>"])
-
+  call chansend(s:id_job, ["\<CR>"]) "emulate the <enter> key in ipython
 endfunction
 
 function! repl#clear()

@@ -102,9 +102,10 @@ Two pluggable, dot-repeatable mappings are provided.
 
 The user should map these pluggable mappings. Our recommended mappings: >
 
-  nnoremap <leader><leader>e <Cmd>ReplToggle<CR>
-  nmap <leader>e <Plug>ReplSendLine
-  xmap <leader>e <Plug>ReplSendVisual
+  nnoremap <Leader>rt <Cmd>ReplToggle<CR>
+  nmap     <Leader>rc <Plug>ReplSendCell
+  nmap     <Leader>rr <Plug>ReplSendLine
+  xmap     <Leader>r  <Plug>ReplSendVisual
 
 Note: as always, pluggable mappings require a recursive mapping. Eg, don't try
 to "nnoremap" a pluggable mapping. It won't work.
