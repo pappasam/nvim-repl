@@ -53,9 +53,9 @@ From within Neovim, type:
 
 ## :keyboard: Key mappings
 
-Two pluggable mappings are provided.
+Two pluggable, dot-repeatable mappings are provided.
 
-- `<Plug>ReplSendLine` dot-repeatable command to send the current line to the repl.
+- `<Plug>ReplSendLine` send the current line to the repl.
 - `<Plug>ReplSendVisual` send the visual selection to the repl.
 
 The user should map these pluggable mappings. Example mappings in config using vim filetype:

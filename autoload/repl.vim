@@ -118,24 +118,29 @@ function! repl#toggle()
   endif
 endfunction
 
-function! repl#repeat_curline(...)
-  call repl#send_block(line('.'), line('.'), 'n')
-  normal! j0
-endfunction
-
-function! repl#repeat_noop(...)
+function! repl#noop(...)
   return
 endfunction
 
-function! repl#send(mode)
+function! repl#sendline(...)
   if s:id_window == v:false
     call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
-  call repl#send_block(line('.'), line('v'), a:mode)
+  call repl#sendblock(line('.'), line('.'), 'n')
+  normal! j0
 endfunction
 
-function! repl#send_block(firstline_num, lastline_num, mode)
+function! repl#sendvisual(mode)
+  if s:id_window == v:false
+    call repl#warning('no repl currently open. Run ":ReplOpen" first')
+    return
+  endif
+  call repl#sendblock('not applicable', 'not applicable', a:mode)
+endfunction
+
+
+function! repl#sendblock(firstline_num, lastline_num, mode)
   "If there is no repl window opened, create one
   if s:id_window == v:false
     call repl#open()
@@ -169,7 +174,7 @@ function! repl#send_block(firstline_num, lastline_num, mode)
   call win_gotoid(current_window_id)
 endfunction
 
-function! repl#run_cell()
+function! repl#runcell()
   let l:cur_line_num = line('.')
   let l:find_begin_line = 0
   while l:cur_line_num > 0 && !l:find_begin_line
@@ -201,7 +206,7 @@ function! repl#run_cell()
     call cursor(l:cell_end_line_num + 1, 0)
   endif
 
-  call repl#send_block(l:cell_begin_line_num, l:cell_end_line_num, mode())
+  call repl#sendblock(l:cell_begin_line_num, l:cell_end_line_num, mode())
 
   "emulate the <enter> key in ipython
   call chansend(s:id_job, ["\<CR>"])
