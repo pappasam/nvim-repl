@@ -1,12 +1,6 @@
-# nvim-repl
+# Neovim REPL
 
-Create, use, and remove an [interactive repl](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim.
-
-This plugin uses a Neovim-specific api and is only intended to be used with the latest version of Neovim (0.5.0+). To see if your Neovim is compatible, run:
-
-```bash
-nvim --version
-```
+Create, use, and remove an [interactive REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim 0.5.0+.
 
 ## :tea: Installation
 
@@ -35,29 +29,19 @@ For other package management tools, please consult their documentation.
 ![demo](images/nvim-repl-demo.gif)
 
 - `:Repl` or `:ReplOpen`
-- _without arg_: open the default shell which is configured by filetype
-- `:Repl env $env_name`:open a python shell with the enviorment of $env_name, only support for [conda](https://www.anaconda.com/)
+- _without argument_: open the default shell which is configured by filetype
+- `:Repl env $env_name`:open a python shell with the environment of `$env_name`, only support for [Conda](https://www.anaconda.com/)
 - `:Repl arg`: open the default shell and exec the `arg` command
-- `:ReplClose`: close the repl, if open.
-- `:ReplToggle`: if repl is open, close it. If repl is closed, open it using either the filetype-associated repl or the configured default repl.
-- `:ReplClear`: clear the repl, if open.
+- `:ReplClose`: close the REPL, if open.
+- `:ReplToggle`: if REPL is open, close it. If REPL is closed, open it using either the filetype associated REPL or the configured default REPL.
+- `:ReplClear`: clear the REPL, if open.
 - `:ReplRunCell`: will run the cell under the cursor and the cursor will jump to next cell
-
-## :book: Full Documentation
-
-From within Neovim, type:
-
-```vim
-:help repl
-```
-
-## :keyboard: Key mappings
 
 Several pluggable, dot-repeatable mappings are provided.
 
-- `<Plug>ReplSendLine` send the current line to the repl.
-- `<Plug>ReplSendCell` send the current cell to the repl.
-- `<Plug>ReplSendVisual` send the visual selection to the repl.
+- `<Plug>ReplSendLine` send the current line to the REPL.
+- `<Plug>ReplSendCell` send the current cell to the REPL.
+- `<Plug>ReplSendVisual` send the visual selection to the REPL.
 
 The user should map these pluggable mappings. Example mappings in config using vim filetype:
 
@@ -70,7 +54,7 @@ xmap     <Leader>r  <Plug>ReplSendVisual
 
 ## :gear: Configurations
 
-Use `g:repl_filetype_commands` to map Neovim filetypes to repls. Eg, if you automatically want to run a "ipython" repl for python filetypes and a "node" repl for JavaScript filetypes, your configuration might look like this:
+Use `g:repl_filetype_commands` to map Neovim file types to REPL. E.g., if you automatically want to run a `ipython` REPL for python file types and a "node" REPL for JavaScript file types, your configuration might look like this:
 
 ```vim
 let g:repl_filetype_commands = {
@@ -79,13 +63,13 @@ let g:repl_filetype_commands = {
   \ }
 ```
 
-**:warning:notice: ipython config**
+**:warning:notice: `ipython` config**
 
 - You should `pip install ipython` firstly, then `let g:repl_filetype_commands = {'python': 'ipython'}`
 
-Use `g:repl_default` to set the default repl if no configured repl is found in `g:repl_filetype_commands`. Defaults to `&shell`.
+Use `g:repl_default` to set the default REPL if no configured REPL is found in `g:repl_filetype_commands`. Defaults to `&shell`.
 
-Use `g:repl_split` to set the repl window position. `vertical` and `horizontal` respect the user-configured global splitright and splitbottom settings.
+Use `g:repl_split` to set the REPL window position. `vertical` and `horizontal` respect the user-configured global `splitright` and `splitbottom` settings.
 
 - `'bottom'`
 - `'top'`
@@ -100,21 +84,28 @@ If split bottom is preferred, then add below line to configuration.
 let g:repl_split = 'bottom'
 ```
 
-Use `g:repl_height` to set repl window's height (number of lines) if `g:repl_split` set `'bottom'`/`'top'`. Default will split equally.
+- `g:repl_height` to set REPL window's height (number of lines) if `g:repl_split` set `'bottom'`/`'top'`. Default `split` equally.
+- `g:repl_width` to set REPL window's width (number of columns) if `g:repl_split` set `'left'`/`'right'`. Default `vsplit` equally.
 
-Use `g:repl_width` to set repl window's width (number of columns) if `g:repl_split` set `'left'`/`'right'`. Default will vsplit equally.
+## :book: Full Documentation
+
+From within Neovim, type:
+
+```vim
+:help repl
+```
 
 ## :question: FAQ
 
 ### Getting strange errors with Python, please help
 
-One such error might be an `IndentError`. This has to do with quirks related to the default Python interpreter. To get around this, I suggest using [bpython](https://github.com/bpython/bpython) as your default interpreter for Python files. To do this, do the following.
+One such error might be a `IndentError`. This has to do with quirks related to the default Python interpreter. To get around this, I suggest using [`bpython`](https://github.com/bpython/bpython) as your default interpreter for Python files. To do this, do the following.
 
 ```bash
 pip install bpython
 ```
 
-In your vimrc:
+In your `init.vim`:
 
 ```vim
 let g:repl_filetype_commands = {
