@@ -99,18 +99,19 @@ From within Neovim, type:
 
 ### Getting strange errors with Python, please help
 
-One such error might be a `IndentError`. This has to do with quirks related to the default Python interpreter. To get around this, I suggest using [`bpython`](https://github.com/bpython/bpython) as your default interpreter for Python files. To do this, do the following.
+One such error might be a `IndentError`. This has to do with quirks related to the default Python interpreter. To get around this, use [`ipython`](https://github.com/ipython/ipython) as your default interpreter for Python files.
+
+Terminal:
 
 ```bash
-pip install bpython
+pip install ipython
 ```
 
-In your `init.vim`:
+`init.vim`:
 
 ```vim
-let g:repl_filetype_commands = {
-  \ 'python': 'bpython -q',
-  \ }
+" init.vim
+let g:repl_filetype_commands = {'python': 'ipython --no-autoindent'}
 ```
 
 ### Escape doesn't work in Terminal mode
