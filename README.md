@@ -89,7 +89,11 @@ let g:repl_split = 'bottom'
 
 ## Cells
 
-Cells are denoted by full-line comments that contain only the characters `%%`. See some examples below:
+Cells are denoted by full-line comments that contain only the characters `%%`.
+
+Comment characters are identified by your buffer's filetype's `'commentstring'`.
+
+See some examples below:
 
 ### Python
 
