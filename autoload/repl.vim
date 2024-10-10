@@ -161,11 +161,13 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
 endfunction
 
 function! repl#sendcell(...)
+  let commentchars = trim(substitute(&commentstring, '%s', '', ''))
+  let cell_pattern = "^\\s*" .. commentchars .. "\\s*%%.*"
   let l:cur_line_num = line('.')
   let l:find_begin_line = 0
   while l:cur_line_num > 0 && !l:find_begin_line
     let l:cur_line = getline(l:cur_line_num)
-    if l:cur_line =~ "^\\s*#\\s*%%.*"
+    if l:cur_line =~ cell_pattern
       let l:cell_begin_line_num = l:cur_line_num
       let l:find_begin_line = 1
     endif
@@ -178,7 +180,7 @@ function! repl#sendcell(...)
   let l:find_end_line = 0
   while l:cur_line_num <= line('$') && !l:find_end_line
     let l:cur_line = getline(l:cur_line_num)
-    if l:cur_line =~ "^\\s*#\\s*%%.*"
+    if l:cur_line =~ cell_pattern
       let l:cell_end_line_num = l:cur_line_num - 1
       let l:find_end_line = 1
     endif

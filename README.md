@@ -2,7 +2,7 @@
 
 Create, use, and remove an [interactive REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim 0.5.0+.
 
-## :tea: Installation
+## Installation
 
 If you use [lazy.nvim](https://github.com/folke/lazy.nvim):
 
@@ -24,7 +24,7 @@ If you use [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 For other package management tools, please consult their documentation.
 
-## :toolbox: Usage
+## Usage
 
 ![demo](images/nvim-repl-demo.gif)
 
@@ -52,7 +52,7 @@ nmap     <Leader>rr <Plug>ReplSendLine
 xmap     <Leader>r  <Plug>ReplSendVisual
 ```
 
-## :gear: Configurations
+## Configuration
 
 Use `g:repl_filetype_commands` to map Neovim file types to REPL. E.g., if you automatically want to run a `ipython` REPL for python file types and a "node" REPL for JavaScript file types, your configuration might look like this:
 
@@ -63,7 +63,7 @@ let g:repl_filetype_commands = {
   \ }
 ```
 
-**:warning:notice: `ipython` config**
+**`ipython` config**
 
 - You should `pip install ipython` firstly, then `let g:repl_filetype_commands = {'python': 'ipython'}`
 
@@ -87,7 +87,43 @@ let g:repl_split = 'bottom'
 - `g:repl_height` to set REPL window's height (number of lines) if `g:repl_split` set `'bottom'`/`'top'`. Default `split` equally.
 - `g:repl_width` to set REPL window's width (number of columns) if `g:repl_split` set `'left'`/`'right'`. Default `vsplit` equally.
 
-## :book: Full Documentation
+## Cells
+
+Cells are denoted by full-line comments that contain only the characters `%%`. See some examples below:
+
+### Python
+
+```python
+# %%
+print("I am the first cell")
+print("I am still the first cell")
+
+# %%
+print("I am the second cell")
+print("I am still the second cell")
+print("I am still, still the second cell")
+# %%
+
+print("I am the third cell")
+```
+
+### Haskell
+
+```haskell
+-- %%
+putStrLn "I am the first cell"
+putStrLn "I am still the first cell"
+
+-- %%
+putStrLn "I am the second cell"
+putStrLn "I am still the second cell"
+putStrLn "I am still, still the second cell"
+-- %%
+
+putStrLn "I am the third cell"
+```
+
+## Full Documentation
 
 From within Neovim, type:
 
@@ -95,7 +131,7 @@ From within Neovim, type:
 :help repl
 ```
 
-## :question: FAQ
+## FAQ
 
 ### Getting strange errors with Python, please help
 
@@ -120,7 +156,7 @@ If you find yourself in Terminal mode, use `<C-\><C-n>` instead of `<Esc>` to re
 
 Type `:help Terminal-mode` and `:help CTRL-\_CTRL-N` for more information.
 
-## :small_airplane: Written by
+## Written by
 
 - [Samuel Roeca](https://samroeca.com/)
 - [A Cup of Air](https://acupofair.github.io/)
