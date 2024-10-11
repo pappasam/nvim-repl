@@ -89,9 +89,9 @@ let g:repl_split = 'bottom'
 
 ## Cells
 
-Cells are denoted by full-line comments that contain only the characters `%%`.
+Cells are denoted by full-line comments that begin with the characters `%%`.
 
-Comment characters are identified by your buffer's filetype's `'commentstring'`.
+Comments are identified by your buffer's filetype's `'commentstring'`.
 
 See some examples below:
 
@@ -102,7 +102,7 @@ See some examples below:
 print("I am the first cell")
 print("I am still the first cell")
 
-# %%
+# %% anything can follow
 print("I am the second cell")
 print("I am still the second cell")
 print("I am still, still the second cell")
@@ -118,7 +118,7 @@ print("I am the third cell")
 putStrLn "I am the first cell"
 putStrLn "I am still the first cell"
 
--- %%
+-- %% anything can follow
 putStrLn "I am the second cell"
 putStrLn "I am still the second cell"
 putStrLn "I am still, still the second cell"
