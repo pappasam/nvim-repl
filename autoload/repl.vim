@@ -161,13 +161,14 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
 endfunction
 
 function! repl#sendcell(...)
-  let commentchars = trim(substitute(&commentstring, '%s', '', ''))
-  let cell_pattern = "^\\s*" .. commentchars .. "\\s*%%.*"
+  " This supports single-line comments with only a prefix (like '## %s') and
+  " comments that fully surround (like '<!-- %s -->')
+  let l:cell_pattern = "^\\s*" .. substitute(&commentstring, '%s', "\\s*%%.*", '')
   let l:cur_line_num = line('.')
   let l:find_begin_line = 0
   while l:cur_line_num > 0 && !l:find_begin_line
     let l:cur_line = getline(l:cur_line_num)
-    if l:cur_line =~ cell_pattern
+    if l:cur_line =~ l:cell_pattern
       let l:cell_begin_line_num = l:cur_line_num
       let l:find_begin_line = 1
     endif
@@ -180,7 +181,7 @@ function! repl#sendcell(...)
   let l:find_end_line = 0
   while l:cur_line_num <= line('$') && !l:find_end_line
     let l:cur_line = getline(l:cur_line_num)
-    if l:cur_line =~ cell_pattern
+    if l:cur_line =~ l:cell_pattern
       let l:cell_end_line_num = l:cur_line_num - 1
       let l:find_end_line = 1
     endif
@@ -192,7 +193,8 @@ function! repl#sendcell(...)
   else
     call cursor(l:cell_end_line_num + 1, 0)
   endif
-  call repl#sendblock(l:cell_begin_line_num, l:cell_end_line_num, mode())
+  " add 1 to avoid sending the commented line itself to the repl
+  call repl#sendblock(l:cell_begin_line_num + 1, l:cell_end_line_num, mode())
   call chansend(s:id_job, ["\<CR>"]) "emulate <enter> key in ipython
 endfunction
 
