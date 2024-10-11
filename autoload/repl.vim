@@ -163,38 +163,38 @@ endfunction
 function! repl#sendcell(...)
   " This supports single-line comments with only a prefix (like '## %s') and
   " comments that fully surround (like '<!-- %s -->')
-  let l:cell_pattern = "^\\s*" .. substitute(&commentstring, '%s', "\\s*%%.*", '')
-  let l:cur_line_num = line('.')
-  let l:find_begin_line = 0
-  while l:cur_line_num > 0 && !l:find_begin_line
-    let l:cur_line = getline(l:cur_line_num)
-    if l:cur_line =~ l:cell_pattern
-      let l:cell_begin_line_num = l:cur_line_num
-      let l:find_begin_line = 1
+  let cell_pattern = "^\\s*" .. substitute(&commentstring, '%s', "\\s*%%.*", '')
+  let cur_line_num = line('.')
+  let find_begin_line = 0
+  while cur_line_num > 0 && !find_begin_line
+    let cur_line = getline(cur_line_num)
+    if cur_line =~ cell_pattern
+      let cell_begin_line_num = cur_line_num
+      let find_begin_line = 1
     endif
-    let l:cur_line_num -= 1
+    let cur_line_num -= 1
   endwhile
-  if !l:find_begin_line
-    let l:cell_begin_line_num = 1
+  if !find_begin_line
+    let cell_begin_line_num = 1
   endif
-  let l:cur_line_num = line('.') + 1
-  let l:find_end_line = 0
-  while l:cur_line_num <= line('$') && !l:find_end_line
-    let l:cur_line = getline(l:cur_line_num)
-    if l:cur_line =~ l:cell_pattern
-      let l:cell_end_line_num = l:cur_line_num - 1
-      let l:find_end_line = 1
+  let cur_line_num = line('.') + 1
+  let find_end_line = 0
+  while cur_line_num <= line('$') && !find_end_line
+    let cur_line = getline(cur_line_num)
+    if cur_line =~ cell_pattern
+      let cell_end_line_num = cur_line_num - 1
+      let find_end_line = 1
     endif
-    let l:cur_line_num += 1
+    let cur_line_num += 1
   endwhile
-  if !l:find_end_line
-    let l:cell_end_line_num = line('$')
-    call cursor(l:cell_end_line_num, 0)
+  if !find_end_line
+    let cell_end_line_num = line('$')
+    call cursor(cell_end_line_num, 0)
   else
-    call cursor(l:cell_end_line_num + 1, 0)
+    call cursor(cell_end_line_num + 1, 0)
   endif
   " add 1 to avoid sending the commented line itself to the repl
-  call repl#sendblock(l:cell_begin_line_num + 1, l:cell_end_line_num, mode())
+  call repl#sendblock(cell_begin_line_num + 1, cell_end_line_num, mode())
   call chansend(s:id_job, ["\<CR>"]) "emulate <enter> key in ipython
 endfunction
 
