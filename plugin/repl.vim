@@ -98,6 +98,9 @@ endif
 if !s:cmd_exists('ReplClear')
   command! ReplClear call repl#clear()
 endif
+if !s:cmd_exists('ReplSendArgs')
+  command! -nargs=1 ReplSendArgs call repl#sendargs(<f-args>)
+endif
 
 " Pluggable mappings
 

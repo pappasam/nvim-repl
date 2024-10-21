@@ -1,4 +1,4 @@
-*repl.txt* A Neovim repl manager
+*repl.txt* A Neovim REPL manager
 
 Author: Samuel Roeca
 
@@ -14,7 +14,7 @@ Table of Contents
                                                                    *repl_intro*
 1. INTRODUCTION~
 
-nvim-repl makes it easy to create, use, and remove an interactive repl within
+nvim-repl makes it easy to create, use, and remove an interactive REPL within
 Neovim. It uses a Neovim-specific api and is only intended to be used with the
 latest version of Neovim (0.5.0+).
 
@@ -26,83 +26,91 @@ latest version of Neovim (0.5.0+).
 Type: Dictionary[String, String]
 Default: defined in plugin/repl.vim
 
-Map a filetype to a repl starting command using this configuration variable.
-Eg, if you automatically want to run a "python" repl for python filetypes and
-a "node" repl for javascript filetypes, your configuration might look like
-this: >
+Map a filetype to a REPL starting command using this configuration variable.
+Eg, if you automatically want to run a "python" REPL for python filetypes and
+a "node" REPL for javascript filetypes, your configuration might look like
+this: >vim
 
   let g:repl_filetype_commands = {
-      \ 'javascript': 'node',
-      \ 'python': 'python',
-      \ }
+        \ 'bash': 'bash',
+        \ 'javascript': 'node',
+        \ 'haskell': 'ghci',
+        \ 'python': 'ipython --quiet --no-autoindent'
+        \ 'r': 'R',
+        \ 'sh': 'sh',
+        \ 'vim': 'nvim --clean -ERM',
+        \ 'zsh': 'zsh',
+        \ }
 
 *g:repl_default*
 Type: String
 Default: &shell
 
-The default repl selected. Used when no configured repl is found for a
+The default REPL selected. Used when no configured REPL is found for a
 particular filetype.
 
 *g:repl_split*
 Type: String
 Default: 'vertical'
 
-Set the split position of repl window. Default will split vertically. Vertical
+Set the split position of REPL window. Default will split vertically. Vertical
 and horizontal respect the user-configured global splitright and splitbottom
 settings.
 
 Available options: >
 
-  - 'bottom'
-  - 'top'
-  - 'left'
-  - 'right'
-  - 'horizontal'
-  - 'vertical'
+  - `bottom`
+  - `top`
+  - `left`
+  - `right`
+  - `horizontal`
+  - `vertical`
 
 *g:repl_height*
 Type: Number
 Default: ''
 
-Set repl window's height (number of lines) if `g:repl_split` set 'bottom'/'top'.
+Set REPL window's height (number of lines) if `g:repl_split` set `bottom` / `top`.
 
 *g:repl_width*
 Type: Number
 Default: ''
 
-Set repl window's width (number of columns) if `g:repl_split` set 'left'/'right'.
+Set REPL window's width (number of columns) if `g:repl_split` set `left` / `right`.
 
 ==============================================================================
                                                                 *repl_commands*
 3. COMMANDS~
 
 *:Repl* *:ReplOpen*
-  open the repl. Takes the name of an executable repl as an optional argument.
-  If no argument is provided, defaults to either the filetype-associated repl
-  or the configured default repl.
+  open the REPL. Takes the name of an executable REPL as an optional argument.
+  If no argument is provided, defaults to either the filetype-associated REPL
+  or the configured default REPL.
 *:ReplClose*
-  close the repl, if open.
+  close the REPL, if open.
 *:ReplToggle*
-  if repl is open, close it. If repl is closed, open it using either the
-  filetype-associated repl or the configured default repl.
+  if REPL is open, close it. If REPL is closed, open it using either the
+  filetype-associated REPL or the configured default REPL.
 *:ReplClear*
-  clear on open repl's screen. Similar to the bash command clear(1). Note:
-  only works if the repl supports "<C-l>" as a screen-clearning mechanism.
+  clear on open REPL's screen. Similar to the bash command clear(1). Note:
+  only works if the REPL supports "<C-l>" as a screen-clearning mechanism.
 *:ReplRunCell*
   run the cell starting with '# %%', and jump the cursor the next cell
+*:ReplSendArgs*
+  send the arguments passed to the command directly to the REPL.
 
 ==============================================================================
                                                                 *repl_mappings*
 4. MAPPINGS~
 
-Two pluggable, dot-repeatable mappings are provided.
+Two pluggable, dot-repeatable mappings are provided:
 
-<Plug>*ReplSendLine* send the current line to the repl.
-<Plug>*ReplSendVisual* send the visual selection to the repl.
+<Plug>*ReplSendLine* send the current line to the REPL.
+<Plug>*ReplSendVisual* send the current cell to the REPL.
+<Plug>*ReplSendCell* send the visual selection to the REPL.
 
-The user should map these pluggable mappings. Our recommended mappings: >
+The user should map these pluggable mappings. Our recommended mappings: >vim
 
-  nnoremap <Leader>rt <Cmd>ReplToggle<CR>
   nmap     <Leader>rc <Plug>ReplSendCell
   nmap     <Leader>rr <Plug>ReplSendLine
   xmap     <Leader>r  <Plug>ReplSendVisual

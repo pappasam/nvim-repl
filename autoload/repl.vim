@@ -160,8 +160,15 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
   call win_gotoid(current_window_id)
 endfunction
 
+function! repl#sendargs(cmd_args)
+  if s:id_window == v:false
+    call repl#open() " If there is no repl window opened, create one
+  endif
+  call chansend(s:id_job, [a:cmd_args, ""])
+endfunction
+
 function! repl#sendcell(...)
-  " This supports single-line comments with only a prefix (like '## %s') and
+  " This supports single-line comments with only a prefix (lije '## %s') and
   " comments that fully surround (like '<!-- %s -->')
   let cell_pattern = "^\\s*" .. substitute(&commentstring, '%s', "\\s*%%.*", '')
   let cur_line_num = line('.')

@@ -4,38 +4,21 @@ Create, use, and remove an [interactive REPL](https://en.wikipedia.org/wiki/Read
 
 ## Installation
 
-If you use [lazy.nvim](https://github.com/folke/lazy.nvim):
-
-```lua
-{
-  "pappasam/nvim-repl",
-  init = function()
-    vim.g["repl_filetype_commands"] = {
-      javascript = "node",
-      python = "ipython --no-autoindent"
-    }
-  end,
-  keys = {
-    { "<leader>rt", "<cmd>ReplToggle<cr>", desc = "Toggle nvim-repl" },
-    { "<leader>rc", "<cmd>ReplRunCell<cr>", desc = "nvim-repl run cell" },
-  },
-}
-```
-
-For other package management tools, please consult their documentation.
+Consult your package manager's documentation. Neovim REPL is a [normal Neovim package](https://neovim.io/doc/user/usr_05.html#_adding-a-package).
 
 ## Usage
 
 ![demo](images/nvim-repl-demo.gif)
 
-- `:Repl` or `:ReplOpen`
-- _without argument_: open the default shell which is configured by filetype
-- `:Repl env $env_name`:open a python shell with the environment of `$env_name`, only support for [Conda](https://www.anaconda.com/)
-- `:Repl arg`: open the default shell and exec the `arg` command
+- `:Repl` or `:ReplOpen`: open a terminal and run the repl provided as the argument.
+  - _without argument_: open the default shell which is configured by filetype.
+- `:Repl env $env_name`: open a python shell with the environment of `$env_name`, only support for [Conda](https://www.anaconda.com/).
+- `:Repl arg`: open the default shell and exec the `arg` command.
 - `:ReplClose`: close the REPL, if open.
 - `:ReplToggle`: if REPL is open, close it. If REPL is closed, open it using either the filetype associated REPL or the configured default REPL.
 - `:ReplClear`: clear the REPL, if open.
-- `:ReplRunCell`: will run the cell under the cursor and the cursor will jump to next cell
+- `:ReplRunCell`: will run the cell under the cursor and the cursor will jump to next cell.
+- `:ReplSendArgs`: will send the arguments passed to the command directly to the REPL.
 
 Several pluggable, dot-repeatable mappings are provided.
 
@@ -46,7 +29,6 @@ Several pluggable, dot-repeatable mappings are provided.
 The user should map these pluggable mappings. Example mappings in config using vim filetype:
 
 ```vim
-nnoremap <Leader>rt <Cmd>ReplToggle<CR>
 nmap     <Leader>rc <Plug>ReplSendCell
 nmap     <Leader>rr <Plug>ReplSendLine
 xmap     <Leader>r  <Plug>ReplSendVisual
@@ -54,38 +36,39 @@ xmap     <Leader>r  <Plug>ReplSendVisual
 
 ## Configuration
 
-Use `g:repl_filetype_commands` to map Neovim file types to REPL. E.g., if you automatically want to run a `ipython` REPL for python file types and a "node" REPL for JavaScript file types, your configuration might look like this:
+- `g:repl_filetype_commands`: map Neovim file types to REPL. E.g., if you automatically want to run a `ipython` REPL for python file types and a "node" REPL for JavaScript file types, your configuration might look like this:
 
-```vim
-let g:repl_filetype_commands = {
-  \ 'javascript': 'node',
-  \ 'python': 'ipython --no-autoindent',
-  \ }
-```
+  ```vim
+  let g:repl_filetype_commands = {
+        \ 'bash': 'bash',
+        \ 'javascript': 'node',
+        \ 'haskell': 'ghci',
+        \ 'python': 'ipython --quiet --no-autoindent -i -c "%config InteractiveShell.ast_node_interactivity=\"last_expr_or_assign\""',
+        \ 'r': 'R',
+        \ 'sh': 'sh',
+        \ 'vim': 'nvim --clean -ERM',
+        \ 'zsh': 'zsh',
+        \ }
+  ```
 
-**`ipython` config**
+- `g:repl_default`: set the default REPL if no configured REPL is found in `g:repl_filetype_commands`. Defaults to `&shell`.
+- `g:repl_split`: set the REPL window position. `vertical` and `horizontal` respect the user-configured global `splitright` and `splitbottom` settings.
 
-- You should `pip install ipython` firstly, then `let g:repl_filetype_commands = {'python': 'ipython'}`
+  - `'bottom'`
+  - `'top'`
+  - `'left'`
+  - `'right'`
+  - `'horizontal'`
+  - `'vertical'` (default)
 
-Use `g:repl_default` to set the default REPL if no configured REPL is found in `g:repl_filetype_commands`. Defaults to `&shell`.
+  If split bottom is preferred, then add below line to configuration.
 
-Use `g:repl_split` to set the REPL window position. `vertical` and `horizontal` respect the user-configured global `splitright` and `splitbottom` settings.
+  ```vim
+  let g:repl_split = 'bottom'
+  ```
 
-- `'bottom'`
-- `'top'`
-- `'left'`
-- `'right'`
-- `'horizontal'`
-- `'vertical'` (default)
-
-If split bottom is preferred, then add below line to configuration.
-
-```vim
-let g:repl_split = 'bottom'
-```
-
-- `g:repl_height` to set REPL window's height (number of lines) if `g:repl_split` set `'bottom'`/`'top'`. Default `split` equally.
-- `g:repl_width` to set REPL window's width (number of columns) if `g:repl_split` set `'left'`/`'right'`. Default `vsplit` equally.
+- `g:repl_height`: set REPL window's height (number of lines) if `g:repl_split` set `'bottom'`/`'top'`. Default `split` equally.
+- `g:repl_width`: set REPL window's width (number of columns) if `g:repl_split` set `'left'`/`'right'`. Default `vsplit` equally.
 
 ## Cells
 
