@@ -29,9 +29,9 @@ Several pluggable, dot-repeatable mappings are provided.
 The user should map these pluggable mappings. Example mappings in config using vim filetype:
 
 ```vim
-nmap     <Leader>rc <Plug>ReplSendCell
-nmap     <Leader>rr <Plug>ReplSendLine
-xmap     <Leader>r  <Plug>ReplSendVisual
+nmap <Leader>rc <Plug>ReplSendCell
+nmap <Leader>rr <Plug>ReplSendLine
+xmap <Leader>r  <Plug>ReplSendVisual
 ```
 
 ## Configuration
