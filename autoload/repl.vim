@@ -53,6 +53,7 @@ function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
       let lines[i] = lines[i][column_start - 1: column_end - (&selection == 'inclusive' ? 1 : 2)]
     endfor
   endif
+  silent! execute line_end + 1
   return lines
 endfunction
 
