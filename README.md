@@ -28,9 +28,9 @@ Configuration for <https://github.com/folke/lazy.nvim>
     }
   end,
   keys = {
-    { "<Leader>c", "<Plug>ReplSendCell", mode = "n", desc = "Send Repl Cell" }
-    { "<Leader>r", "<Plug>ReplSendLine", mode = "n", desc = "Send Repl Line" }
-    { "<Leader>r", "<Plug>ReplSendVisual", mode = "x", desc = "Send Repl Visual Selection" }
+    { "<Leader>c", "<Plug>(ReplSendCell)", mode = "n", desc = "Send Repl Cell" }
+    { "<Leader>r", "<Plug>(ReplSendLine)", mode = "n", desc = "Send Repl Line" }
+    { "<Leader>r", "<Plug>(ReplSendVisual)", mode = "x", desc = "Send Repl Visual Selection" }
   },
 }
 ```
@@ -53,16 +53,16 @@ Configuration for <https://github.com/folke/lazy.nvim>
 
 Several pluggable, dot-repeatable mappings are provided.
 
-- `<Plug>ReplSendLine` send the current line to the REPL.
-- `<Plug>ReplSendCell` send the current cell to the REPL.
-- `<Plug>ReplSendVisual` send the visual selection to the REPL.
+- `<Plug>(ReplSendLine)` send the current line to the REPL.
+- `<Plug>(ReplSendCell)` send the current cell to the REPL.
+- `<Plug>(ReplSendVisual)` send the visual selection to the REPL.
 
 The user should map these pluggable mappings. Example mappings in config using vim filetype:
 
 ```vim
-nmap <silent> <Leader>c <Plug>ReplSendCell
-nmap <silent> <Leader>r <Plug>ReplSendLine
-xmap <silent> <Leader>r <Plug>ReplSendVisual
+nmap <silent> <Leader>c <Plug>(ReplSendCell)
+nmap <silent> <Leader>r <Plug>(ReplSendLine)
+xmap <silent> <Leader>r <Plug>(ReplSendVisual)
 ```
 
 ## Configuration

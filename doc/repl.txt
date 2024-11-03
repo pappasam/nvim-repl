@@ -105,15 +105,15 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
 
 Two pluggable, dot-repeatable mappings are provided:
 
-<Plug>*ReplSendLine* send the current line to the REPL.
-<Plug>*ReplSendVisual* send the current cell to the REPL.
-<Plug>*ReplSendCell* send the visual selection to the REPL.
+<Plug>*(ReplSendLine)* send the current line to the REPL.
+<Plug>*(ReplSendVisual)* send the current cell to the REPL.
+<Plug>*(ReplSendCell)* send the visual selection to the REPL.
 
 The user should map these pluggable mappings. Our recommended mappings: >vim
 
-  nmap     <Leader>rc <Plug>ReplSendCell
-  nmap     <Leader>rr <Plug>ReplSendLine
-  xmap     <Leader>r  <Plug>ReplSendVisual
+  nmap     <Leader>c  <Plug>(ReplSendCell)
+  nmap     <Leader>r  <Plug>(ReplSendLine)
+  xmap     <Leader>r  <Plug>(ReplSendVisual)
 
 Note: as always, pluggable mappings require a recursive mapping. Eg, don't try
 to "nnoremap" a pluggable mapping. It won't work.
