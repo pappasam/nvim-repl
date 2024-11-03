@@ -4,7 +4,38 @@ Create, use, and remove an [interactive REPL](https://en.wikipedia.org/wiki/Read
 
 ## Installation
 
-Consult your package manager's documentation. Neovim REPL is a [normal Neovim package](https://neovim.io/doc/user/usr_05.html#_adding-a-package).
+See below for installation instructions for some common Neovim Package managers. For all other package managers, consult your package manager's documentation. Neovim REPL is a [normal Neovim package](https://neovim.io/doc/user/usr_05.html#_adding-a-package).
+
+<details>
+  <summary>lazy.nvim</summary>
+  <br>
+
+Configuration for <https://github.com/folke/lazy.nvim>
+
+```lua
+{
+  "pappasam/nvim-repl",
+  init = function()
+    vim.g["repl_filetype_commands"] = {
+      bash = "bash",
+      javascript = "node",
+      haskell = "ghci",
+      python = "ipython --no-autoindent",
+      r = "R",
+      sh = "sh",
+      vim = "nvim --clean -ERM",
+      zsh = "zsh",
+    }
+  end,
+  keys = {
+    { "<Leader>c", "<Plug>ReplSendCell", mode = "n", desc = "Send Repl Cell" }
+    { "<Leader>r", "<Plug>ReplSendLine", mode = "n", desc = "Send Repl Line" }
+    { "<Leader>r", "<Plug>ReplSendVisual", mode = "x", desc = "Send Repl Visual Selection" }
+  },
+}
+```
+
+</details>
 
 ## Usage
 
@@ -29,9 +60,9 @@ Several pluggable, dot-repeatable mappings are provided.
 The user should map these pluggable mappings. Example mappings in config using vim filetype:
 
 ```vim
-nmap <Leader>rc <Plug>ReplSendCell
-nmap <Leader>rr <Plug>ReplSendLine
-xmap <Leader>r  <Plug>ReplSendVisual
+nmap <silent> <Leader>c <Plug>ReplSendCell
+nmap <silent> <Leader>r <Plug>ReplSendLine
+xmap <silent> <Leader>r <Plug>ReplSendVisual
 ```
 
 ## Configuration
@@ -43,7 +74,7 @@ xmap <Leader>r  <Plug>ReplSendVisual
         \ 'bash': 'bash',
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
-        \ 'python': 'ipython --quiet --no-autoindent -i -c "%config InteractiveShell.ast_node_interactivity=\"last_expr_or_assign\""',
+        \ 'python': 'ipython --no-autoindent',
         \ 'r': 'R',
         \ 'sh': 'sh',
         \ 'vim': 'nvim --clean -ERM',
