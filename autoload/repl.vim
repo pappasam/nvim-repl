@@ -7,7 +7,6 @@
 " License:        MIT
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-let s:id_window = v:false
 let s:id_job = v:false
 
 function! repl#warning(msg)
@@ -18,7 +17,6 @@ endfunction
 
 function! s:cleanup()
   call jobstop(s:id_job)
-  let s:id_window = v:false
   let s:id_job = v:false
   echom 'repl: closed!'
 endfunction
@@ -29,13 +27,13 @@ function! s:setup()
 endfunction
 
 function! s:repl_reset_visual_position()
-  set lazyredraw
+  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == s:id_job})
   let current_window_id = win_getid()
-  call win_gotoid(s:id_window)
-  normal! G
+  for win in repl_windows
+    call win_gotoid(win.winid)
+    call cursor(line('$'), 0)
+  endfor
   call win_gotoid(current_window_id)
-  set nolazyredraw
-  redraw
 endfunction
 
 function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
@@ -58,7 +56,7 @@ function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
 endfunction
 
 function! repl#open(...)
-  if s:id_window != v:false
+  if s:id_job != v:false
     call repl#warning('already open. To close existing repl, run ":ReplClose"')
     return
   endif
@@ -93,7 +91,6 @@ function! repl#open(...)
     set shell=cmd
   endif
   let s:id_job = termopen(command)
-  let s:id_window = win_getid()
   call s:setup()
   call win_gotoid(current_window_id)
   let &shell=s:old_shell
@@ -101,14 +98,20 @@ function! repl#open(...)
 endfunction
 
 function! repl#close()
+  set lazyredraw
+  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == s:id_job})
   let current_window_id = win_getid()
-  call win_gotoid(s:id_window)
-  quit
+  for win in repl_windows
+    call win_gotoid(win.winid)
+    quit
+  endfor
   call win_gotoid(current_window_id)
+  set nolazyredraw
+  redraw
 endfunction
 
 function! repl#toggle()
-  if s:id_window == v:false
+  if s:id_job == v:false
     call repl#open()
   else
     call repl#close()
@@ -120,7 +123,7 @@ function! repl#noop(...)
 endfunction
 
 function! repl#sendline(...)
-  if s:id_window == v:false
+  if s:id_job == v:false
     call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
@@ -129,7 +132,7 @@ function! repl#sendline(...)
 endfunction
 
 function! repl#sendvisual(mode)
-  if s:id_window == v:false
+  if s:id_job == v:false
     call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
@@ -137,7 +140,7 @@ function! repl#sendvisual(mode)
 endfunction
 
 function! repl#sendblock(firstline_num, lastline_num, mode)
-  if s:id_window == v:false
+  if s:id_job == v:false
     call repl#open() " If there is no repl window opened, create one
   endif
   let buflines_raw = a:mode ==? 'v' || a:mode == "\<c-v>"
@@ -155,14 +158,11 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
     let buflines_chansend += [""] " Otherwise, add 1
   endif
   call chansend(s:id_job, buflines_chansend)
-  let current_window_id = win_getid()
-  call win_gotoid(s:id_window)
-  call cursor(line('$'), 0)
-  call win_gotoid(current_window_id)
+  call s:repl_reset_visual_position()
 endfunction
 
 function! repl#sendargs(cmd_args)
-  if s:id_window == v:false
+  if s:id_job == v:false
     call repl#open() " If there is no repl window opened, create one
   endif
   call chansend(s:id_job, [a:cmd_args, ""])
@@ -203,11 +203,11 @@ function! repl#sendcell(...)
   endif
   " add 1 to avoid sending the commented line itself to the repl
   call repl#sendblock(cell_begin_line_num + 1, cell_end_line_num, mode())
-  call chansend(s:id_job, ["\<CR>"]) "emulate <enter> key in ipython
+  call s:repl_reset_visual_position()
 endfunction
 
 function! repl#clear()
-  if s:id_window == v:false
+  if s:id_job == v:false
     call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
