@@ -35,7 +35,7 @@ this: >vim
         \ 'bash': 'bash',
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
-        \ 'python': 'ipython --quiet --no-autoindent'
+        \ 'python': 'ipython --quiet --no-autoindent',
         \ 'r': 'R',
         \ 'sh': 'sh',
         \ 'vim': 'nvim --clean -ERM',
