@@ -14,9 +14,9 @@ Table of Contents
                                                                    *repl_intro*
 1. INTRODUCTION~
 
-nvim-repl makes it easy to create, use, and remove an interactive REPL within
-Neovim. It uses a Neovim-specific api and is only intended to be used with the
-latest version of Neovim (0.5.0+).
+nvim-repl makes it easy to create, use, and remove interactive REPLs within
+Neovim. It uses a Neovim-specific api and is only intended to be used with
+Neovim 0.5.0+
 
 ==============================================================================
                                                            *repl_configuration*

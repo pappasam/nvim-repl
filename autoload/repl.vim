@@ -7,33 +7,47 @@
 " License:        MIT
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-let s:id_job = v:false
-
 function! repl#warning(msg)
   echohl WarningMsg
   echom 'repl: ' . a:msg
   echohl None
 endfunction
 
-function! s:cleanup()
-  call jobstop(s:id_job)
-  let s:id_job = v:false
+function! s:cleanup(bufnr) abort
+  let job_id = getbufvar(str2nr(a:bufnr), 'repl_id_job', 0)
+  if !job_id
+    return
+  endif
+  call jobstop(job_id)
+  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == job_id})
+  let current_window_id = win_getid()
+  for win in repl_windows
+    call win_gotoid(win.winid)
+    quit
+  endfor
   echom 'repl: closed!'
 endfunction
 
-function! s:setup()
-  setlocal nonumber nornu nobuflisted
-  autocmd WinClosed <buffer> call s:cleanup()
-endfunction
-
 function! s:repl_reset_visual_position()
-  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == s:id_job})
+  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_id_job})
   let current_window_id = win_getid()
   for win in repl_windows
     call win_gotoid(win.winid)
     call cursor(line('$'), 0)
   endfor
   call win_gotoid(current_window_id)
+endfunction
+
+function! s:repl_id_job_exists()
+  if !exists('b:repl_id_job')
+    return 0
+  endif
+  try
+    call jobpid(b:repl_id_job)
+    return 1
+  catch /.*/
+    return 0
+  endtry
 endfunction
 
 function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
@@ -56,7 +70,7 @@ function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
 endfunction
 
 function! repl#open(...)
-  if s:id_job != v:false
+  if s:repl_id_job_exists()
     call repl#warning('already open. To close existing repl, run ":ReplClose"')
     return
   endif
@@ -90,16 +104,20 @@ function! repl#open(...)
   if s:old_shell == 'powershell'
     set shell=cmd
   endif
-  let s:id_job = termopen(command)
-  call s:setup()
+  let id_job = termopen(command)
+  let b:repl_id_job = id_job " set in terminal buffer
+  setlocal nonumber nornu nobuflisted
+  autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
   call win_gotoid(current_window_id)
+  "autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
+  let b:repl_id_job = id_job " set in repl buffer
   let &shell=s:old_shell
   echom 'repl: opened!'
 endfunction
 
 function! repl#close()
   set lazyredraw
-  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == s:id_job})
+  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_id_job})
   let current_window_id = win_getid()
   for win in repl_windows
     call win_gotoid(win.winid)
@@ -111,7 +129,7 @@ function! repl#close()
 endfunction
 
 function! repl#toggle()
-  if s:id_job == v:false
+  if !s:repl_id_job_exists()
     call repl#open()
   else
     call repl#close()
@@ -123,7 +141,7 @@ function! repl#noop(...)
 endfunction
 
 function! repl#sendline(...)
-  if s:id_job == v:false
+  if !s:repl_id_job_exists()
     call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
@@ -132,7 +150,7 @@ function! repl#sendline(...)
 endfunction
 
 function! repl#sendvisual(mode)
-  if s:id_job == v:false
+  if !s:repl_id_job_exists()
     call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
@@ -140,8 +158,9 @@ function! repl#sendvisual(mode)
 endfunction
 
 function! repl#sendblock(firstline_num, lastline_num, mode)
-  if s:id_job == v:false
-    call repl#open() " If there is no repl window opened, create one
+  if !s:repl_id_job_exists()
+    call repl#warning('no repl currently open. Run ":ReplOpen" first')
+    return
   endif
   let buflines_raw = a:mode ==? 'v' || a:mode == "\<c-v>"
         \ ? s:get_visual_selection(a:mode)
@@ -157,18 +176,22 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
   else
     let buflines_chansend += [""] " Otherwise, add 1
   endif
-  call chansend(s:id_job, buflines_chansend)
+  call chansend(b:repl_id_job, buflines_chansend)
   call s:repl_reset_visual_position()
 endfunction
 
 function! repl#sendargs(cmd_args)
-  if s:id_job == v:false
+  if !s:repl_id_job_exists()
     call repl#open() " If there is no repl window opened, create one
   endif
-  call chansend(s:id_job, [a:cmd_args, ""])
+  call chansend(b:repl_id_job, [a:cmd_args, ""])
 endfunction
 
 function! repl#sendcell(...)
+  if !s:repl_id_job_exists()
+    call repl#warning('no repl currently open. Run ":ReplOpen" first')
+    return
+  endif
   " This supports single-line comments with only a prefix (lije '## %s') and
   " comments that fully surround (like '<!-- %s -->')
   let cell_pattern = "^\\s*" .. substitute(&commentstring, '%s', "\\s*%%.*", '')
@@ -207,9 +230,9 @@ function! repl#sendcell(...)
 endfunction
 
 function! repl#clear()
-  if s:id_job == v:false
+  if !s:repl_id_job_exists()
     call repl#warning('no repl currently open. Run ":ReplOpen" first')
     return
   endif
-  call chansend(s:id_job, "\<c-l>")
+  call chansend(b:repl_id_job, "\<c-l>")
 endfunction

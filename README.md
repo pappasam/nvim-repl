@@ -1,6 +1,6 @@
 # Neovim REPL
 
-Create, use, and remove an [interactive REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim 0.5.0+.
+Create, use, and remove [interactive REPLs](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim 0.5.0+.
 
 ## Installation
 
