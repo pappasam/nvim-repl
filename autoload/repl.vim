@@ -109,7 +109,6 @@ function! repl#open(...)
   setlocal nonumber nornu nobuflisted
   autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
   call win_gotoid(current_window_id)
-  "autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
   let b:repl_id_job = id_job " set in repl buffer
   let &shell=s:old_shell
   echom 'repl: opened!'
