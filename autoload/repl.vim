@@ -226,7 +226,6 @@ function! repl#sendcell(...)
   endif
   " add 1 to avoid sending the commented line itself to the repl
   call repl#sendblock(cell_begin_line_num + 1, cell_end_line_num, mode())
-  call s:repl_reset_visual_position()
 endfunction
 
 function! repl#clear()
