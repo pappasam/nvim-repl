@@ -14,9 +14,7 @@ Table of Contents
                                                                    *repl_intro*
 1. INTRODUCTION~
 
-nvim-repl makes it easy to create, use, and remove interactive REPLs within
-Neovim. It uses a Neovim-specific api and is only intended to be used with
-Neovim 0.5.0+
+Create, use, and remove interactive REPLs within Neovim.
 
 ==============================================================================
                                                            *repl_configuration*
@@ -83,21 +81,32 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
 3. COMMANDS~
 
 *:Repl* *:ReplOpen*
-  open the REPL. Takes the name of an executable REPL as an optional argument.
+
+  Open the REPL. Takes the name of an executable REPL as an optional argument.
   If no argument is provided, defaults to either the filetype-associated REPL
   or the configured default REPL.
+
 *:ReplClose*
-  close the REPL, if open.
+
+  Close the REPL, if open.
+
 *:ReplToggle*
-  if REPL is open, close it. If REPL is closed, open it using either the
+
+  If REPL is open, close it. If REPL is closed, open it using either the
   filetype-associated REPL or the configured default REPL.
+
 *:ReplClear*
-  clear on open REPL's screen. Similar to the bash command clear(1). Note:
+
+  Clear on open REPL's screen. Similar to the bash command clear(1). Note:
   only works if the REPL supports "<C-l>" as a screen-clearning mechanism.
+
 *:ReplRunCell*
-  run the cell starting with '# %%', and jump the cursor the next cell
+
+  Run the cell starting with '# %%', and jump the cursor the next cell
+
 *:ReplSendArgs*
-  send the arguments passed to the command directly to the REPL.
+
+  Send the arguments passed to the command directly to the REPL.
 
 ==============================================================================
                                                                 *repl_mappings*
@@ -105,12 +114,17 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
 
 Pluggable, dot-repeatable mappings are provided for convenience:
 
-*<Plug>(ReplSendLine)*
-  send the current line to the REPL.
-*<Plug>(ReplSendVisual)*
-  send the current cell to the REPL.
-*<Plug>(ReplSendCell)*
-  send the visual selection to the REPL.
+<Plug>(ReplSendLine)                                      *<Plug>(ReplSendLine)*
+
+  Send the current line to the REPL.
+
+<Plug>(ReplSendVisual)                                  *<Plug>(ReplSendVisual)*
+
+  Send the current cell to the REPL.
+
+<Plug>(ReplSendCell)                                      *<Plug>(ReplSendCell)*
+
+  Send the visual selection to the REPL.
 
 The user should map these pluggable mappings. Our recommended mappings: >vim
 
