@@ -230,10 +230,10 @@ endfunction
 
 function! repl#newcell()
   if getline('.') =~ '^\s*$' && (line('.') == 1 || getline(line('.') - 1) =~ '^\s*$')
-    silent call setline('.', substitute(&commentstring, '%s', "%%", ''))
+    silent call setline('.', substitute(&commentstring, '%s', '%%', ''))
     silent put =['','']
   else
-    silent execute "put =['','" .. substitute(&commentstring, '%s', "%%", '') .. "','','']"
+    silent execute "put =['','" .. substitute(&commentstring, '%s', '%%', '') .. "','','']"
   endif
 endfunction
 
