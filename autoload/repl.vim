@@ -192,8 +192,9 @@ function! repl#sendcell(...)
     return
   endif
   " This supports single-line comments with only a prefix (lije '## %s') and
-  " comments that fully surround (like '<!-- %s -->')
-  let cell_pattern = "^\\s*" .. substitute(&commentstring, '%s', "\\s*%%.*", '')
+  " comments that fully surround (like '<!-- %s -->'). commentstring is
+  " escaped for compatibility with regex matching
+  let cell_pattern = "^\\s*" .. substitute(escape(&commentstring, '^$.*[]~\/&'), '%s', "\\s*%%.*", '')
   let cur_line_num = line('.')
   let find_begin_line = 0
   while cur_line_num > 0 && !find_begin_line
