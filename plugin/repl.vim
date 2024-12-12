@@ -92,6 +92,9 @@ endif
 if !s:cmd_exists(':ReplToggle')
   command! ReplToggle call repl#toggle()
 endif
+if !s:cmd_exists(':ReplNewCell')
+  command! ReplNewCell call repl#newcell()
+endif
 if !s:cmd_exists(':ReplRunCell')
   command! ReplRunCell call repl#sendcell()
 endif

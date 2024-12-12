@@ -28,8 +28,8 @@ Configuration for <https://github.com/folke/lazy.nvim>
     }
   end,
   keys = {
-    { "<Leader>c", "<Plug>(ReplSendCell)", mode = "n", desc = "Send Repl Cell" }
-    { "<Leader>r", "<Plug>(ReplSendLine)", mode = "n", desc = "Send Repl Line" }
+    { "<Leader>rc", "<Plug>(ReplSendCell)", mode = "n", desc = "Send Repl Cell" }
+    { "<Leader>rr", "<Plug>(ReplSendLine)", mode = "n", desc = "Send Repl Line" }
     { "<Leader>r", "<Plug>(ReplSendVisual)", mode = "x", desc = "Send Repl Visual Selection" }
   },
 }
@@ -48,8 +48,9 @@ Configuration for <https://github.com/folke/lazy.nvim>
 - `:ReplClose`: close the REPL, if open.
 - `:ReplToggle`: if REPL is open, close it. If REPL is closed, open it using either the filetype associated REPL or the configured default REPL.
 - `:ReplClear`: clear the REPL, if open.
-- `:ReplRunCell`: will run the cell under the cursor and the cursor will jump to next cell.
-- `:ReplSendArgs`: will send the arguments passed to the command directly to the REPL.
+- `:ReplRunCell`: run the cell under the cursor and the cursor will jump to next cell.
+- `:ReplNewCell`: create a new cell.
+- `:ReplSendArgs`: send the arguments passed to the command directly to the REPL.
 
 Several pluggable, dot-repeatable mappings are provided.
 
@@ -60,9 +61,9 @@ Several pluggable, dot-repeatable mappings are provided.
 The user should map these pluggable mappings. Example mappings in config using vim filetype:
 
 ```vim
-nmap <silent> <Leader>c <Plug>(ReplSendCell)
-nmap <silent> <Leader>r <Plug>(ReplSendLine)
-xmap <silent> <Leader>r <Plug>(ReplSendVisual)
+nmap <silent> <Leader>rc <Plug>(ReplSendCell)
+nmap <silent> <Leader>rr <Plug>(ReplSendLine)
+xmap <silent> <Leader>r  <Plug>(ReplSendVisual)
 ```
 
 ## Configuration

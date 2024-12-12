@@ -102,7 +102,11 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
 
 *:ReplRunCell*
 
-  Run the cell starting with '# %%', and jump the cursor the next cell
+  Run the cell, and jump the cursor the next cell
+
+*:ReplNewCell*
+
+  Create a new cell
 
 *:ReplSendArgs*
 
@@ -128,8 +132,8 @@ Pluggable, dot-repeatable mappings are provided for convenience:
 
 The user should map these pluggable mappings. Our recommended mappings: >vim
 
-  nmap     <Leader>c  <Plug>(ReplSendCell)
-  nmap     <Leader>r  <Plug>(ReplSendLine)
+  nmap     <Leader>rc <Plug>(ReplSendCell)
+  nmap     <Leader>rr <Plug>(ReplSendLine)
   xmap     <Leader>r  <Plug>(ReplSendVisual)
 
 Note: as always, pluggable mappings require a recursive mapping. Eg, don't try
