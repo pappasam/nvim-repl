@@ -69,21 +69,32 @@ function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
   return lines
 endfunction
 
+function! s:get_repl_from_config()
+  let config = get(g:repl_filetype_commands, &filetype, g:repl_default)
+  let t_config = type(config)
+  if t_config == v:t_string
+    return #{cmd: config, prefix: '', suffix: ''}
+  elseif t_config == v:t_dict
+    return #{cmd: config.cmd, prefix: get(config, 'prefix', ''), suffix: get(config, 'suffix', '')}
+  else
+    throw 'nvim-repl config for ' .. &filetype .. 'is neither a String nor a Dict'
+  endif
+endfunction
+
+function! s:dequote(str)
+  return substitute(a:str, '^["'']\(.*\)["'']$', '\1', '')
+endfunction
+
 function! repl#open(...)
   if s:repl_id_job_exists()
     call repl#warning('already open. To close existing repl, run ":ReplClose"')
     return
   endif
   let current_window_id = win_getid()
-  let func_args = a:000
-  if len(func_args) == 1
-    let command = func_args[0]
-  else "The num of args is 0 or 2
-    let command = get(g:repl_filetype_commands, &filetype, g:repl_default)
-    if len(func_args) == 2 && func_args[0] == 'env'
-      " TODO: support more editors than conda
-      let command = 'conda activate ' .. func_args[1] .. ' & ' .. command
-    endif
+  if a:0 > 0
+    let repl = #{cmd: a:1, prefix: s:dequote(get(a:, 2, '')), suffix: s:dequote(get(a:, 3, ''))}
+  else
+    let repl = s:get_repl_from_config()
   endif
   if g:repl_split == 'vertical'
     execute 'vertical ' . g:repl_width .. 'split new'
@@ -104,12 +115,13 @@ function! repl#open(...)
   if s:old_shell == 'powershell'
     set shell=cmd
   endif
-  let id_job = termopen(command)
+  let id_job = termopen(repl.cmd)
   let b:repl_id_job = id_job " set in terminal buffer
   setlocal nonumber nornu nobuflisted
   autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
   call win_gotoid(current_window_id)
   let b:repl_id_job = id_job " set in repl buffer
+  let b:repl = repl
   let &shell=s:old_shell
   echom 'repl: opened!'
 endfunction
@@ -165,11 +177,17 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
         \ ? s:get_visual_selection(a:mode)
         \ : getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
   let buflines_chansend = []
+  if b:repl.prefix != ''
+    call add(buflines_chansend, b:repl.prefix)
+  endif
   for line in buflines_raw
     if line != "" && line !~ "^\\s*#\\s*%%.*"
       let buflines_chansend += [line] " remove the empty line and #%% line
     endif
   endfor
+  if b:repl.suffix != ''
+    call add(buflines_chansend, b:repl.suffix)
+  endif
   if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
     let buflines_chansend += ["", ""] " If last line has leading whitespace, add 2 lines
   else

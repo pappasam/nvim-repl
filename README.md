@@ -20,6 +20,7 @@ Configuration for <https://github.com/folke/lazy.nvim>
       bash = "bash",
       javascript = "node",
       haskell = "ghci",
+      ocaml = {cmd = "utop", suffix = ";;"},
       python = "ipython --no-autoindent",
       r = "R",
       sh = "sh",
@@ -41,10 +42,10 @@ Configuration for <https://github.com/folke/lazy.nvim>
 
 ![demo](images/nvim-repl-demo.gif)
 
-- `:Repl` or `:ReplOpen`: open a terminal and run the repl provided as the argument.
-  - _without argument_: open the default shell which is configured by filetype.
-- `:Repl env $env_name`: open a python shell with the environment of `$env_name`, only support for [Conda](https://www.anaconda.com/).
-- `:Repl arg`: open the default shell and exec the `arg` command.
+- `:Repl` or `:ReplOpen`: open a terminal and run the repl. All arguments are optional; no arguments default to the values set in `g:repl_filetype_commands`.
+  - `arg1-cmd` the command to start the repl. The command can be multiple words (for example, including `conda activate`) if escaped properly.
+  - `arg2-prefix` text that precenes all commands sent to the repl ('' to skip).
+  - `arg3-suffix` text that follows all commands sent to the repl ('' to skip). Useful for ocaml.
 - `:ReplClose`: close the REPL, if open.
 - `:ReplToggle`: if REPL is open, close it. If REPL is closed, open it using either the filetype associated REPL or the configured default REPL.
 - `:ReplClear`: clear the REPL, if open.
@@ -75,6 +76,7 @@ xmap <silent> <Leader>r  <Plug>(ReplSendVisual)
         \ 'bash': 'bash',
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
+        \ 'ocaml': #{cmd: 'utop', suffix: ';;'},
         \ 'python': 'ipython --no-autoindent',
         \ 'r': 'R',
         \ 'sh': 'sh',

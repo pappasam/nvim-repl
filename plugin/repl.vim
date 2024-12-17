@@ -47,15 +47,17 @@ function! s:configure_constants()
   elseif type(g:repl_filetype_commands) != v:t_dict
     throw 'g:repl_filetype_commands must be Dict'
   endif
-  let g:repl_filetype_commands = extend(
+  let g:repl_filetype_commands = extendnew(
         \ s:default_commands,
         \ g:repl_filetype_commands,
         \ )
 
   if !exists('g:repl_default')
-    let g:repl_default = &shell
+    let g:repl_default = #{cmd: &shell, prefix: '', suffix: ''}
+  elseif type(g:repl_default) == v:t_dict
+    let g:repl_default = extendnew(#{cmd: &shell, prefix: '', suffix: ''}, g:repl_default)
   elseif type(g:repl_default) != v:t_string
-    throw 'g:repl_default must be a String'
+    throw 'g:repl_default must be a String or a Dict'
   endif
 
   if !exists('g:repl_split')

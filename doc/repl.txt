@@ -21,7 +21,7 @@ Create, use, and remove interactive REPLs within Neovim.
 2. CONFIGURATION~
 
 *g:repl_filetype_commands*
-Type: Dictionary[String, String]
+Type: Dictionary[String, String | Dict[String | String]]
 Default: defined in plugin/repl.vim
 
 Map a filetype to a REPL starting command using this configuration variable.
@@ -33,6 +33,7 @@ this: >vim
         \ 'bash': 'bash',
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
+        \ 'ocaml': #{cmd: 'utop', suffix: ';;'},
         \ 'python': 'ipython --quiet --no-autoindent',
         \ 'r': 'R',
         \ 'sh': 'sh',
@@ -40,12 +41,25 @@ this: >vim
         \ 'zsh': 'zsh',
         \ }
 
+A filetype's repl value can be a String or a Dict. If it's a Dict, acceptable
+keys are:
+
+- `cmd` the command to start the repl. The command can be multiple words (for
+  example, including `conda activate`) if escaped properly.
+- `prefix` text that precenes all commands sent to the repl ('' to skip).
+- `suffix` text that follows all commands sent to the repl ('' to skip).
+  Useful for ocaml, where one should set the suffix to `;;`.
+
+If its value is a String, the value is the `cmd`, and `prefix` / `suffix` are
+set to `''` (eg, there is no prefix / suffix).
+
 *g:repl_default*
-Type: String
+Type: String | Dict[String | Dict]
 Default: &shell
 
 The default REPL selected. Used when no configured REPL is found for a
-particular filetype.
+particular filetype. This has the same type and behavior as the values for
+`g:repl_filetype_commands`.
 
 *g:repl_split*
 Type: String
@@ -82,9 +96,16 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
 
 *:Repl* *:ReplOpen*
 
-  Open the REPL. Takes the name of an executable REPL as an optional argument.
-  If no argument is provided, defaults to either the filetype-associated REPL
-  or the configured default REPL.
+  Open a terminal and run the repl. All arguments are optional; no arguments
+  default to the values set in `g:repl_filetype_commands`.
+
+  - `arg1-cmd` the command to start the repl. The command can be multiple
+    words (for example, including `conda activate`) if enclosed in single
+    quotes.
+  - `arg2-prefix` text that precenes all commands sent to the repl ('' to
+    skip).
+  - `arg3-suffix` text that follows all commands sent to the repl ('' to
+    skip). Useful for ocaml.
 
 *:ReplClose*
 
