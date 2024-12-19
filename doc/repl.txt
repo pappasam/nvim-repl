@@ -137,7 +137,7 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
                                                                 *repl_mappings*
 4. MAPPINGS~
 
-Pluggable, dot-repeatable mappings are provided for convenience:
+Pluggable, dot-repeatable mappings are provided for the use to map:
 
 <Plug>(ReplSendLine)                                      *<Plug>(ReplSendLine)*
 
@@ -151,14 +151,15 @@ Pluggable, dot-repeatable mappings are provided for convenience:
 
   Send the visual selection to the REPL.
 
-The user should map these pluggable mappings. Our recommended mappings: >vim
+Our recommended mappings: >vim
 
-  nmap     <Leader>rc <Plug>(ReplSendCell)
-  nmap     <Leader>rr <Plug>(ReplSendLine)
-  xmap     <Leader>r  <Plug>(ReplSendVisual)
+  nnoremap <Leader>cc <Cmd>ReplNewCell<CR>
+  nmap <silent> <Leader>cr <Plug>(ReplSendCell)
+  nmap <silent> <Leader>r <Plug>(ReplSendLine)
+  xmap <silent> <Leader>r <Plug>(ReplSendVisual)
 
-Note: as always, pluggable mappings require a recursive mapping. Eg, don't try
-to "nnoremap" a pluggable mapping. It won't work.
+Note: pluggable mappings require a recursive mapping. Eg, don't try to
+"nnoremap" a pluggable mapping. It won't work.
 
 ==============================================================================
                                                                  *repl_credits*
