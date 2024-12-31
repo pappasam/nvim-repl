@@ -148,6 +148,8 @@ putStrLn "I am the third cell"
 
 ## Full Documentation
 
+See: <https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt>
+
 From within Neovim, type:
 
 ```vim
