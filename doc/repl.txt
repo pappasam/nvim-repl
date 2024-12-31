@@ -46,7 +46,7 @@ keys are:
 
 - `cmd` the command to start the repl. The command can be multiple words (for
   example, including `conda activate`) if escaped properly.
-- `prefix` text that precenes all commands sent to the repl ('' to skip).
+- `prefix` text that precedes all commands sent to the repl ('' to skip).
 - `suffix` text that follows all commands sent to the repl ('' to skip).
   Useful for ocaml, where one should set the suffix to `;;`.
 
