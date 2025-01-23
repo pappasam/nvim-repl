@@ -132,7 +132,6 @@ endfunction
 
 function! repl#attach()
   let inputs_tail = []
-  let inputs = ['Select repl:']
   let jobs = []
   for [jobid, value] in items(s:active_repls)
     call add(inputs_tail, '(jobid ' .. jobid .. ') opened by ' .. value[0])
@@ -141,16 +140,18 @@ function! repl#attach()
   if len(jobs) == 0
     call repl#warning('no open repls, cannot attach')
     return
-  endif
-  call sort(inputs_tail)
-  call sort(jobs)
-  call map(inputs_tail, '  (v:key + 1) .. ". " .. v:val')
-  call extend(inputs, inputs_tail)
-  let choice = inputlist(inputs)
-  redraw!
-  if choice > len(jobs) || choice < 1
-    call repl#warning('no valid choice selected, not attatched')
-    return
+  elseif len(jobs) == 1
+    let choice = 1
+  else
+    call sort(inputs_tail)
+    call sort(jobs)
+    call map(inputs_tail, '  (v:key + 1) .. ". " .. v:val')
+    let choice = inputlist(extendnew(['Select repl:'], inputs_tail))
+    redraw!
+    if choice > len(jobs) || choice < 1
+      call repl#warning('no valid choice selected, not attatched')
+      return
+    endif
   endif
   let b:repl_id_job = jobs[choice - 1][0]
   let b:repl = jobs[choice - 1][1]
