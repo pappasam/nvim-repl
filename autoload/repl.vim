@@ -138,18 +138,18 @@ function! repl#attach()
     call add(inputs_tail, '(jobid ' .. jobid .. ') opened by ' .. value[0])
     call add(jobs, [str2nr(jobid), value[1]])
   endfor
+  if len(jobs) == 0
+    call repl#warning('no open repls, cannot attach')
+    return
+  endif
   call sort(inputs_tail)
   call sort(jobs)
   call map(inputs_tail, '  (v:key + 1) .. ". " .. v:val')
   call extend(inputs, inputs_tail)
-  if len(inputs) == 0
-    call repl#warning('repl: no open repls, cannot attach')
-    return
-  endif
   let choice = inputlist(inputs)
   redraw!
   if choice > len(jobs) || choice < 1
-    call repl#warning('repl: no valid choice selected, not attatched')
+    call repl#warning('no valid choice selected, not attatched')
     return
   endif
   let b:repl_id_job = jobs[choice - 1][0]
