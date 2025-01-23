@@ -184,7 +184,7 @@ endfunction
 
 function! repl#sendline(...)
   if !s:repl_id_job_exists()
-    call repl#warning('no repl currently open. Run ":ReplOpen" first')
+    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
   call repl#sendblock(line('.'), line('.'), 'n')
@@ -193,7 +193,7 @@ endfunction
 
 function! repl#sendvisual(mode)
   if !s:repl_id_job_exists()
-    call repl#warning('no repl currently open. Run ":ReplOpen" first')
+    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
   call repl#sendblock('not applicable', 'not applicable', a:mode)
@@ -201,7 +201,7 @@ endfunction
 
 function! repl#sendblock(firstline_num, lastline_num, mode)
   if !s:repl_id_job_exists()
-    call repl#warning('no repl currently open. Run ":ReplOpen" first')
+    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
   let buflines_raw = a:mode ==? 'v' || a:mode == "\<c-v>"
@@ -237,7 +237,7 @@ endfunction
 
 function! repl#sendcell(...)
   if !s:repl_id_job_exists()
-    call repl#warning('no repl currently open. Run ":ReplOpen" first')
+    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
   " This supports single-line comments with only a prefix (lije '## %s') and
@@ -288,7 +288,7 @@ endfunction
 
 function! repl#clear()
   if !s:repl_id_job_exists()
-    call repl#warning('no repl currently open. Run ":ReplOpen" first')
+    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
   call chansend(b:repl_id_job, "\<c-l>")
