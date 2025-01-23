@@ -107,6 +107,11 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
   - `arg3-suffix` text that follows all commands sent to the repl ('' to
     skip). Useful for ocaml.
 
+*:ReplAttach*
+
+  Attach to an existing, open terminal. Enables multiple buffers to
+  communicate with one terminal.
+
 *:ReplClose*
 
   Close the REPL, if open.

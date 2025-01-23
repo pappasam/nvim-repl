@@ -47,6 +47,7 @@ Configuration for <https://github.com/folke/lazy.nvim>
   - `arg1-cmd` the command to start the repl. The command can be multiple words (for example, including `conda activate`) if escaped properly.
   - `arg2-prefix` text that precenes all commands sent to the repl ('' to skip).
   - `arg3-suffix` text that follows all commands sent to the repl ('' to skip). Useful for ocaml.
+- `:ReplAttach`: attach to an existing, open terminal. Enables multiple buffers to communicate with one terminal.
 - `:ReplClose`: close the REPL, if open.
 - `:ReplToggle`: if REPL is open, close it. If REPL is closed, open it using either the filetype associated REPL or the configured default REPL.
 - `:ReplClear`: clear the REPL, if open.

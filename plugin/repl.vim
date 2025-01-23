@@ -88,6 +88,9 @@ endif
 if !s:cmd_exists(':ReplOpen')
   command! -nargs=* -complete=shellcmd ReplOpen call repl#open(<f-args>)
 endif
+if !s:cmd_exists(':ReplAttach')
+  command! ReplAttach call repl#attach()
+endif
 if !s:cmd_exists('ReplClose')
   command! ReplClose call repl#close()
 endif

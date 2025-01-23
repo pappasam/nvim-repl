@@ -13,6 +13,8 @@ function! repl#warning(msg)
   echohl None
 endfunction
 
+let s:active_repls = {} " type: {jobid: [filepath, repl]}
+
 function! s:cleanup(bufnr) abort
   let job_id = getbufvar(str2nr(a:bufnr), 'repl_id_job', 0)
   if !job_id
@@ -25,6 +27,7 @@ function! s:cleanup(bufnr) abort
     call win_gotoid(win.winid)
     quit
   endfor
+  unlet s:active_repls[job_id]
   echom 'repl: closed!'
 endfunction
 
@@ -111,8 +114,8 @@ function! repl#open(...)
   else
     throw 'Something went wrong, file issue with https://github.com/pappasam/nvim-repl...'
   endif
-  let s:old_shell = &shell
-  if s:old_shell == 'powershell'
+  let old_shell = &shell
+  if old_shell == 'powershell'
     set shell=cmd
   endif
   let id_job = termopen(repl.cmd)
@@ -122,8 +125,36 @@ function! repl#open(...)
   call win_gotoid(current_window_id)
   let b:repl_id_job = id_job " set in repl buffer
   let b:repl = repl
-  let &shell=s:old_shell
+  let &shell = old_shell
+  let s:active_repls[id_job] = [expand('%:.'), repl]
   echom 'repl: opened!'
+endfunction
+
+function! repl#attach()
+  let inputs_tail = []
+  let inputs = ['Select repl:']
+  let jobs = []
+  for [jobid, value] in items(s:active_repls)
+    call add(inputs_tail, '(jobid ' .. jobid .. ') opened by ' .. value[0])
+    call add(jobs, [str2nr(jobid), value[1]])
+  endfor
+  call sort(inputs_tail)
+  call sort(jobs)
+  call map(inputs_tail, '  (v:key + 1) .. ". " .. v:val')
+  call extend(inputs, inputs_tail)
+  if len(inputs) == 0
+    echom 'repl: no open repls, cannot attach'
+    return
+  endif
+  let choice = inputlist(inputs)
+  redraw!
+  if choice > len(jobs) || choice < 1
+    echom 'repl: no valid choice selected, not attatched'
+    return
+  endif
+  let b:repl_id_job = jobs[choice - 1][0]
+  let b:repl = jobs[choice - 1][1]
+  echom 'repl: attached'
 endfunction
 
 function! repl#close()
