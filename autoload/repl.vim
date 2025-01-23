@@ -143,13 +143,13 @@ function! repl#attach()
   call map(inputs_tail, '  (v:key + 1) .. ". " .. v:val')
   call extend(inputs, inputs_tail)
   if len(inputs) == 0
-    echom 'repl: no open repls, cannot attach'
+    call repl#warning('repl: no open repls, cannot attach')
     return
   endif
   let choice = inputlist(inputs)
   redraw!
   if choice > len(jobs) || choice < 1
-    echom 'repl: no valid choice selected, not attatched'
+    call repl#warning('repl: no valid choice selected, not attatched')
     return
   endif
   let b:repl_id_job = jobs[choice - 1][0]
