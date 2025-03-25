@@ -34,7 +34,7 @@ this: >vim
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
         \ 'ocaml': #{cmd: 'utop', suffix: ';;'},
-        \ 'python': 'ipython --quiet --no-autoindent',
+        \ 'python': #{cmd: 'ipython --no-autoindent', repl_type: 'ipython'},
         \ 'r': 'R',
         \ 'sh': 'sh',
         \ 'vim': 'nvim --clean -ERM',
@@ -49,9 +49,13 @@ keys are:
 - `prefix` text that precedes all commands sent to the repl ('' to skip).
 - `suffix` text that follows all commands sent to the repl ('' to skip).
   Useful for ocaml, where one should set the suffix to `;;`.
+- `repl_type` unlocks different repl behaviors ('' uses default behavior).
+  Supported repl types are:
+  - `default`: sends lines, 1 at a time, to the repl for evaluation.
+  - `ipython`: similar to default, but enters ipython's special multiline mode
+    with <C-o> if more than 1 line is sent to the repl.
 
-If its value is a String, the value is the `cmd`, and `prefix` / `suffix` are
-set to `''` (eg, there is no prefix / suffix).
+If its value is a String, the value is the `cmd`. All other options are `''`.
 
 *g:repl_default*
 Type: String | Dict[String | Dict]
