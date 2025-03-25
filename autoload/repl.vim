@@ -200,6 +200,11 @@ function! repl#sendvisual(mode)
   call repl#sendblock('not applicable', 'not applicable', a:mode)
 endfunction
 
+function! s:arrow_down()
+  " ANSI/VT100-compatible symbol for the Down arrow key
+  return "\x1b[B"
+endfunction
+
 function! repl#sendblock(firstline_num, lastline_num, mode)
   if !s:repl_id_job_exists()
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
@@ -220,19 +225,24 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
   if b:repl.suffix != ''
     call add(buflines_chansend, b:repl.suffix)
   endif
-  if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
-    let buflines_chansend += ["", ""] " If last line has leading whitespace, add 2 lines
-  else
-    let buflines_chansend += [""] " Otherwise, add 1
-  endif
   if b:repl.repl_type == 'ipython'
-    if len(buflines_chansend) == 2 && buflines_chansend[1] == '' " use %paste only if > 1 line
+    if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
+      let buflines_chansend += [""] " If last line has leading whitespace, add 1 line
+    endif
+    if len(buflines_chansend) == 1
       call chansend(b:repl_id_job, buflines_chansend)
     else
-      let @+ = join(buflines_chansend, "\n")
-      call chansend(b:repl_id_job, ['%paste', ''])
+      call chansend(b:repl_id_job, "\<C-o>")
+      call chansend(b:repl_id_job, buflines_chansend)
+      call chansend(b:repl_id_job, s:arrow_down())
     endif
+    call chansend(b:repl_id_job, "\r")
   else
+    if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
+      let buflines_chansend += ["", ""] " If last line has leading whitespace, add 2 lines
+    else
+      let buflines_chansend += [""] " Otherwise, add 1
+    endif
     call chansend(b:repl_id_job, buflines_chansend)
   endif
   call s:repl_reset_visual_position()

@@ -52,8 +52,8 @@ keys are:
 - `repl_type` unlocks different repl behaviors ('' uses default behavior).
   Supported repl types are:
   - `default`: sends lines, 1 at a time, to the repl for evaluation.
-  - `ipython`: similar to default, but uses system clipboard and %paste if
-    multiple lines are being sent to the repl.
+  - `ipython`: similar to default, but enters ipython's special multiline mode
+    with <C-o> if more than 1 line is sent to the repl.
 
 If its value is a String, the value is the `cmd`. All other options are `''`.
 
