@@ -80,7 +80,7 @@ xmap <silent> <Leader>r <Plug>(ReplSendVisual)
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
         \ 'ocaml': #{cmd: 'utop', suffix: ';;'},
-        \ 'python': 'ipython --no-autoindent',
+        \ 'python': #{cmd: 'ipython --no-autoindent', repl_type: 'ipython'},
         \ 'r': 'R',
         \ 'sh': 'sh',
         \ 'vim': 'nvim --clean -ERM',
