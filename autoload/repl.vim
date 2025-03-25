@@ -95,7 +95,7 @@ function! repl#open(...)
   endif
   let current_window_id = win_getid()
   if a:0 > 0
-    let repl = #{cmd: a:1, prefix: s:dequote(get(a:, 2, '')), suffix: s:dequote(get(a:, 3, '')), repl_type: s:dequote(get(a:, 3, ''))}
+    let repl = #{cmd: a:1, prefix: s:dequote(get(a:, 2, '')), suffix: s:dequote(get(a:, 3, '')), repl_type: s:dequote(get(a:, 4, ''))}
   else
     let repl = s:get_repl_from_config()
   endif
