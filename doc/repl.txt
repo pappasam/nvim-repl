@@ -87,16 +87,8 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
 
 *:Repl* *:ReplOpen*
 
-  Open a terminal and run the repl. All arguments are optional; no arguments
-  default to the values set in `g:repl_filetype_commands`.
-
-  - `arg1-cmd` the command to start the repl. The command can be multiple
-    words (for example, including `conda activate`) if enclosed in single
-    quotes.
-  - `arg2-prefix` text that precenes all commands sent to the repl ('' to
-    skip).
-  - `arg3-suffix` text that follows all commands sent to the repl ('' to
-    skip). Useful for ocaml.
+  Open a terminal and run the repl. Takes 0 or 1 arguments. If provided, the
+  argument has the same type as non-key values in `g:repl_filetype_commands`.
 
 *:ReplAttach*
 
@@ -130,21 +122,8 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
   Send the arguments passed to the command directly to the REPL.
 
 ==============================================================================
-                                                              *repl_functions*
-3. FUNCTIONS~
-
-Most users will use the commands above. That said, some public functions may
-be useful if you need to further customize your environment.
-
-*repl#open*
-Type: Callable[[repl_config?]]
-Default: `vertical split new`
-
-  Used to open a repl. Can be called with either 0 or 1 arguments.
-
-==============================================================================
                                                                 *repl_mappings*
-5. MAPPINGS~
+4. MAPPINGS~
 
 Pluggable, dot-repeatable mappings are provided for the use to map:
 

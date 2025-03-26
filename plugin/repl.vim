@@ -60,10 +60,10 @@ function! s:configure_constants()
   " Commands
 
   if !s:cmd_exists(':Repl')
-    command! -nargs=* -complete=shellcmd Repl call repl#open(<f-args>)
+    command! -nargs=? -complete=shellcmd Repl call repl#open(<f-args>)
   endif
   if !s:cmd_exists(':ReplOpen')
-    command! -nargs=* -complete=shellcmd ReplOpen call repl#open(<f-args>)
+    command! -nargs=? -complete=shellcmd ReplOpen call repl#open(<f-args>)
   endif
   if !s:cmd_exists(':ReplAttach')
     command! ReplAttach call repl#attach()

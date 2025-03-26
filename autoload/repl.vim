@@ -74,10 +74,17 @@ endfunction
 
 function! s:get_repl(config)
   let t_config = type(a:config)
-  if t_config == v:t_string
-    return #{cmd: a:config,
-          \ repl_type: '',
-          \ open_window: g:repl_open_window_default}
+  if t_config == v:t_string && len(a:config) > 0
+    if a:config[0] == '#' || a:config[0] == '{'
+      let parsed = eval(a:config)
+      return #{cmd: parsed.cmd,
+            \ repl_type: get(parsed, 'repl_type', ''),
+            \ open_window: get(parsed, 'open_window', g:repl_open_window_default)}
+    else
+      return #{cmd: a:config,
+            \ repl_type: '',
+            \ open_window: g:repl_open_window_default}
+    endif
   elseif t_config == v:t_dict
     return #{cmd: a:config.cmd,
           \ repl_type: get(a:config, 'repl_type', ''),
@@ -85,10 +92,6 @@ function! s:get_repl(config)
   else
     throw 'nvim-repl config for ' .. &filetype .. 'is neither a String nor a Dict'
   endif
-endfunction
-
-function! s:dequote(str)
-  return substitute(a:str, '^["'']\(.*\)["'']$', '\1', '')
 endfunction
 
 function! repl#open(...) " takes 0 or 1 arguments (dict)
