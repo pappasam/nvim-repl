@@ -117,7 +117,7 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
 
   Create a new cell
 
-*:ReplSendArgs*
+*:ReplSend*
 
   Send the arguments passed to the command directly to the REPL.
 

@@ -53,7 +53,7 @@ Configuration for <https://github.com/folke/lazy.nvim>
 - `:ReplClear`: clear the REPL, if open.
 - `:ReplRunCell`: run the cell under the cursor and the cursor will jump to next cell.
 - `:ReplNewCell`: create a new cell.
-- `:ReplSendArgs`: send the arguments passed to the command directly to the REPL.
+- `:ReplSend`: send the arguments passed to the command directly to the REPL.
 
 Several pluggable, dot-repeatable mappings are provided for the user to map themselves.
 
