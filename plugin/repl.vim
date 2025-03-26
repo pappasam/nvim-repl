@@ -30,15 +30,6 @@ let s:default_commands = {
       \ 'python': 'python',
       \ }
 
-let s:allowed_split_values = [
-      \ 'vertical',
-      \ 'horizontal',
-      \ 'top',
-      \ 'left',
-      \ 'right',
-      \ 'bottom',
-      \ ]
-
 " User configuration
 
 function! s:configure_constants()
@@ -53,62 +44,49 @@ function! s:configure_constants()
         \ )
 
   if !exists('g:repl_default')
-    let g:repl_default = #{cmd: &shell, prefix: '', suffix: ''}
+    let g:repl_default = #{cmd: &shell, prefix: '', suffix: '', repl_type: ''}
   elseif type(g:repl_default) == v:t_dict
-    let g:repl_default = extendnew(#{cmd: &shell, prefix: '', suffix: ''}, g:repl_default)
+    let g:repl_default = extendnew(#{cmd: &shell, prefix: '', suffix: '', repl_type: ''}, g:repl_default)
   elseif type(g:repl_default) != v:t_string
     throw 'g:repl_default must be a String or a Dict'
   endif
 
-  if !exists('g:repl_split')
-    let g:repl_split = 'vertical'
-  elseif index(s:allowed_split_values, g:repl_split) == -1
-    throw 'g:repl_split is not in allowed values '
-          \ .. join(s:allowed_split_values, ', ')
+  if !exists('g:repl_open_window')
+    let g:repl_open_window = 'vertical split new'
+  elseif type(g:repl_open_window) != v:t_string
+    throw 'g:repl_open_window must be a String'
   endif
 
-  if !exists('g:repl_height')
-    let g:repl_height = ''
-  elseif type(g:repl_height) != v:t_number
-    throw 'g:repl_height is configured and is not a number'
-  endif
+  " Commands
 
-  if !exists('g:repl_width')
-    let g:repl_width = ''
-  elseif type(g:repl_width) != v:t_number
-    throw 'g:repl_width is configured and is not a number'
+  if !s:cmd_exists(':Repl')
+    command! -nargs=* -complete=shellcmd Repl call repl#open(<f-args>)
+  endif
+  if !s:cmd_exists(':ReplOpen')
+    command! -nargs=* -complete=shellcmd ReplOpen call repl#open(<f-args>)
+  endif
+  if !s:cmd_exists(':ReplAttach')
+    command! ReplAttach call repl#attach()
+  endif
+  if !s:cmd_exists('ReplClose')
+    command! ReplClose call repl#close()
+  endif
+  if !s:cmd_exists(':ReplToggle')
+    command! ReplToggle call repl#toggle()
+  endif
+  if !s:cmd_exists(':ReplNewCell')
+    command! ReplNewCell call repl#newcell()
+  endif
+  if !s:cmd_exists(':ReplRunCell')
+    command! ReplRunCell call repl#sendcell()
+  endif
+  if !s:cmd_exists('ReplClear')
+    command! ReplClear call repl#clear()
+  endif
+  if !s:cmd_exists('ReplSendArgs')
+    command! -nargs=1 ReplSendArgs call repl#sendargs(<f-args>)
   endif
 endfunction
-
-" Commands
-
-if !s:cmd_exists(':Repl')
-  command! -nargs=* -complete=shellcmd Repl call repl#open(<f-args>)
-endif
-if !s:cmd_exists(':ReplOpen')
-  command! -nargs=* -complete=shellcmd ReplOpen call repl#open(<f-args>)
-endif
-if !s:cmd_exists(':ReplAttach')
-  command! ReplAttach call repl#attach()
-endif
-if !s:cmd_exists('ReplClose')
-  command! ReplClose call repl#close()
-endif
-if !s:cmd_exists(':ReplToggle')
-  command! ReplToggle call repl#toggle()
-endif
-if !s:cmd_exists(':ReplNewCell')
-  command! ReplNewCell call repl#newcell()
-endif
-if !s:cmd_exists(':ReplRunCell')
-  command! ReplRunCell call repl#sendcell()
-endif
-if !s:cmd_exists('ReplClear')
-  command! ReplClear call repl#clear()
-endif
-if !s:cmd_exists('ReplSendArgs')
-  command! -nargs=1 ReplSendArgs call repl#sendargs(<f-args>)
-endif
 
 " Pluggable mappings
 

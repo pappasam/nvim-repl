@@ -20,8 +20,8 @@ Configuration for <https://github.com/folke/lazy.nvim>
       bash = "bash",
       javascript = "node",
       haskell = "ghci",
-      ocaml = {cmd = "utop", suffix = ";;"},
-      python = "ipython --no-autoindent",
+      ocaml = {cmd = "utop", repl_type = "utop"},
+      python = {cmd = "ipython --no-autoindent", repl_type = "ipython"},
       r = "R",
       sh = "sh",
       vim = "nvim --clean -ERM",
@@ -79,7 +79,7 @@ xmap <silent> <Leader>r <Plug>(ReplSendVisual)
         \ 'bash': 'bash',
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
-        \ 'ocaml': #{cmd: 'utop', suffix: ';;'},
+        \ 'ocaml': #{cmd: 'utop', repl_type: 'utop'},
         \ 'python': #{cmd: 'ipython --no-autoindent', repl_type: 'ipython'},
         \ 'r': 'R',
         \ 'sh': 'sh',
@@ -89,23 +89,11 @@ xmap <silent> <Leader>r <Plug>(ReplSendVisual)
   ```
 
 - `g:repl_default`: set the default REPL if no configured REPL is found in `g:repl_filetype_commands`. Defaults to `&shell`.
-- `g:repl_split`: set the REPL window position. `vertical` and `horizontal` respect the user-configured global `splitright` and `splitbottom` settings.
-
-  - `'bottom'`
-  - `'top'`
-  - `'left'`
-  - `'right'`
-  - `'horizontal'`
-  - `'vertical'` (default)
-
-  If split bottom is preferred, then add below line to configuration.
-
-  ```vim
-  let g:repl_split = 'bottom'
-  ```
-
-- `g:repl_height`: set REPL window's height (number of lines) if `g:repl_split` set `'bottom'`/`'top'`. Default `split` equally.
-- `g:repl_width`: set REPL window's width (number of columns) if `g:repl_split` set `'left'`/`'right'`. Default `vsplit` equally.
+- `g:repl_open_window`: Vim command used to open the repl window. Uses Vim's built-in commands for maximum flexibility.
+  - Vertical split (default): `vertical split new`
+  - Vertical split with width of 79 specified: `vertical 79split new`
+  - Left split: `leftabove vertical split new`
+  - See `help opening-window` for additional options
 
 ## Cells
 

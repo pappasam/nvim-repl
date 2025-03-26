@@ -76,9 +76,11 @@ function! s:get_repl_from_config()
   let config = get(g:repl_filetype_commands, &filetype, g:repl_default)
   let t_config = type(config)
   if t_config == v:t_string
-    return #{cmd: config, prefix: '', suffix: '', repl_type: ''}
+    return #{cmd: config, repl_type: '', open_window: ''}
   elseif t_config == v:t_dict
-    return #{cmd: config.cmd, prefix: get(config, 'prefix', ''), suffix: get(config, 'suffix', ''), repl_type: get(config, 'repl_type', '')}
+    return #{cmd: config.cmd,
+          \ repl_type: get(config, 'repl_type', ''),
+          \ open_window: get(config, 'open_window', '')}
   else
     throw 'nvim-repl config for ' .. &filetype .. 'is neither a String nor a Dict'
   endif
@@ -95,24 +97,17 @@ function! repl#open(...)
   endif
   let current_window_id = win_getid()
   if a:0 > 0
-    let repl = #{cmd: a:1, prefix: s:dequote(get(a:, 2, '')), suffix: s:dequote(get(a:, 3, '')), repl_type: s:dequote(get(a:, 4, ''))}
+    let repl = #{
+          \ cmd: a:1,
+          \ repl_type: s:dequote(get(a:, 2, '')),
+          \ open_window: s:dequote(get(a:, 3, ''))}
   else
     let repl = s:get_repl_from_config()
   endif
-  if g:repl_split == 'vertical'
-    execute 'vertical ' . g:repl_width .. 'split new'
-  elseif g:repl_split == 'left'
-    execute 'leftabove vertical ' .. g:repl_width .. 'split new'
-  elseif g:repl_split == 'right'
-    execute 'rightbelow vertical ' .. g:repl_width .. 'split new'
-  elseif g:repl_split == 'horizontal'
-    execute g:repl_height .. 'split new'
-  elseif g:repl_split == 'bottom'
-    execute 'rightbelow ' .. g:repl_height .. 'split new'
-  elseif g:repl_split == 'top'
-    execute 'leftabove ' .. g:repl_height .. 'split new'
+  if repl.open_window == ''
+    execute g:repl_open_window
   else
-    throw 'Something went wrong, file issue with https://github.com/pappasam/nvim-repl...'
+    execute repl.open_window
   endif
   let old_shell = &shell
   if old_shell == 'powershell'
@@ -214,17 +209,11 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
         \ ? s:get_visual_selection(a:mode)
         \ : getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
   let buflines_chansend = []
-  if b:repl.prefix != ''
-    call add(buflines_chansend, b:repl.prefix)
-  endif
   for line in buflines_raw
     if line != "" && line !~ "^\\s*#\\s*%%.*"
       let buflines_chansend += [line] " remove the empty line and #%% line
     endif
   endfor
-  if b:repl.suffix != ''
-    call add(buflines_chansend, b:repl.suffix)
-  endif
   if b:repl.repl_type == 'ipython'
     if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
       let buflines_chansend += [""] " If last line has leading whitespace, add 1 line
@@ -237,6 +226,11 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
       call chansend(b:repl_id_job, s:arrow_down())
     endif
     call chansend(b:repl_id_job, "\r")
+  elseif b:repl.repl_type == 'utop'
+    if len(buflines_chansend) > 0
+      let buflines_chansend[-1] = buflines_chansend[-1] .. ' ;;'
+    endif
+    call chansend(b:repl_id_job, buflines_chansend + [""])
   else
     if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
       let buflines_chansend += ["", ""] " If last line has leading whitespace, add 2 lines
