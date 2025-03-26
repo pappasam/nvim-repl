@@ -21,7 +21,6 @@ Configuration for <https://github.com/folke/lazy.nvim>
       javascript = "node",
       haskell = "ghci",
       ocaml = {cmd = "utop", repl_type = "utop"},
-      python = {cmd = "ipython --no-autoindent", repl_type = "ipython"},
       r = "R",
       sh = "sh",
       vim = "nvim --clean -ERM",
@@ -72,7 +71,7 @@ xmap <silent> <Leader>r <Plug>(ReplSendVisual)
 
 ## Configuration
 
-- `g:repl_filetype_commands`: map Neovim file types to REPL. E.g., if you automatically want to run a `ipython` REPL for python file types and a "node" REPL for JavaScript file types, your configuration might look like this:
+- `g:repl_filetype_commands`: map Neovim file types to REPL. Note: [`ipython`](https://github.com/ipython/ipython) is already configured for Python. If you want additional repls, your configuration might look like this:
 
   ```vim
   let g:repl_filetype_commands = {
@@ -80,7 +79,6 @@ xmap <silent> <Leader>r <Plug>(ReplSendVisual)
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
         \ 'ocaml': #{cmd: 'utop', repl_type: 'utop'},
-        \ 'python': #{cmd: 'ipython --no-autoindent', repl_type: 'ipython'},
         \ 'r': 'R',
         \ 'sh': 'sh',
         \ 'vim': 'nvim --clean -ERM',
@@ -146,23 +144,6 @@ From within Neovim, type:
 ```
 
 ## FAQ
-
-### Getting strange errors with Python, please help
-
-One such error might be a `IndentError`. This has to do with quirks related to the default Python interpreter. To get around this, use [`ipython`](https://github.com/ipython/ipython) as your default interpreter for Python files.
-
-Terminal:
-
-```bash
-pip install ipython
-```
-
-`init.vim`:
-
-```vim
-" init.vim
-let g:repl_filetype_commands = {'python': 'ipython --no-autoindent'}
-```
 
 ### Escape doesn't work in Terminal mode
 
