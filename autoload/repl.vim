@@ -215,20 +215,13 @@ function! s:arrow_down()
   return "\x1b[B"
 endfunction
 
-function! s:send_block(firstline_num, lastline_num, mode)
-  if !s:repl_id_job_exists()
-    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
-    return
-  endif
-  let buflines_raw = a:mode ==? 'v' || a:mode == "\<c-v>"
-        \ ? s:get_visual_selection(a:mode)
-        \ : getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
-  let buflines_chansend = []
-  for line in buflines_raw
-    if line != "" && line !~ "^\\s*#\\s*%%.*"
-      let buflines_chansend += [line] " remove the empty line and #%% line
-    endif
-  endfor
+function! s:alt_enter()
+  " Standard escape sequence for Alt+Enter
+  return "\x1b\r"
+endfunction
+
+function! s:chansend_buflines(buflines)
+  let buflines_chansend = a:buflines
   if b:repl.repl_type == 'ipython'
     if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
       let buflines_chansend += [""] " If last line has leading whitespace, add 1 line
@@ -246,6 +239,11 @@ function! s:send_block(firstline_num, lastline_num, mode)
       let buflines_chansend[-1] = buflines_chansend[-1] .. ' ;;'
     endif
     call chansend(b:repl_id_job, buflines_chansend + [""])
+  elseif b:repl.repl_type == 'aider'
+    if len(buflines_chansend) > 0
+      let buflines_chansend[-1] = buflines_chansend[-1] .. s:alt_enter()
+    endif
+    call chansend(b:repl_id_job, buflines_chansend)
   else
     if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
       let buflines_chansend += ["", ""] " If last line has leading whitespace, add 2 lines
@@ -257,11 +255,28 @@ function! s:send_block(firstline_num, lastline_num, mode)
   call s:repl_reset_visual_position()
 endfunction
 
+function! s:send_block(firstline_num, lastline_num, mode)
+  if !s:repl_id_job_exists()
+    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
+    return
+  endif
+  let buflines_raw = a:mode ==? 'v' || a:mode == "\<c-v>"
+        \ ? s:get_visual_selection(a:mode)
+        \ : getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
+  let buflines_chansend = []
+  for line in buflines_raw
+    if line != "" && line !~ "^\\s*#\\s*%%.*"
+      let buflines_chansend += [line] " remove the empty line and #%% line
+    endif
+  endfor
+  call s:chansend_buflines(buflines_chansend)
+endfunction
+
 function! repl#sendargs(cmd_args)
   if !s:repl_id_job_exists()
     call repl#open() " If there is no repl window opened, create one
   endif
-  call chansend(b:repl_id_job, [a:cmd_args, ""])
+  call s:chansend_buflines([a:cmd_args])
 endfunction
 
 function! repl#sendcell(...)

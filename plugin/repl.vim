@@ -86,6 +86,9 @@ function! s:configure_constants()
   if !s:cmd_exists('ReplSendArgs')
     command! -nargs=1 ReplSendArgs call repl#sendargs(<f-args>)
   endif
+  if !s:cmd_exists('Aider')
+    command! Aider call repl#open(#{cmd: 'aider', open_window: 'tabnew', repl_type: 'aider'})
+  endif
 endfunction
 
 " Pluggable mappings
