@@ -15,6 +15,55 @@ endfunction
 
 let s:active_repls = {} " type: {jobid: [filepath, repl]}
 
+function! s:goto_jobid_window(job_id)
+  if !has('nvim') || !jobwait([a:job_id], 0)[0] == -1
+    echom "Job " . a:job_id . " does not exist or has already completed"
+    return
+  endif
+  let found = 0
+  let current_tab = tabpagenr()
+
+  " Check all windows in current tab
+  for winnr in range(1, winnr('$'))
+    let bufnr = winbufnr(winnr)
+    " Check if this buffer has the job we're looking for
+    let chan_info = nvim_get_chan_info(a:job_id)
+    if has_key(chan_info, 'buffer') && chan_info.buffer == bufnr
+      " Found it in current tab
+      execute winnr . "wincmd w"
+      return 1
+    endif
+  endfor
+  " Not found in current tab, search through all tabs
+  let last_tab = tabpagenr('$')
+  " Loop through all tabs
+  for tab_num in range(1, last_tab)
+    " Skip current tab as we already checked it
+    if tab_num == current_tab
+      continue
+    endif
+    " Get list of windows in this tab
+    let buffers_in_tab = tabpagebuflist(tab_num)
+    " Check each buffer in this tab
+    for idx in range(len(buffers_in_tab))
+      let bufnr = buffers_in_tab[idx]
+      " Check if this buffer has the job we're looking for
+      let chan_info = nvim_get_chan_info(a:job_id)
+      if has_key(chan_info, 'buffer') && chan_info.buffer == bufnr
+        " Found it! Go to that tab
+        execute "tabnext " . tab_num
+        " Get the window number in this tab (idx is 0-based, window numbers are 1-based)
+        let win_num = idx + 1
+        execute win_num . "wincmd w"
+        return 1
+      endif
+    endfor
+  endfor
+  " If we get here, job exists but isn't displayed in any window
+  echo "Job " . a:job_id . " exists but isn't displayed in any window"
+  return 0
+endfunction
+
 function! s:path_relative_to_git_root(path)
   let git_root = trim(system('git rev-parse --show-toplevel 2>/dev/null'))
   if git_root == '' || v:shell_error != 0
@@ -318,7 +367,12 @@ function! repl#sendargs(cmd_args)
   call s:chansend_buflines([a:cmd_args])
 endfunction
 
-function! repl#aider_buffers(preamble) " public version
+function! repl#aidersend(cmd_args)
+  call repl#sendargs(a:cmd_args)
+  call s:goto_jobid_window(b:repl_id_job)
+endfunction
+
+function! repl#aiderbuffers(preamble) " public version
   if a:preamble != '/add' && a:preamble != '/drop'
     throw 'Unsupported command argument'
   endif
@@ -326,16 +380,6 @@ function! repl#aider_buffers(preamble) " public version
   echom file_args
   call repl#sendargs(a:preamble .. ' ' .. file_args)
 endfunction
-
-function! repl#yolo()
-  if !s:repl_id_job_exists()
-    call repl#open()
-  endif
-  let yolo_message = "print(\"YOLO: You Only Live Once!\")"
-  call s:chansend_buflines([yolo_message])
-  echom 'YOLO mode activated!'
-endfunction
-
 
 function! repl#sendcell(...)
   if !s:repl_id_job_exists()

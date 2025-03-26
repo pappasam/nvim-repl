@@ -93,7 +93,7 @@ function! s:configure_constants()
     function! s:complete_aider_add_drop(arglead, cmdline, cursorpos)
       return ['/add', '/drop']
     endfunction
-    command! -nargs=1 -complete=customlist,s:complete_aider_add_drop AiderBuffers call repl#aider_buffers(<f-args>)
+    command! -nargs=1 -complete=customlist,s:complete_aider_add_drop AiderBuffers call repl#aiderbuffers(<f-args>)
   endif
   if !s:cmd_exists('AiderSend')
     function! s:complete_aider_send(arglead, cmdline, cursorpos)
@@ -140,7 +140,7 @@ function! s:configure_constants()
             \ '/weak-model',
             \ '/web']
     endfunction
-    command! -nargs=1 -complete=customlist,s:complete_aider_send AiderSend call repl#sendargs(<f-args>)
+    command! -nargs=1 -complete=customlist,s:complete_aider_send AiderSend call repl#aidersend(<f-args>)
   endif
 endfunction
 
