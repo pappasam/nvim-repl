@@ -42,56 +42,13 @@ Configuration for <https://github.com/folke/lazy.nvim>
 
 ![demo](images/nvim-repl-demo.gif)
 
-- `:Repl` or `:ReplOpen`: open a terminal and run the repl. All arguments are optional; no arguments default to the values set in `g:repl_filetype_commands`.
-  - `arg1-cmd` the command to start the repl. The command can be multiple words (for example, including `conda activate`) if escaped properly.
-  - `arg2-prefix` text that precenes all commands sent to the repl ('' to skip).
-  - `arg3-suffix` text that follows all commands sent to the repl ('' to skip). Useful for ocaml.
-- `:ReplAttach`: attach to an existing, open terminal. Enables multiple buffers to communicate with one terminal.
-- `:ReplClose`: close the REPL, if open.
-- `:ReplToggle`: if REPL is open, close it. If REPL is closed, open it using either the filetype associated REPL or the configured default REPL.
-- `:ReplClear`: clear the REPL, if open.
-- `:ReplRunCell`: run the cell under the cursor and the cursor will jump to next cell.
-- `:ReplNewCell`: create a new cell.
-- `:ReplSend`: send the arguments passed to the command directly to the REPL.
+For detailed documentation, see: <https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt>
 
-Several pluggable, dot-repeatable mappings are provided for the user to map themselves.
-
-- `<Plug>(ReplSendLine)` send the current line to the REPL.
-- `<Plug>(ReplSendCell)` send the current cell to the REPL.
-- `<Plug>(ReplSendVisual)` send the visual selection to the REPL.
-
-See below for some suggested mappings (in `init.vim`):
+From within Neovim, type:
 
 ```vim
-nnoremap <Leader>cc <Cmd>ReplNewCell<CR>
-nmap <silent> <Leader>cr <Plug>(ReplSendCell)
-nmap <silent> <Leader>r <Plug>(ReplSendLine)
-xmap <silent> <Leader>r <Plug>(ReplSendVisual)
+:help repl
 ```
-
-## Configuration
-
-- `g:repl_filetype_commands`: map Neovim file types to REPL. Note: [`ipython`](https://github.com/ipython/ipython) is already configured for Python. If you want additional repls, your configuration might look like this:
-
-  ```vim
-  let g:repl_filetype_commands = {
-        \ 'bash': 'bash',
-        \ 'javascript': 'node',
-        \ 'haskell': 'ghci',
-        \ 'ocaml': #{cmd: 'utop', repl_type: 'utop'},
-        \ 'r': 'R',
-        \ 'sh': 'sh',
-        \ 'vim': 'nvim --clean -ERM',
-        \ 'zsh': 'zsh',
-        \ }
-  ```
-
-- `g:repl_default`: set the default REPL if no configured REPL is found in `g:repl_filetype_commands`. Defaults to `&shell`.
-- `g:repl_open_window_default`: Default Vim command used to open the repl window. Uses Vim's built-in commands for maximum flexibility.
-  - Vertical split (default): `vertical split new`
-  - Vertical split with width of 79 specified: `vertical 79split new`
-  - Left split: `leftabove vertical split new`
-  - See `:help opening-window` for additional options
 
 ## Cells
 
@@ -131,16 +88,6 @@ putStrLn "I am still, still the second cell"
 -- %%
 
 putStrLn "I am the third cell"
-```
-
-## Full Documentation
-
-See: <https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt>
-
-From within Neovim, type:
-
-```vim
-:help repl
 ```
 
 ## FAQ

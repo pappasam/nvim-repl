@@ -25,16 +25,13 @@ Type: Dictionary[String, String | Dict[String | String]]
 Default: defined in plugin/repl.vim
 
 Map a filetype to a REPL starting command using this configuration variable.
-Eg, if you automatically want to run a "python" REPL for python filetypes and
-a "node" REPL for javascript filetypes, your configuration might look like
-this: >vim
+Your configuration might look like this: >vim
 
   let g:repl_filetype_commands = {
         \ 'bash': 'bash',
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
         \ 'ocaml': #{cmd: 'utop', repl_type: 'utop'},
-        \ 'python': #{cmd: 'ipython --no-autoindent', repl_type: 'ipython'},
         \ 'r': 'R',
         \ 'sh': 'sh',
         \ 'vim': 'nvim --clean -ERM',
