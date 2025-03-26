@@ -69,19 +69,8 @@ function! s:path_relative_to_git_root(path)
   if git_root == '' || v:shell_error != 0
     throw 'not in a git repository'
   endif
-  return strpart(a:path, len(git_root) + 1)  " +1 to skip the trailing slash
-endfunction
-
-function! s:buffers_in_cwd()
-  let l:cwd = getcwd() .. '/'
-  let l:buffers = map(
-        \ filter(
-        \   filter(range(0, bufnr('$')), 'buflisted(v:val)'),
-        \   'fnamemodify(bufname(v:val), ":p") =~ "^" . escape(l:cwd, "\\[].$^") . ".*"'
-        \ ),
-        \ 'fnamemodify(bufname(v:val), ":.")'
-        \ )
-  return uniq(sort(l:buffers))
+  " +1 to skip the trailing slash
+  return escape(strpart(a:path, len(git_root) + 1), ' ')
 endfunction
 
 function! s:buffers_in_gitroot()
@@ -197,13 +186,7 @@ function! repl#open(...) " takes 0 or 1 arguments (dict)
   if old_shell == 'powershell'
     set shell=cmd
   endif
-  if repl.repl_type == 'aider'
-    let id_job = jobstart(
-          \ repl.cmd .. ' ' .. join(s:buffers_in_cwd(), ' '),
-          \ {'term': v:true})
-  else
-    let id_job = jobstart(repl.cmd, {'term': v:true})
-  endif
+  let id_job = jobstart(repl.cmd, {'term': v:true})
   let b:repl_id_job = id_job " set in terminal buffer
   setlocal nonumber nornu nobuflisted
   autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
@@ -372,13 +355,20 @@ function! repl#aidersend(cmd_args)
   call s:goto_jobid_window(b:repl_id_job)
 endfunction
 
-function! repl#aiderbuffers(preamble) " public version
+function! repl#aiderbufall(preamble)
   if a:preamble != '/add' && a:preamble != '/drop'
     throw 'Unsupported command argument'
   endif
   let file_args = join(s:buffers_in_gitroot(), ' ')
-  echom file_args
   call repl#sendargs(a:preamble .. ' ' .. file_args)
+endfunction
+
+function! repl#aiderbuf(preamble)
+  if a:preamble != '/add' && a:preamble != '/drop'
+    throw 'Unsupported command argument'
+  endif
+  let path = s:path_relative_to_git_root(expand('%:p'))
+  call repl#sendargs(a:preamble .. ' ' .. path)
 endfunction
 
 function! repl#sendcell(...)

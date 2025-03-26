@@ -89,56 +89,62 @@ function! s:configure_constants()
   if !s:cmd_exists('Aider')
     command! Aider call repl#open(#{cmd: 'aider', open_window: 'tabnew', repl_type: 'aider'})
   endif
-  if !s:cmd_exists('AiderBuffers')
-    function! s:complete_aider_add_drop(arglead, cmdline, cursorpos)
+  if !s:cmd_exists('AiderBufAll')
+    function! s:complete_aider_bufall_add_drop(arglead, cmdline, cursorpos)
       return ['/add', '/drop']
     endfunction
-    command! -nargs=1 -complete=customlist,s:complete_aider_add_drop AiderBuffers call repl#aiderbuffers(<f-args>)
+    command! -nargs=1 -complete=customlist,s:complete_aider_bufall_add_drop AiderBufAll call repl#aiderbufall(<f-args>)
+  endif
+  if !s:cmd_exists('AiderBuf')
+    function! s:complete_aider_buf_add_drop(arglead, cmdline, cursorpos)
+      return ['/add', '/drop']
+    endfunction
+    command! -nargs=1 -complete=customlist,s:complete_aider_buf_add_drop AiderBuf call repl#aiderbuf(<f-args>)
   endif
   if !s:cmd_exists('AiderSend')
     function! s:complete_aider_send(arglead, cmdline, cursorpos)
       return [ '/add',
-            \ '/architect',
-            \ '/ask',
-            \ '/chat-mode',
-            \ '/clear',
-            \ '/code',
-            \ '/commit',
-            \ '/context',
-            \ '/copy',
-            \ '/copy-context',
-            \ '/diff',
-            \ '/drop',
-            \ '/edit',
-            \ '/editor',
-            \ '/editor-model',
-            \ '/exit',
-            \ '/git',
-            \ '/help',
-            \ '/lint',
-            \ '/load',
-            \ '/ls',
-            \ '/map',
-            \ '/map-refresh',
-            \ '/model',
-            \ '/models',
-            \ '/multiline-mode',
-            \ '/paste',
-            \ '/quit',
-            \ '/read-only',
-            \ '/reasoning-effort',
-            \ '/report',
-            \ '/reset',
-            \ '/run',
-            \ '/save',
-            \ '/settings',
-            \ '/test',
-            \ '/think-tokens',
-            \ '/tokens',
-            \ '/undo',
-            \ '/voice',
-            \ '/weak-model',
-            \ '/web']
+            \  '/architect',
+            \  '/ask',
+            \  '/chat-mode',
+            \  '/clear',
+            \  '/code',
+            \  '/commit',
+            \  '/context',
+            \  '/copy',
+            \  '/copy-context',
+            \  '/diff',
+            \  '/drop',
+            \  '/edit',
+            \  '/editor',
+            \  '/editor-model',
+            \  '/exit',
+            \  '/git',
+            \  '/help',
+            \  '/lint',
+            \  '/load',
+            \  '/ls',
+            \  '/map',
+            \  '/map-refresh',
+            \  '/model',
+            \  '/models',
+            \  '/multiline-mode',
+            \  '/paste',
+            \  '/quit',
+            \  '/read-only',
+            \  '/reasoning-effort',
+            \  '/report',
+            \  '/reset',
+            \  '/run',
+            \  '/save',
+            \  '/settings',
+            \  '/test',
+            \  '/think-tokens',
+            \  '/tokens',
+            \  '/undo',
+            \  '/voice',
+            \  '/weak-model',
+            \  '/web']
     endfunction
     command! -nargs=1 -complete=customlist,s:complete_aider_send AiderSend call repl#aidersend(<f-args>)
   endif
