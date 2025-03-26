@@ -15,6 +15,26 @@ endfunction
 
 let s:active_repls = {} " type: {jobid: [filepath, repl]}
 
+function! s:path_relative_to_git_root(path)
+  let git_root = trim(system('git rev-parse --show-toplevel 2>/dev/null'))
+  if git_root == '' || v:shell_error != 0
+    throw 'not in a git repository'
+  endif
+  return strpart(a:path, len(git_root) + 1)  " +1 to skip the trailing slash
+endfunction
+
+function! s:buffers_in_cwd()
+  let l:cwd = getcwd() . '/'
+  let l:buffers = map(
+        \ filter(
+        \   filter(range(0, bufnr('$')), 'buflisted(v:val)'),
+        \   'fnamemodify(bufname(v:val), ":p") =~ "^" . escape(l:cwd, "\\[].$^") . ".*"'
+        \ ),
+        \ 'fnamemodify(bufname(v:val), ":.")'
+        \ )
+  return uniq(sort(l:buffers))
+endfunction
+
 function! s:cleanup(bufnr) abort
   let job_id = getbufvar(str2nr(a:bufnr), 'repl_id_job', 0)
   if !job_id
@@ -112,7 +132,13 @@ function! repl#open(...) " takes 0 or 1 arguments (dict)
   if old_shell == 'powershell'
     set shell=cmd
   endif
-  let id_job = termopen(repl.cmd)
+  if repl.repl_type == 'aider'
+    let id_job = jobstart(
+          \ repl.cmd .. ' ' .. join(s:buffers_in_cwd(), ' '),
+          \ {'term': v:true})
+  else
+    let id_job = jobstart(repl.cmd, {'term': v:true})
+  endif
   let b:repl_id_job = id_job " set in terminal buffer
   setlocal nonumber nornu nobuflisted
   autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
