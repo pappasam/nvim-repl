@@ -153,15 +153,13 @@ function! repl#attach()
 endfunction
 
 function! repl#close()
-  set lazyredraw
   let current_window_id = win_getid()
   let current_tab = tabpagenr()
   let current_repl_id = get(b:, 'repl_id_job', '')
   if empty(current_repl_id)
-    set nolazyredraw
-    redraw
     return
   endif
+  set lazyredraw
   let tab_count = tabpagenr('$')
   for t in range(1, tab_count)
     if t <= tabpagenr('$')
