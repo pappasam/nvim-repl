@@ -24,13 +24,29 @@ function! s:path_relative_to_git_root(path)
 endfunction
 
 function! s:buffers_in_cwd()
-  let l:cwd = getcwd() . '/'
+  let l:cwd = getcwd() .. '/'
   let l:buffers = map(
         \ filter(
         \   filter(range(0, bufnr('$')), 'buflisted(v:val)'),
         \   'fnamemodify(bufname(v:val), ":p") =~ "^" . escape(l:cwd, "\\[].$^") . ".*"'
         \ ),
         \ 'fnamemodify(bufname(v:val), ":.")'
+        \ )
+  return uniq(sort(l:buffers))
+endfunction
+
+function! s:buffers_in_gitroot()
+  let l:git_root = trim(system('git rev-parse --show-toplevel 2>/dev/null'))
+  if l:git_root == '' || v:shell_error != 0
+    throw 'not in a git repository'
+  endif
+  let l:git_root = l:git_root .. '/'
+  let l:buffers = map(
+        \ filter(
+        \   filter(range(0, bufnr('$')), 'buflisted(v:val)'),
+        \   'fnamemodify(bufname(v:val), ":p") =~ "^" . escape(l:git_root, "\\[].$^") . ".*"'
+        \ ),
+        \ 'strpart(fnamemodify(bufname(v:val), ":p"), len(l:git_root))'
         \ )
   return uniq(sort(l:buffers))
 endfunction
@@ -301,6 +317,25 @@ function! repl#sendargs(cmd_args)
   endif
   call s:chansend_buflines([a:cmd_args])
 endfunction
+
+function! repl#aider_buffers(preamble) " public version
+  if a:preamble != '/add' && a:preamble != '/drop'
+    throw 'Unsupported command argument'
+  endif
+  let file_args = join(s:buffers_in_gitroot(), ' ')
+  echom file_args
+  call repl#sendargs(a:preamble .. ' ' .. file_args)
+endfunction
+
+function! repl#yolo()
+  if !s:repl_id_job_exists()
+    call repl#open()
+  endif
+  let yolo_message = "print(\"YOLO: You Only Live Once!\")"
+  call s:chansend_buflines([yolo_message])
+  echom 'YOLO mode activated!'
+endfunction
+
 
 function! repl#sendcell(...)
   if !s:repl_id_job_exists()

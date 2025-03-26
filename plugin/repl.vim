@@ -89,6 +89,12 @@ function! s:configure_constants()
   if !s:cmd_exists('Aider')
     command! Aider call repl#open(#{cmd: 'aider', open_window: 'tabnew', repl_type: 'aider'})
   endif
+  if !s:cmd_exists('AiderBuffers')
+    function! s:complete_add_drop(arglead, cmdline, cursorpos)
+      return ['/add', '/drop']
+    endfunction
+    command! -nargs=1 -complete=customlist,s:complete_add_drop AiderBuffers call repl#aider_buffers(<f-args>)
+  endif
 endfunction
 
 " Pluggable mappings
