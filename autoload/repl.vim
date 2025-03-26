@@ -195,8 +195,7 @@ endfunction
 
 function! repl#sendline(...)
   if !s:repl_id_job_exists()
-    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
-    return
+    call repl#attach()
   endif
   call s:send_block(line('.'), line('.'), 'n')
   normal! j0
@@ -204,8 +203,7 @@ endfunction
 
 function! repl#sendvisual(mode)
   if !s:repl_id_job_exists()
-    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
-    return
+    call repl#attach()
   endif
   call s:send_block('not applicable', 'not applicable', a:mode)
 endfunction
@@ -257,8 +255,7 @@ endfunction
 
 function! s:send_block(firstline_num, lastline_num, mode)
   if !s:repl_id_job_exists()
-    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
-    return
+    call repl#attach()
   endif
   let buflines_raw = a:mode ==? 'v' || a:mode == "\<c-v>"
         \ ? s:get_visual_selection(a:mode)
@@ -274,15 +271,14 @@ endfunction
 
 function! repl#sendargs(cmd_args)
   if !s:repl_id_job_exists()
-    call repl#open() " If there is no repl window opened, create one
+    call repl#attach()
   endif
   call s:chansend_buflines([a:cmd_args])
 endfunction
 
 function! repl#sendcell(...)
   if !s:repl_id_job_exists()
-    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
-    return
+    call repl#attach()
   endif
   " This supports single-line comments with only a prefix (lije '## %s') and
   " comments that fully surround (like '<!-- %s -->'). commentstring is
