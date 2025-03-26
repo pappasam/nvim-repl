@@ -27,7 +27,7 @@ endfunction
 " Configuration:
 
 let s:default_commands = {
-      \ 'python': 'python',
+      \ 'python': #{cmd: 'ipython --TerminalInteractiveShell.editing_mode=emacs --quiet --no-autoindent -i -c "%config InteractiveShell.ast_node_interactivity=\"last_expr_or_assign\""', repl_type: 'ipython'},
       \ }
 
 " User configuration
