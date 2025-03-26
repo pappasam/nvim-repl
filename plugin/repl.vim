@@ -44,17 +44,17 @@ function! s:configure_constants()
         \ )
 
   if !exists('g:repl_default')
-    let g:repl_default = #{cmd: &shell, prefix: '', suffix: '', repl_type: ''}
+    let g:repl_default = #{cmd: &shell, repl_type: ''}
   elseif type(g:repl_default) == v:t_dict
-    let g:repl_default = extendnew(#{cmd: &shell, prefix: '', suffix: '', repl_type: ''}, g:repl_default)
+    let g:repl_default = extendnew(#{cmd: &shell, repl_type: ''}, g:repl_default)
   elseif type(g:repl_default) != v:t_string
     throw 'g:repl_default must be a String or a Dict'
   endif
 
-  if !exists('g:repl_open_window')
-    let g:repl_open_window = 'vertical split new'
-  elseif type(g:repl_open_window) != v:t_string
-    throw 'g:repl_open_window must be a String'
+  if !exists('g:repl_open_window_default')
+    let g:repl_open_window_default = 'vertical split new'
+  elseif type(g:repl_open_window_default) != v:t_string
+    throw 'g:repl_open_window_default must be a String'
   endif
 
   " Commands

@@ -89,11 +89,11 @@ xmap <silent> <Leader>r <Plug>(ReplSendVisual)
   ```
 
 - `g:repl_default`: set the default REPL if no configured REPL is found in `g:repl_filetype_commands`. Defaults to `&shell`.
-- `g:repl_open_window`: Vim command used to open the repl window. Uses Vim's built-in commands for maximum flexibility.
+- `g:repl_open_window_default`: Default Vim command used to open the repl window. Uses Vim's built-in commands for maximum flexibility.
   - Vertical split (default): `vertical split new`
   - Vertical split with width of 79 specified: `vertical 79split new`
   - Left split: `leftabove vertical split new`
-  - See `help opening-window` for additional options
+  - See `:help opening-window` for additional options
 
 ## Cells
 

@@ -72,15 +72,16 @@ function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
   return lines
 endfunction
 
-function! s:get_repl_from_config()
-  let config = get(g:repl_filetype_commands, &filetype, g:repl_default)
-  let t_config = type(config)
+function! s:get_repl(config)
+  let t_config = type(a:config)
   if t_config == v:t_string
-    return #{cmd: config, repl_type: '', open_window: ''}
+    return #{cmd: a:config,
+          \ repl_type: '',
+          \ open_window: g:repl_open_window_default}
   elseif t_config == v:t_dict
-    return #{cmd: config.cmd,
-          \ repl_type: get(config, 'repl_type', ''),
-          \ open_window: get(config, 'open_window', '')}
+    return #{cmd: a:config.cmd,
+          \ repl_type: get(a:config, 'repl_type', ''),
+          \ open_window: get(a:config, 'open_window', g:repl_open_window_default)}
   else
     throw 'nvim-repl config for ' .. &filetype .. 'is neither a String nor a Dict'
   endif
@@ -90,25 +91,20 @@ function! s:dequote(str)
   return substitute(a:str, '^["'']\(.*\)["'']$', '\1', '')
 endfunction
 
-function! repl#open(...)
+function! repl#open(...) " takes 0 or 1 arguments (dict)
   if s:repl_id_job_exists()
     call repl#warning('already open. To close existing repl, run ":ReplClose"')
     return
   endif
+  if a:0 == 0
+    let repl = s:get_repl(get(g:repl_filetype_commands, &filetype, g:repl_default))
+  elseif a:0 == 1
+    let repl = s:get_repl(a:1)
+  else
+    throw 'nvim-repl: repl#open only takes 0 or 1 arguments'
+  endif
   let current_window_id = win_getid()
-  if a:0 > 0
-    let repl = #{
-          \ cmd: a:1,
-          \ repl_type: s:dequote(get(a:, 2, '')),
-          \ open_window: s:dequote(get(a:, 3, ''))}
-  else
-    let repl = s:get_repl_from_config()
-  endif
-  if repl.open_window == ''
-    execute g:repl_open_window
-  else
-    execute repl.open_window
-  endif
+  execute repl.open_window
   let old_shell = &shell
   if old_shell == 'powershell'
     set shell=cmd
@@ -183,7 +179,7 @@ function! repl#sendline(...)
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
-  call repl#sendblock(line('.'), line('.'), 'n')
+  call s:send_block(line('.'), line('.'), 'n')
   normal! j0
 endfunction
 
@@ -192,7 +188,7 @@ function! repl#sendvisual(mode)
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
-  call repl#sendblock('not applicable', 'not applicable', a:mode)
+  call s:send_block('not applicable', 'not applicable', a:mode)
 endfunction
 
 function! s:arrow_down()
@@ -200,7 +196,7 @@ function! s:arrow_down()
   return "\x1b[B"
 endfunction
 
-function! repl#sendblock(firstline_num, lastline_num, mode)
+function! s:send_block(firstline_num, lastline_num, mode)
   if !s:repl_id_job_exists()
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
@@ -288,7 +284,7 @@ function! repl#sendcell(...)
     call cursor(cell_end_line_num + 1, 0)
   endif
   " add 1 to avoid sending the commented line itself to the repl
-  call repl#sendblock(cell_begin_line_num + 1, cell_end_line_num, mode())
+  call s:send_block(cell_begin_line_num + 1, cell_end_line_num, mode())
 endfunction
 
 function! repl#newcell()

@@ -52,7 +52,8 @@ keys are:
   - `ipython`: similar to default, but enters ipython's special multiline mode
     with <C-o> if more than 1 line is sent to the repl.
   - `utop`: adds `;;` to the end of the text that is sent to the repl.
-- `open_window
+- `open_window` same as `g:repl_open_window_default`, but specific to
+  configured repl.
 
 If its value is a String, the value is the `cmd`. All other options are `''`.
 
@@ -64,19 +65,19 @@ The default REPL selected. Used when no configured REPL is found for a
 particular filetype. This has the same type and behavior as the values for
 `g:repl_filetype_commands`.
 
-*g:repl_open_window*
+*g:repl_open_window_default*
 Type: String
 Default: `vertical split new`
 
-Vim command used to open the repl window. Uses Vim's built-in commands for
-maximum flexibility.
+Default Vim command used to open the repl window. Uses Vim's built-in commands
+for maximum flexibility.
 
 Examples: >
 
   - Vertical split (default): `vertical split new`
   - Vertical split with width of 79 specified: `vertical 79split new`
   - Left split: `leftabove vertical split new`
-  - See `help opening-window` for additional options
+  - See `:help opening-window` for additional options
 
 Set REPL window's width (number of columns) if `g:repl_split` set `left` / `right`.
 
@@ -129,8 +130,21 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
   Send the arguments passed to the command directly to the REPL.
 
 ==============================================================================
+                                                              *repl_functions*
+3. FUNCTIONS~
+
+Most users will use the commands above. That said, some public functions may
+be useful if you need to further customize your environment.
+
+*repl#open*
+Type: Callable[[repl_config?]]
+Default: `vertical split new`
+
+  Used to open a repl. Can be called with either 0 or 1 arguments.
+
+==============================================================================
                                                                 *repl_mappings*
-4. MAPPINGS~
+5. MAPPINGS~
 
 Pluggable, dot-repeatable mappings are provided for the use to map:
 
