@@ -33,7 +33,7 @@ this: >vim
         \ 'bash': 'bash',
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
-        \ 'ocaml': #{cmd: 'utop', suffix: ';;'},
+        \ 'ocaml': #{cmd: 'utop', repl_type: 'utop'},
         \ 'python': #{cmd: 'ipython --no-autoindent', repl_type: 'ipython'},
         \ 'r': 'R',
         \ 'sh': 'sh',
@@ -46,14 +46,14 @@ keys are:
 
 - `cmd` the command to start the repl. The command can be multiple words (for
   example, including `conda activate`) if escaped properly.
-- `prefix` text that precedes all commands sent to the repl ('' to skip).
-- `suffix` text that follows all commands sent to the repl ('' to skip).
-  Useful for ocaml, where one should set the suffix to `;;`.
 - `repl_type` unlocks different repl behaviors ('' uses default behavior).
   Supported repl types are:
   - `default`: sends lines, 1 at a time, to the repl for evaluation.
   - `ipython`: similar to default, but enters ipython's special multiline mode
     with <C-o> if more than 1 line is sent to the repl.
+  - `utop`: adds `;;` to the end of the text that is sent to the repl.
+- `open_window` same as `g:repl_open_window_default`, but specific to
+  configured repl.
 
 If its value is a String, the value is the `cmd`. All other options are `''`.
 
@@ -65,32 +65,19 @@ The default REPL selected. Used when no configured REPL is found for a
 particular filetype. This has the same type and behavior as the values for
 `g:repl_filetype_commands`.
 
-*g:repl_split*
+*g:repl_open_window_default*
 Type: String
-Default: 'vertical'
+Default: `vertical split new`
 
-Set the split position of REPL window. Default will split vertically. Vertical
-and horizontal respect the user-configured global splitright and splitbottom
-settings.
+Default Vim command used to open the repl window. Uses Vim's built-in commands
+for maximum flexibility.
 
-Available options: >
+Examples: >
 
-  - `bottom`
-  - `top`
-  - `left`
-  - `right`
-  - `horizontal`
-  - `vertical`
-
-*g:repl_height*
-Type: Number
-Default: ''
-
-Set REPL window's height (number of lines) if `g:repl_split` set `bottom` / `top`.
-
-*g:repl_width*
-Type: Number
-Default: ''
+  - Vertical split (default): `vertical split new`
+  - Vertical split with width of 79 specified: `vertical 79split new`
+  - Left split: `leftabove vertical split new`
+  - See `:help opening-window` for additional options
 
 Set REPL window's width (number of columns) if `g:repl_split` set `left` / `right`.
 
@@ -100,16 +87,8 @@ Set REPL window's width (number of columns) if `g:repl_split` set `left` / `righ
 
 *:Repl* *:ReplOpen*
 
-  Open a terminal and run the repl. All arguments are optional; no arguments
-  default to the values set in `g:repl_filetype_commands`.
-
-  - `arg1-cmd` the command to start the repl. The command can be multiple
-    words (for example, including `conda activate`) if enclosed in single
-    quotes.
-  - `arg2-prefix` text that precenes all commands sent to the repl ('' to
-    skip).
-  - `arg3-suffix` text that follows all commands sent to the repl ('' to
-    skip). Useful for ocaml.
+  Open a terminal and run the repl. Takes 0 or 1 arguments. If provided, the
+  argument has the same type as non-key values in `g:repl_filetype_commands`.
 
 *:ReplAttach*
 

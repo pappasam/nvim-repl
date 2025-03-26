@@ -72,48 +72,42 @@ function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
   return lines
 endfunction
 
-function! s:get_repl_from_config()
-  let config = get(g:repl_filetype_commands, &filetype, g:repl_default)
-  let t_config = type(config)
-  if t_config == v:t_string
-    return #{cmd: config, prefix: '', suffix: '', repl_type: ''}
+function! s:get_repl(config)
+  let t_config = type(a:config)
+  if t_config == v:t_string && len(a:config) > 0
+    if a:config[0] == '#' || a:config[0] == '{'
+      let parsed = eval(a:config)
+      return #{cmd: parsed.cmd,
+            \ repl_type: get(parsed, 'repl_type', ''),
+            \ open_window: get(parsed, 'open_window', g:repl_open_window_default)}
+    else
+      return #{cmd: a:config,
+            \ repl_type: '',
+            \ open_window: g:repl_open_window_default}
+    endif
   elseif t_config == v:t_dict
-    return #{cmd: config.cmd, prefix: get(config, 'prefix', ''), suffix: get(config, 'suffix', ''), repl_type: get(config, 'repl_type', '')}
+    return #{cmd: a:config.cmd,
+          \ repl_type: get(a:config, 'repl_type', ''),
+          \ open_window: get(a:config, 'open_window', g:repl_open_window_default)}
   else
     throw 'nvim-repl config for ' .. &filetype .. 'is neither a String nor a Dict'
   endif
 endfunction
 
-function! s:dequote(str)
-  return substitute(a:str, '^["'']\(.*\)["'']$', '\1', '')
-endfunction
-
-function! repl#open(...)
+function! repl#open(...) " takes 0 or 1 arguments (dict)
   if s:repl_id_job_exists()
     call repl#warning('already open. To close existing repl, run ":ReplClose"')
     return
   endif
+  if a:0 == 0
+    let repl = s:get_repl(get(g:repl_filetype_commands, &filetype, g:repl_default))
+  elseif a:0 == 1
+    let repl = s:get_repl(a:1)
+  else
+    throw 'nvim-repl: repl#open only takes 0 or 1 arguments'
+  endif
   let current_window_id = win_getid()
-  if a:0 > 0
-    let repl = #{cmd: a:1, prefix: s:dequote(get(a:, 2, '')), suffix: s:dequote(get(a:, 3, '')), repl_type: s:dequote(get(a:, 4, ''))}
-  else
-    let repl = s:get_repl_from_config()
-  endif
-  if g:repl_split == 'vertical'
-    execute 'vertical ' . g:repl_width .. 'split new'
-  elseif g:repl_split == 'left'
-    execute 'leftabove vertical ' .. g:repl_width .. 'split new'
-  elseif g:repl_split == 'right'
-    execute 'rightbelow vertical ' .. g:repl_width .. 'split new'
-  elseif g:repl_split == 'horizontal'
-    execute g:repl_height .. 'split new'
-  elseif g:repl_split == 'bottom'
-    execute 'rightbelow ' .. g:repl_height .. 'split new'
-  elseif g:repl_split == 'top'
-    execute 'leftabove ' .. g:repl_height .. 'split new'
-  else
-    throw 'Something went wrong, file issue with https://github.com/pappasam/nvim-repl...'
-  endif
+  execute repl.open_window
   let old_shell = &shell
   if old_shell == 'powershell'
     set shell=cmd
@@ -188,7 +182,7 @@ function! repl#sendline(...)
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
-  call repl#sendblock(line('.'), line('.'), 'n')
+  call s:send_block(line('.'), line('.'), 'n')
   normal! j0
 endfunction
 
@@ -197,7 +191,7 @@ function! repl#sendvisual(mode)
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
-  call repl#sendblock('not applicable', 'not applicable', a:mode)
+  call s:send_block('not applicable', 'not applicable', a:mode)
 endfunction
 
 function! s:arrow_down()
@@ -205,7 +199,7 @@ function! s:arrow_down()
   return "\x1b[B"
 endfunction
 
-function! repl#sendblock(firstline_num, lastline_num, mode)
+function! s:send_block(firstline_num, lastline_num, mode)
   if !s:repl_id_job_exists()
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
@@ -214,17 +208,11 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
         \ ? s:get_visual_selection(a:mode)
         \ : getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
   let buflines_chansend = []
-  if b:repl.prefix != ''
-    call add(buflines_chansend, b:repl.prefix)
-  endif
   for line in buflines_raw
     if line != "" && line !~ "^\\s*#\\s*%%.*"
       let buflines_chansend += [line] " remove the empty line and #%% line
     endif
   endfor
-  if b:repl.suffix != ''
-    call add(buflines_chansend, b:repl.suffix)
-  endif
   if b:repl.repl_type == 'ipython'
     if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
       let buflines_chansend += [""] " If last line has leading whitespace, add 1 line
@@ -237,6 +225,11 @@ function! repl#sendblock(firstline_num, lastline_num, mode)
       call chansend(b:repl_id_job, s:arrow_down())
     endif
     call chansend(b:repl_id_job, "\r")
+  elseif b:repl.repl_type == 'utop'
+    if len(buflines_chansend) > 0
+      let buflines_chansend[-1] = buflines_chansend[-1] .. ' ;;'
+    endif
+    call chansend(b:repl_id_job, buflines_chansend + [""])
   else
     if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
       let buflines_chansend += ["", ""] " If last line has leading whitespace, add 2 lines
@@ -294,7 +287,7 @@ function! repl#sendcell(...)
     call cursor(cell_end_line_num + 1, 0)
   endif
   " add 1 to avoid sending the commented line itself to the repl
-  call repl#sendblock(cell_begin_line_num + 1, cell_end_line_num, mode())
+  call s:send_block(cell_begin_line_num + 1, cell_end_line_num, mode())
 endfunction
 
 function! repl#newcell()
