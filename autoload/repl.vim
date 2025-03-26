@@ -154,13 +154,31 @@ endfunction
 
 function! repl#close()
   set lazyredraw
-  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_id_job})
   let current_window_id = win_getid()
-  for win in repl_windows
-    call win_gotoid(win.winid)
-    quit
+  let current_tab = tabpagenr()
+  let current_repl_id = get(b:, 'repl_id_job', '')
+  if empty(current_repl_id)
+    set nolazyredraw
+    redraw
+    return
+  endif
+  let tab_count = tabpagenr('$')
+  for t in range(1, tab_count)
+    if t <= tabpagenr('$')
+      execute 'tabnext ' . t
+      let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == current_repl_id})
+      for win in repl_windows
+        call win_gotoid(win.winid)
+        quit
+      endfor
+    endif
   endfor
-  call win_gotoid(current_window_id)
+  if current_tab <= tabpagenr('$')
+    execute 'tabnext ' . current_tab
+  endif
+  if win_id2tabwin(current_window_id)[0] > 0
+    call win_gotoid(current_window_id)
+  endif
   set nolazyredraw
   redraw
 endfunction
