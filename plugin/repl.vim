@@ -146,7 +146,7 @@ function! s:configure_constants()
             \  '/weak-model',
             \  '/web']
     endfunction
-    command! -nargs=1 -complete=customlist,s:complete_aider_send AiderSend call repl#aidersend(<f-args>)
+    command! -nargs=? -complete=customlist,s:complete_aider_send AiderSend call repl#aidersend(<f-args>)
   endif
 endfunction
 

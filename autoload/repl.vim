@@ -330,6 +330,55 @@ function! s:send_block(firstline_num, lastline_num, mode)
   call s:chansend_buflines(buflines_chansend)
 endfunction
 
+function! s:create_floating_input(prompt, callback)
+  let original_win = win_getid()
+  let buf = nvim_create_buf(v:false, v:true)
+  call nvim_buf_set_option(buf, 'bufhidden', 'wipe')
+  let width = 60
+  let height = 20
+  let win_height = nvim_get_option('lines')
+  let win_width = nvim_get_option('columns')
+  let row = (win_height - height) / 2
+  let col = (win_width - width) / 2
+  let opts = {
+        \ 'relative': 'editor',
+        \ 'width': width,
+        \ 'height': height,
+        \ 'col': col,
+        \ 'row': row,
+        \ 'anchor': 'NW',
+        \ 'style': 'minimal',
+        \ 'border': 'rounded'
+        \ }
+  let win = nvim_open_win(buf, v:true, opts)
+  autocmd BufUnload <buffer> call s:process_input(b:input_data_store)
+  call nvim_win_set_option(win, 'winhl', 'Normal:Floating')
+  call nvim_buf_set_lines(buf, 0, -1, v:true, [a:prompt])
+  call nvim_win_set_cursor(win, [1, len(a:prompt)])
+  let b:input_data_store = {
+        \ 'win': win,
+        \ 'buf': buf,
+        \ 'callback': a:callback,
+        \ 'prompt_len': len(a:prompt),
+        \ 'original_win': original_win
+        \ }
+  startinsert!
+endfunction
+
+function! s:process_input(input_data)
+  let lines = nvim_buf_get_lines(a:input_data.buf, 0, 1, v:false)
+  if len(lines) > 0
+    let input_text = lines[0][a:input_data.prompt_len:]
+    if nvim_win_is_valid(a:input_data.win)
+      call nvim_win_close(a:input_data.win, v:true)
+    endif
+    if nvim_win_is_valid(a:input_data.original_win)
+      call nvim_set_current_win(a:input_data.original_win)
+      call a:input_data.callback(input_text)
+    endif
+  endif
+endfunction
+
 function! repl#sendargs(cmd_args)
   if !s:repl_id_job_exists()
     call repl#attach()
@@ -338,9 +387,20 @@ function! repl#sendargs(cmd_args)
   echom "repl: sent '" .. a:cmd_args .. "'"
 endfunction
 
-function! repl#aidersend(cmd_args)
+function s:aidersend(cmd_args)
   call repl#sendargs(a:cmd_args)
   call s:goto_jobid_window(b:repl_id_job)
+endfunction
+
+function! repl#aidersend(...)
+  if a:0 == 0
+    call s:create_floating_input('', function('s:aidersend'))
+  elseif a:0 == 1
+    let cmd_args = a:1
+    call s:aidersend(cmd_args)
+  else
+    throw 'nvim-repl: repl#aidersend only takes 0 or 1 arguments'
+  endif
 endfunction
 
 function! repl#aiderbufall(preamble)
@@ -359,18 +419,17 @@ function! repl#aiderbuf(preamble)
   call repl#sendargs(a:preamble .. ' ' .. path)
 endfunction
 
-" for use with Aider's notifications_command config option
 function! repl#aider_notifications_command()
   echom 'repl: aider finished, buffers updated!'
   let current_bufnr = bufnr('%')
+  let current_tabnr = tabpagenr()
   for bufnr in range(1, bufnr('$'))
-    if bufexists(bufnr) && bufloaded(bufnr)
-      if getbufvar(bufnr, '&buftype') == ''
-        execute 'buffer ' .. bufnr
-        checktime
-      endif
+    if bufexists(bufnr) && getbufvar(bufnr, '&buftype') == ''
+      call bufload(bufnr)
+      execute 'checktime ' .. bufnr
     endif
   endfor
+  execute 'tabnext ' .. current_tabnr
   if bufexists(current_bufnr) && bufloaded(current_bufnr)
     execute 'buffer ' .. current_bufnr
   endif
