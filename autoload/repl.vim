@@ -348,6 +348,7 @@ function! repl#sendargs(cmd_args)
     call repl#attach()
   endif
   call s:chansend_buflines([a:cmd_args])
+  echom "repl: sent '" .. a:cmd_args .. "'"
 endfunction
 
 function! repl#aidersend(cmd_args)
