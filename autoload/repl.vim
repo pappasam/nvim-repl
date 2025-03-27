@@ -22,44 +22,31 @@ function! s:goto_jobid_window(job_id)
   endif
   let found = 0
   let current_tab = tabpagenr()
-
-  " Check all windows in current tab
   for winnr in range(1, winnr('$'))
     let bufnr = winbufnr(winnr)
-    " Check if this buffer has the job we're looking for
     let chan_info = nvim_get_chan_info(a:job_id)
     if has_key(chan_info, 'buffer') && chan_info.buffer == bufnr
-      " Found it in current tab
       execute winnr . "wincmd w"
       return 1
     endif
   endfor
-  " Not found in current tab, search through all tabs
   let last_tab = tabpagenr('$')
-  " Loop through all tabs
   for tab_num in range(1, last_tab)
-    " Skip current tab as we already checked it
     if tab_num == current_tab
       continue
     endif
-    " Get list of windows in this tab
     let buffers_in_tab = tabpagebuflist(tab_num)
-    " Check each buffer in this tab
     for idx in range(len(buffers_in_tab))
       let bufnr = buffers_in_tab[idx]
-      " Check if this buffer has the job we're looking for
       let chan_info = nvim_get_chan_info(a:job_id)
       if has_key(chan_info, 'buffer') && chan_info.buffer == bufnr
-        " Found it! Go to that tab
         execute "tabnext " . tab_num
-        " Get the window number in this tab (idx is 0-based, window numbers are 1-based)
         let win_num = idx + 1
         execute win_num . "wincmd w"
         return 1
       endif
     endfor
   endfor
-  " If we get here, job exists but isn't displayed in any window
   echo "Job " . a:job_id . " exists but isn't displayed in any window"
   return 0
 endfunction
@@ -370,6 +357,24 @@ function! repl#aiderbuf(preamble)
   endif
   let path = s:path_relative_to_git_root(expand('%:p'))
   call repl#sendargs(a:preamble .. ' ' .. path)
+endfunction
+
+" for use with Aider's notifications_command config option
+function! repl#aider_notifications_command()
+  " echo useful to remove this function call from the command line
+  echo ''
+  let current_bufnr = bufnr('%')
+  for bufnr in range(1, bufnr('$'))
+    if bufexists(bufnr) && bufloaded(bufnr)
+      if getbufvar(bufnr, '&buftype') == ''
+        execute 'buffer ' . bufnr
+        checktime
+      endif
+    endif
+  endfor
+  if bufexists(current_bufnr) && bufloaded(current_bufnr)
+    execute 'buffer ' . current_bufnr
+  endif
 endfunction
 
 function! repl#sendcell(...)
