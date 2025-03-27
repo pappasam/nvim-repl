@@ -294,7 +294,7 @@ function! s:send_block(firstline_num, lastline_num, mode)
   call s:chansend_buflines(buflines_chansend)
 endfunction
 
-function! s:create_floating_input(prompt, callback, filetype)
+function! s:create_floating_input(callback, filetype)
   let parent_repl_id_job = b:repl_id_job
   let original_win = win_getid()
   let buf = nvim_create_buf(v:false, v:true)
@@ -324,14 +324,10 @@ function! s:create_floating_input(prompt, callback, filetype)
   cnoreabbrev <buffer> wq quit
   cnoreabbrev <buffer> x quit
   let b:repl_id_job = parent_repl_id_job
-  call nvim_win_set_option(win, 'winhl', 'Normal:Floating')
-  call nvim_buf_set_lines(buf, 0, -1, v:true, [a:prompt])
-  call nvim_win_set_cursor(win, [1, len(a:prompt)])
   let b:input_data_store = {
         \ 'win': win,
         \ 'buf': buf,
         \ 'callback': a:callback,
-        \ 'prompt_len': len(a:prompt),
         \ 'original_win': original_win
         \ }
   execute 'setlocal filetype=' .. a:filetype
@@ -396,7 +392,7 @@ function! repl#aidersend(...)
       call repl#warning('no repl exists')
       return
     endif
-    call s:create_floating_input('', function('s:aider_send_float_callback'), 'markdown')
+    call s:create_floating_input(function('s:aider_send_float_callback'), 'markdown')
   elseif a:0 == 1
     let cmd_args = a:1
     call repl#sendargs(cmd_args)
