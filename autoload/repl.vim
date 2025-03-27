@@ -294,7 +294,7 @@ function! s:send_block(firstline_num, lastline_num, mode)
   call s:chansend_buflines(buflines_chansend)
 endfunction
 
-function! s:create_floating_input(prompt, callback)
+function! s:create_floating_input(prompt, callback, filetype)
   let parent_repl_id_job = b:repl_id_job
   let original_win = win_getid()
   let buf = nvim_create_buf(v:false, v:true)
@@ -328,6 +328,7 @@ function! s:create_floating_input(prompt, callback)
         \ 'prompt_len': len(a:prompt),
         \ 'original_win': original_win
         \ }
+  execute 'setlocal filetype=' .. a:filetype
   startinsert!
 endfunction
 
@@ -351,9 +352,12 @@ function! repl#sendargs(cmd_args)
   endif
   let t_cmd_args = type(a:cmd_args)
   if t_cmd_args == v:t_string
-    let args = [a:cmd_args]
+    let args = [trim(a:cmd_args, '', 2)]
   else
-    let args = map(a:cmd_args, 'trim(v:val, "", 2)')
+    let args = []
+    for arg in a:cmd_args
+      call add(args, trim(arg, '', 2))
+    endfor
   endif
   call s:chansend_buflines(args)
   echom "repl: sent '" .. join(args, "\n") .. "'"
@@ -361,7 +365,7 @@ endfunction
 
 function! repl#aidersend(...)
   if a:0 == 0
-    call s:create_floating_input('', function('repl#sendargs'))
+    call s:create_floating_input('', function('repl#sendargs'), 'markdown')
   elseif a:0 == 1
     let cmd_args = a:1
     call repl#sendargs(cmd_args)
