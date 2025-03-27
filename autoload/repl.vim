@@ -9,7 +9,7 @@
 
 function! repl#warning(msg)
   echohl WarningMsg
-  echom 'repl: ' . a:msg
+  echom 'repl: ' .. a:msg
   echohl None
 endfunction
 
@@ -17,7 +17,7 @@ let s:active_repls = {} " type: {jobid: [filepath, repl]}
 
 function! s:goto_jobid_window(job_id)
   if !has('nvim') || !jobwait([a:job_id], 0)[0] == -1
-    echom "Job " . a:job_id . " does not exist or has already completed"
+    echom "Job " .. a:job_id .. " does not exist or has already completed"
     return
   endif
   let found = 0
@@ -26,7 +26,7 @@ function! s:goto_jobid_window(job_id)
     let bufnr = winbufnr(winnr)
     let chan_info = nvim_get_chan_info(a:job_id)
     if has_key(chan_info, 'buffer') && chan_info.buffer == bufnr
-      execute winnr . "wincmd w"
+      execute winnr .. "wincmd w"
       return 1
     endif
   endfor
@@ -40,14 +40,14 @@ function! s:goto_jobid_window(job_id)
       let bufnr = buffers_in_tab[idx]
       let chan_info = nvim_get_chan_info(a:job_id)
       if has_key(chan_info, 'buffer') && chan_info.buffer == bufnr
-        execute "tabnext " . tab_num
+        execute "tabnext " .. tab_num
         let win_num = idx + 1
-        execute win_num . "wincmd w"
+        execute win_num .. "wincmd w"
         return 1
       endif
     endfor
   endfor
-  echo "Job " . a:job_id . " exists but isn't displayed in any window"
+  echo "Job " .. a:job_id .. " exists but isn't displayed in any window"
   return 0
 endfunction
 
@@ -69,7 +69,7 @@ function! s:buffers_in_gitroot()
   let l:buffers = map(
         \ filter(
         \   filter(range(0, bufnr('$')), 'buflisted(v:val)'),
-        \   'fnamemodify(bufname(v:val), ":p") =~ "^" . escape(l:git_root, "\\[].$^") . ".*"'
+        \   'fnamemodify(bufname(v:val), ":p") =~ "^" .. escape(l:git_root, "\\[].$^") .. ".*"'
         \ ),
         \ 'strpart(fnamemodify(bufname(v:val), ":p"), len(l:git_root))'
         \ )
@@ -224,7 +224,7 @@ function! repl#close()
   let tab_count = tabpagenr('$')
   for t in range(1, tab_count)
     if t <= tabpagenr('$')
-      execute 'tabnext ' . t
+      execute 'tabnext ' .. t
       let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == current_repl_id})
       for win in repl_windows
         call win_gotoid(win.winid)
@@ -233,7 +233,7 @@ function! repl#close()
     endif
   endfor
   if current_tab <= tabpagenr('$')
-    execute 'tabnext ' . current_tab
+    execute 'tabnext ' .. current_tab
   endif
   if win_id2tabwin(current_window_id)[0] > 0
     call win_gotoid(current_window_id)
@@ -366,13 +366,13 @@ function! repl#aider_notifications_command()
   for bufnr in range(1, bufnr('$'))
     if bufexists(bufnr) && bufloaded(bufnr)
       if getbufvar(bufnr, '&buftype') == ''
-        execute 'buffer ' . bufnr
+        execute 'buffer ' .. bufnr
         checktime
       endif
     endif
   endfor
   if bufexists(current_bufnr) && bufloaded(current_bufnr)
-    execute 'buffer ' . current_bufnr
+    execute 'buffer ' .. current_bufnr
   endif
 endfunction
 
