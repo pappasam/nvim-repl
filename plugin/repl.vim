@@ -87,7 +87,7 @@ function! s:configure_constants()
     command! -nargs=1 ReplSend call repl#sendargs(<f-args>)
   endif
   if !s:cmd_exists('Aider')
-    command! Aider call repl#open(#{cmd: 'aider', open_window: 'tabnew', repl_type: 'aider'})
+    command! Aider call repl#aideropen()
   endif
   if !s:cmd_exists('AiderBufAll')
     function! s:complete_aider_bufall_add_drop(arglead, cmdline, cursorpos)

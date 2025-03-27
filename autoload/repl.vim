@@ -361,8 +361,7 @@ endfunction
 
 " for use with Aider's notifications_command config option
 function! repl#aider_notifications_command()
-  " echo useful to remove this function call from the command line
-  echo ''
+  echom 'repl: aider finished, buffers updated!'
   let current_bufnr = bufnr('%')
   for bufnr in range(1, bufnr('$'))
     if bufexists(bufnr) && bufloaded(bufnr)
@@ -375,6 +374,11 @@ function! repl#aider_notifications_command()
   if bufexists(current_bufnr) && bufloaded(current_bufnr)
     execute 'buffer ' . current_bufnr
   endif
+endfunction
+
+function! repl#aideropen()
+  let cmd = "aider --notifications --notifications-command=\"nvim --server $NVIM --remote-send '<C-\\><C-n>:call repl#aider_notifications_command()<CR>'\""
+  call repl#open(#{cmd: cmd, open_window: 'tabnew', repl_type: 'aider'})
 endfunction
 
 function! repl#sendcell(...)
