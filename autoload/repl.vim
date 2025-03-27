@@ -15,42 +15,6 @@ endfunction
 
 let s:active_repls = {} " type: {jobid: [filepath, repl]}
 
-function! s:goto_jobid_window(job_id)
-  if !has('nvim') || !jobwait([a:job_id], 0)[0] == -1
-    echom "Job " .. a:job_id .. " does not exist or has already completed"
-    return
-  endif
-  let found = 0
-  let current_tab = tabpagenr()
-  for winnr in range(1, winnr('$'))
-    let bufnr = winbufnr(winnr)
-    let chan_info = nvim_get_chan_info(a:job_id)
-    if has_key(chan_info, 'buffer') && chan_info.buffer == bufnr
-      execute winnr .. "wincmd w"
-      return 1
-    endif
-  endfor
-  let last_tab = tabpagenr('$')
-  for tab_num in range(1, last_tab)
-    if tab_num == current_tab
-      continue
-    endif
-    let buffers_in_tab = tabpagebuflist(tab_num)
-    for idx in range(len(buffers_in_tab))
-      let bufnr = buffers_in_tab[idx]
-      let chan_info = nvim_get_chan_info(a:job_id)
-      if has_key(chan_info, 'buffer') && chan_info.buffer == bufnr
-        execute "tabnext " .. tab_num
-        let win_num = idx + 1
-        execute win_num .. "wincmd w"
-        return 1
-      endif
-    endfor
-  endfor
-  echo "Job " .. a:job_id .. " exists but isn't displayed in any window"
-  return 0
-endfunction
-
 function! s:path_relative_to_git_root(path)
   let git_root = trim(system('git rev-parse --show-toplevel 2>/dev/null'))
   if git_root == '' || v:shell_error != 0
@@ -395,17 +359,12 @@ function! repl#sendargs(cmd_args)
   echom "repl: sent '" .. join(args, "\n") .. "'"
 endfunction
 
-function s:aidersend(cmd_args)
-  call repl#sendargs(a:cmd_args)
-  call s:goto_jobid_window(b:repl_id_job)
-endfunction
-
 function! repl#aidersend(...)
   if a:0 == 0
-    call s:create_floating_input('', function('s:aidersend'))
+    call s:create_floating_input('', function('repl#sendargs'))
   elseif a:0 == 1
     let cmd_args = a:1
-    call s:aidersend(cmd_args)
+    call repl#sendargs(cmd_args)
   else
     throw 'nvim-repl: repl#aidersend only takes 0 or 1 arguments'
   endif
