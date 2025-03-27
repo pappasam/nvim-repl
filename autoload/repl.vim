@@ -317,6 +317,12 @@ function! s:create_floating_input(prompt, callback, filetype)
         \ }
   let win = nvim_open_win(buf, v:true, opts)
   autocmd BufUnload <buffer> call s:process_input(b:input_data_store)
+  " necessary so that folks don't try to save and get errors
+  cnoreabbrev <buffer> WQ quit
+  cnoreabbrev <buffer> Wq quit
+  cnoreabbrev <buffer> w quit
+  cnoreabbrev <buffer> wq quit
+  cnoreabbrev <buffer> x quit
   let b:repl_id_job = parent_repl_id_job
   call nvim_win_set_option(win, 'winhl', 'Normal:Floating')
   call nvim_buf_set_lines(buf, 0, -1, v:true, [a:prompt])
