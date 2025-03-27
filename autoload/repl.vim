@@ -331,6 +331,7 @@ function! s:send_block(firstline_num, lastline_num, mode)
 endfunction
 
 function! s:create_floating_input(prompt, callback)
+  let parent_repl_id_job = b:repl_id_job
   let original_win = win_getid()
   let buf = nvim_create_buf(v:false, v:true)
   call nvim_buf_set_option(buf, 'bufhidden', 'wipe')
@@ -352,6 +353,7 @@ function! s:create_floating_input(prompt, callback)
         \ }
   let win = nvim_open_win(buf, v:true, opts)
   autocmd BufUnload <buffer> call s:process_input(b:input_data_store)
+  let b:repl_id_job = parent_repl_id_job
   call nvim_win_set_option(win, 'winhl', 'Normal:Floating')
   call nvim_buf_set_lines(buf, 0, -1, v:true, [a:prompt])
   call nvim_win_set_cursor(win, [1, len(a:prompt)])
@@ -366,9 +368,9 @@ function! s:create_floating_input(prompt, callback)
 endfunction
 
 function! s:process_input(input_data)
-  let lines = nvim_buf_get_lines(a:input_data.buf, 0, 1, v:false)
+  let lines = nvim_buf_get_lines(a:input_data.buf, 0, -1, v:false)
   if len(lines) > 0
-    let input_text = lines[0][a:input_data.prompt_len:]
+    let input_text = lines
     if nvim_win_is_valid(a:input_data.win)
       call nvim_win_close(a:input_data.win, v:true)
     endif
@@ -383,8 +385,14 @@ function! repl#sendargs(cmd_args)
   if !s:repl_id_job_exists()
     call repl#attach()
   endif
-  call s:chansend_buflines([a:cmd_args])
-  echom "repl: sent '" .. a:cmd_args .. "'"
+  let t_cmd_args = type(a:cmd_args)
+  if t_cmd_args == v:t_string
+    let args = [a:cmd_args]
+  else
+    let args = map(a:cmd_args, 'trim(v:val, "", 2)')
+  endif
+  call s:chansend_buflines(args)
+  echom "repl: sent '" .. join(args, "\n") .. "'"
 endfunction
 
 function s:aidersend(cmd_args)
@@ -408,7 +416,7 @@ function! repl#aiderbufall(preamble)
     throw 'Unsupported command argument'
   endif
   let file_args = join(s:buffers_in_gitroot(), ' ')
-  call repl#sendargs(a:preamble .. ' ' .. file_args)
+  call repl#sendargs([a:preamble .. ' ' .. file_args])
 endfunction
 
 function! repl#aiderbuf(preamble)
@@ -416,7 +424,7 @@ function! repl#aiderbuf(preamble)
     throw 'Unsupported command argument'
   endif
   let path = s:path_relative_to_git_root(expand('%:p'))
-  call repl#sendargs(a:preamble .. ' ' .. path)
+  call repl#sendargs([a:preamble .. ' ' .. path])
 endfunction
 
 function! repl#aider_notifications_command()

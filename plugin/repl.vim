@@ -84,7 +84,7 @@ function! s:configure_constants()
     command! ReplClear call repl#clear()
   endif
   if !s:cmd_exists('ReplSend')
-    command! -nargs=1 ReplSend call repl#sendargs(<f-args>)
+    command! -nargs=1 ReplSend call repl#sendargs([<f-args>])
   endif
   if !s:cmd_exists('Aider')
     command! Aider call repl#aideropen()
