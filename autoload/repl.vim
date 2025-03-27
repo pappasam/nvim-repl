@@ -392,6 +392,10 @@ endfunction
 
 function! repl#aidersend(...)
   if a:0 == 0
+    if !s:repl_id_job_exists()
+      call repl#warning('no repl exists')
+      return
+    endif
     call s:create_floating_input('', function('s:aider_send_float_callback'), 'markdown')
   elseif a:0 == 1
     let cmd_args = a:1
