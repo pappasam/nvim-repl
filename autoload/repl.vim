@@ -363,9 +363,30 @@ function! repl#sendargs(cmd_args)
   echom "repl: sent '" .. join(args, "\n") .. "'"
 endfunction
 
+function! s:aider_send_float_callback(cmd_args)
+  if !s:repl_id_job_exists()
+    call repl#attach()
+  endif
+  let args = []
+  let count = 0
+  for arg in a:cmd_args
+    let trimmed = trim(arg, '', 2)
+    if trimmed != ''
+      let count += 1
+    endif
+    call add(args, trimmed)
+  endfor
+  if count > 0
+    call s:chansend_buflines(args)
+    echom 'repl: sent float buffer to aider'
+  else
+    echom 'repl: send cancelled'
+  endif
+endfunction
+
 function! repl#aidersend(...)
   if a:0 == 0
-    call s:create_floating_input('', function('repl#sendargs'), 'markdown')
+    call s:create_floating_input('', function('s:aider_send_float_callback'), 'markdown')
   elseif a:0 == 1
     let cmd_args = a:1
     call repl#sendargs(cmd_args)
