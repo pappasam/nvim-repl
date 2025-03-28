@@ -44,20 +44,20 @@ Your configuration might look like this: >vim
         \ 'zsh': 'zsh',
         \ }
 
-A filetype's repl value can be a String or a Dict. If it's a Dict, acceptable
+A filetype's REPL value can be a String or a Dict. If it's a Dict, acceptable
 keys are:
 
-- `cmd` the command to start the repl. The command can be multiple words (for
+- `cmd` the command to start the REPL. The command can be multiple words (for
   example, including `conda activate`) if escaped properly.
-- `repl_type` unlocks different repl behaviors ('' uses default behavior).
-  Supported repl types are:
-  - `''`: the default. Sends lines, 1 at a time, to the repl for evaluation.
-  - `'aider'`: an AI repl. Supports additional aider-specific commands.
+- `repl_type` unlocks different REPL behaviors ('' uses default behavior).
+  Supported REPL types are:
+  - `''`: the default. Sends lines, 1 at a time, to the REPL for evaluation.
+  - `'aider'`: an AI REPL. Supports additional aider-specific commands.
   - `'ipython'`: similar to default, but enters ipython's special multiline mode
-    with <C-o> if more than 1 line is sent to the repl.
-  - `'utop'`: adds `;;` to the end of the text that is sent to the repl.
+    with <C-o> if more than 1 line is sent to the REPL.
+  - `'utop'`: adds `;;` to the end of the text that is sent to the REPL.
 - `open_window` same as `g:repl_open_window_default`, but specific to
-  configured repl.
+  configured REPL.
 
 If its value is a String, the value is the `cmd`. All other options are `''`.
 
@@ -73,7 +73,7 @@ particular filetype. This has the same type and behavior as the values for
 Type: String
 Default: `vertical split new`
 
-Default Vim command used to open the repl window. Uses Vim's built-in commands
+Default Vim command used to open the REPL window. Uses Vim's built-in commands
 for maximum flexibility.
 
 Examples: >
@@ -89,9 +89,11 @@ Set REPL window's width(number of columns) if `g:repl_split` set `left` / `right
                                                                 *repl_commands*
 3. COMMANDS~
 
+Unless otherwise specified, assume a command takes 0 arguments.
+
 *:Repl* *:ReplOpen*
 
-  Open a terminal and run the repl. Takes 0 or 1 arguments. If provided, the
+  Open a terminal and run the REPL. Takes 0 or 1 arguments. If provided, the
   argument has the same type as non-key values in `g:repl_filetype_commands`.
 
 *:ReplAttach*
@@ -124,6 +126,10 @@ Set REPL window's width(number of columns) if `g:repl_split` set `left` / `right
 *:ReplSend*
 
   Send the arguments passed to the command directly to the REPL.
+
+*:Aider*
+
+  Open a terminal and run an aider REPL.
 
 *:AiderSend*
 
