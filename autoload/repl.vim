@@ -351,11 +351,6 @@ function! s:create_floating_input(callback)
   let win = nvim_open_win(buf, v:true, opts)
   autocmd BufUnload <buffer> call s:process_input(b:input_data_store)
   " necessary so that folks don't try to save and get errors
-  cnoreabbrev <buffer> WQ quit
-  cnoreabbrev <buffer> Wq quit
-  cnoreabbrev <buffer> w quit
-  cnoreabbrev <buffer> wq quit
-  cnoreabbrev <buffer> x quit
   let b:input_data_store = {
         \ 'win': win,
         \ 'buf': buf,
@@ -403,7 +398,7 @@ function! s:sendargs_float_callback(cmd_args)
   endfor
   if count > 0
     call s:chansend_buflines(args)
-    call repl#info('sent float buffer to aider')
+    call repl#info('sent text to aider')
   else
     call repl#warning('send cancelled')
   endif
