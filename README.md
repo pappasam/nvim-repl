@@ -20,7 +20,6 @@ From within Neovim, type:
 
 ![demo](images/nvim-repl-demo.gif)
 
-
 ### Aider AI
 
 ![demo](images/nvim-repl-aider-demo.gif)
@@ -108,3 +107,10 @@ putStrLn "I am the third cell"
 If you find yourself in Terminal mode, use `<C-\><C-n>` instead of `<Esc>` to return to Normal mode.
 
 Type `:help Terminal-mode` and `:help CTRL-\_CTRL-N` for more information.
+
+### Recommended aider configuration?
+
+The built-in aider integration overrides aider's `--notifications` and `--notifications-command` for a smooth Neovim integration. All other settings default to the user's aider configuration file and environment. To that end, we recommend:
+
+1. Use `$AIDER_MODEL` to specify your preferred model before opening Neovim.
+2. For other settings, please reference the Author's current [aider configuration](https://github.com/pappasam/config/blob/main/dotfiles/.aider.conf.yml) for inspiration.
