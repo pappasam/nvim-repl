@@ -20,6 +20,11 @@ From within Neovim, type:
 
 ![demo](images/nvim-repl-demo.gif)
 
+
+### Aider AI
+
+![demo](images/nvim-repl-aider-demo.gif)
+
 ## Installation
 
 Neovim REPL is a [normal Neovim package](https://neovim.io/doc/user/usr_05.html#_adding-a-package).
