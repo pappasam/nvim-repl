@@ -7,6 +7,12 @@
 " License:        MIT
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+function! repl#info(msg)
+  echohl DiagnosticInfo
+  echom 'repl: ' .. a:msg
+  echohl None
+endfunction
+
 function! repl#warning(msg)
   echohl WarningMsg
   echom 'repl: ' .. a:msg
@@ -53,7 +59,7 @@ function! s:cleanup(bufnr) abort
     quit
   endfor
   unlet s:active_repls[job_id]
-  echom 'repl: closed!'
+  call repl#info('closed!')
 endfunction
 
 function! s:repl_reset_visual_position()
@@ -146,7 +152,7 @@ function! repl#open(...) " takes 0 or 1 arguments (dict)
   let b:repl = repl
   let &shell = old_shell
   let s:active_repls[id_job] = [expand('%:.'), repl]
-  echom 'repl: opened!'
+  call repl#info('opened!')
 endfunction
 
 function! repl#attach()
@@ -174,7 +180,7 @@ function! repl#attach()
   endif
   let b:repl_id_job = jobs[choice - 1][0]
   let b:repl = jobs[choice - 1][1]
-  echom 'repl: attached'
+  call repl#info('attached')
 endfunction
 
 function! repl#close()
@@ -374,7 +380,7 @@ function! repl#sendargs(cmd_args)
     endfor
   endif
   call s:chansend_buflines(args)
-  echom "repl: sent '" .. join(args, "\n") .. "'"
+  call repl#info("sent '" .. trim(join(args, "\n")) .. "'")
 endfunction
 
 function! s:aider_send_float_callback(cmd_args)
@@ -395,7 +401,7 @@ function! s:aider_send_float_callback(cmd_args)
   endfor
   if count > 0
     call s:chansend_buflines(args)
-    echom 'repl: sent float buffer to aider'
+    call repl#info('sent float buffer to aider')
   else
     call repl#warning('send cancelled')
   endif
@@ -451,7 +457,7 @@ function! repl#aiderbuf(preamble)
 endfunction
 
 function! repl#aider_notifications_command()
-  echom 'repl: aider finished, buffers updated!'
+  call repl#info('aider finished, buffers updated!')
   let current_bufnr = bufnr('%')
   let current_tabnr = tabpagenr()
   for bufnr in range(1, bufnr('$'))
