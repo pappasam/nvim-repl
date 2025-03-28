@@ -37,7 +37,6 @@ Your configuration might look like this: >vim
         \ 'bash': 'bash',
         \ 'javascript': 'node',
         \ 'haskell': 'ghci',
-        \ 'ocaml': #{cmd: 'utop', repl_type: 'utop'},
         \ 'r': 'R',
         \ 'sh': 'sh',
         \ 'vim': 'nvim --clean -ERM',
