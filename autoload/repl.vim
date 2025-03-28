@@ -339,6 +339,10 @@ function! s:create_floating_input(callback)
   let row = (win_height - height) / 2
   let col = (win_width - width) / 2
   let opts = {
+        \ 'title': 'REPL: ' .. parent_repl.repl_type,
+        \ 'title_pos': 'center',
+        \ 'footer': '&ft=' .. parent_filetype,
+        \ 'footer_pos': 'center',
         \ 'relative': 'editor',
         \ 'width': width,
         \ 'height': height,
@@ -349,6 +353,7 @@ function! s:create_floating_input(callback)
         \ 'border': 'rounded'
         \ }
   let win = nvim_open_win(buf, v:true, opts)
+  call nvim_set_option_value('winhl', 'FloatTitle:NormalFloat,FloatFooter:NormalFloat', {'win': win})
   autocmd BufUnload <buffer> call s:process_input(b:input_data_store)
   " necessary so that folks don't try to save and get errors
   let b:input_data_store = {
