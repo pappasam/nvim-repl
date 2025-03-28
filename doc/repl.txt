@@ -181,8 +181,47 @@ Note: pluggable mappings require a recursive mapping. Eg, don't try to
 "nnoremap" a pluggable mapping. It won't work.
 
 ==============================================================================
+                                                                  *repl_cells*
+5. CELLS~
+
+Cells are denoted by full-line comments that begin with the characters `%%`.
+
+Comments are identified by your buffer's filetype's 'commentstring'.
+
+See some examples below:
+
+Python: >python
+
+  # %%
+  print("I am the first cell")
+  print("I am still the first cell")
+
+  # %% anything can follow
+  print("I am the second cell")
+  print("I am still the second cell")
+  print("I am still, still the second cell")
+  # %%
+
+  print("I am the third cell")
+
+Haskell: >haskell
+
+  -- %%
+  putStrLn "I am the first cell"
+  putStrLn "I am still the first cell"
+
+  -- %% anything can follow
+  putStrLn "I am the second cell"
+  putStrLn "I am still the second cell"
+  putStrLn "I am still, still the second cell"
+  -- %%
+
+  putStrLn "I am the third cell"
+
+
+==============================================================================
                                                                  *repl_credits*
-5. CREDITS~
+6. CREDITS~
 
 This plugin was inspired by vim-slime: https://github.com/jpalardy/vim-slime .
 

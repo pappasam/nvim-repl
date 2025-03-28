@@ -60,46 +60,6 @@ Configuration for <https://github.com/folke/lazy.nvim>
 
 </details>
 
-## Cells
-
-Cells are denoted by full-line comments that begin with the characters `%%`.
-
-Comments are identified by your buffer's filetype's `'commentstring'`.
-
-See some examples below:
-
-### Python
-
-```python
-# %%
-print("I am the first cell")
-print("I am still the first cell")
-
-# %% anything can follow
-print("I am the second cell")
-print("I am still the second cell")
-print("I am still, still the second cell")
-# %%
-
-print("I am the third cell")
-```
-
-### Haskell
-
-```haskell
--- %%
-putStrLn "I am the first cell"
-putStrLn "I am still the first cell"
-
--- %% anything can follow
-putStrLn "I am the second cell"
-putStrLn "I am still the second cell"
-putStrLn "I am still, still the second cell"
--- %%
-
-putStrLn "I am the third cell"
-```
-
 ## FAQ
 
 ### Escape doesn't work in Terminal mode
@@ -108,7 +68,7 @@ If you find yourself in Terminal mode, use `<C-\><C-n>` instead of `<Esc>` to re
 
 Type `:help Terminal-mode` and `:help CTRL-\_CTRL-N` for more information.
 
-### Recommended aider configuration?
+### Recommended aider configuration
 
 The built-in aider integration overrides aider's `--notifications` and `--notifications-command` for a smooth Neovim integration. All other settings default to the user's aider configuration file and environment. To that end, we recommend:
 
