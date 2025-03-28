@@ -8,9 +8,21 @@ Works with any REPL, but contains custom support for the following REPLs:
 - [aider](https://aider.chat): AI pair programming in your terminal
 - [utop](https://opam.ocaml.org/blog/about-utop): a much improved interface to the OCaml toplevel
 
+Documentation is available here: <https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt>
+
+From within Neovim, type:
+
+```vim
+:help repl
+```
+
+## Demo
+
+![demo](images/nvim-repl-demo.gif)
+
 ## Installation
 
-See below for installation instructions for some common Neovim Package managers. For all other package managers, consult your package manager's documentation. Neovim REPL is a [normal Neovim package](https://neovim.io/doc/user/usr_05.html#_adding-a-package).
+Neovim REPL is a [normal Neovim package](https://neovim.io/doc/user/usr_05.html#_adding-a-package).
 
 <details>
   <summary>lazy.nvim</summary>
@@ -43,18 +55,6 @@ Configuration for <https://github.com/folke/lazy.nvim>
 ```
 
 </details>
-
-## Usage
-
-![demo](images/nvim-repl-demo.gif)
-
-For detailed documentation, see: <https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt>
-
-From within Neovim, type:
-
-```vim
-:help repl
-```
 
 ## Cells
 
@@ -103,8 +103,3 @@ putStrLn "I am the third cell"
 If you find yourself in Terminal mode, use `<C-\><C-n>` instead of `<Esc>` to return to Normal mode.
 
 Type `:help Terminal-mode` and `:help CTRL-\_CTRL-N` for more information.
-
-## Written by
-
-- [Samuel Roeca](https://samroeca.com/)
-- [A Cup of Air](https://acupofair.github.io/)
