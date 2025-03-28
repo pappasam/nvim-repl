@@ -221,6 +221,9 @@ endfunction
 function! repl#sendline(...)
   if !s:repl_id_job_exists()
     call repl#attach()
+    if !exists("b:repl_id_job")
+      return
+    endif
   endif
   call s:send_block(line('.'), line('.'), 'n')
   normal! j0
@@ -229,6 +232,9 @@ endfunction
 function! repl#sendvisual(mode)
   if !s:repl_id_job_exists()
     call repl#attach()
+    if !exists("b:repl_id_job")
+      return
+    endif
   endif
   call s:send_block('not applicable', 'not applicable', a:mode)
 endfunction
@@ -281,6 +287,9 @@ endfunction
 function! s:send_block(firstline_num, lastline_num, mode)
   if !s:repl_id_job_exists()
     call repl#attach()
+    if !exists("b:repl_id_job")
+      return
+    endif
   endif
   let buflines_raw = a:mode ==? 'v' || a:mode == "\<c-v>"
         \ ? s:get_visual_selection(a:mode)
@@ -351,6 +360,9 @@ endfunction
 function! repl#sendargs(cmd_args)
   if !s:repl_id_job_exists()
     call repl#attach()
+    if !exists("b:repl_id_job")
+      return
+    endif
   endif
   let t_cmd_args = type(a:cmd_args)
   if t_cmd_args == v:t_string
@@ -368,6 +380,9 @@ endfunction
 function! s:aider_send_float_callback(cmd_args)
   if !s:repl_id_job_exists()
     call repl#attach()
+    if !exists("b:repl_id_job")
+      return
+    endif
   endif
   let args = []
   let count = 0
@@ -382,14 +397,20 @@ function! s:aider_send_float_callback(cmd_args)
     call s:chansend_buflines(args)
     echom 'repl: sent float buffer to aider'
   else
-    echom 'repl: send cancelled'
+    call repl#warning('send cancelled')
   endif
 endfunction
 
 function! repl#aidersend(...)
   if a:0 == 0
     if !s:repl_id_job_exists()
-      call repl#warning('no repl exists')
+      call repl#attach()
+      if !exists("b:repl_id_job")
+        return
+      endif
+    endif
+    if b:repl.repl_type != 'aider'
+      call repl#warning('Can ony run if attached to aider repl')
       return
     endif
     call s:create_floating_input(function('s:aider_send_float_callback'), 'markdown')
@@ -397,23 +418,35 @@ function! repl#aidersend(...)
     let cmd_args = a:1
     call repl#sendargs(cmd_args)
   else
-    throw 'nvim-repl: repl#aidersend only takes 0 or 1 arguments'
+    call repl#warning('repl#aidersend only takes 0 or 1 arguments')
   endif
 endfunction
 
 function! repl#aiderbufall(preamble)
   if a:preamble != '/add' && a:preamble != '/drop'
-    throw 'Unsupported command argument'
+    call repl#warning('unsupported command argument')
+    return
   endif
-  let file_args = join(s:buffers_in_gitroot(), ' ')
+  try
+    let file_args = join(s:buffers_in_gitroot(), ' ')
+  catch /.*/
+    call repl#warning(v:exception)
+    return
+  endtry
   call repl#sendargs([a:preamble .. ' ' .. file_args])
 endfunction
 
 function! repl#aiderbuf(preamble)
   if a:preamble != '/add' && a:preamble != '/drop'
-    throw 'Unsupported command argument'
+    call repl#warning('unsupported command argument')
+    return
   endif
-  let path = s:path_relative_to_git_root(expand('%:p'))
+  try
+    let path = s:path_relative_to_git_root(expand('%:p'))
+  catch /.*/
+    call repl#warning(v:exception)
+    return
+  endtry
   call repl#sendargs([a:preamble .. ' ' .. path])
 endfunction
 
@@ -441,6 +474,9 @@ endfunction
 function! repl#sendcell(...)
   if !s:repl_id_job_exists()
     call repl#attach()
+    if !exists("b:repl_id_job")
+      return
+    endif
   endif
   " This supports single-line comments with only a prefix (lije '## %s') and
   " comments that fully surround (like '<!-- %s -->'). commentstring is
