@@ -91,7 +91,7 @@ Set REPL window's width(number of columns) if `g:repl_split` set `left` / `right
 
 Unless otherwise specified, assume a command takes 0 arguments.
 
-*:Repl* *:ReplOpen*
+*:Repl*
 
   Open a terminal and run the REPL. Takes 0 or 1 arguments. If provided, the
   argument has the same type as non-key values in `g:repl_filetype_commands`.
@@ -117,39 +117,35 @@ Unless otherwise specified, assume a command takes 0 arguments.
 
 *:ReplRunCell*
 
-  Run the cell, and jump the cursor the next cell
+  Run the cell, and jump the cursor the next cell.
 
 *:ReplNewCell*
 
-  Create a new cell
+  Create a new cell.
 
 *:ReplSend*
 
-  Send the arguments passed to the command directly to the REPL.
+  Send the arguments passed to the command directly to the REPL. Takes 0 or 1
+  arguments.
 
-*:Aider*
+  If no arguments are provided, opens a floating window that can accept
+  multiple lines. When the window is closed, the lines are sent to the REPL.
 
-  Open a terminal and run an aider REPL.
+  If an argument is provided, then the full text of the argument is sent to
+  the REPL.
 
-*:AiderSend*
+*:ReplAider*
 
-  Send the arguments passed to the command directly to the aider REPL. Takes 0
-  or 1 arguments.
+  Like :Repl, but only open an aider repl.
 
-  If no arguments are provided, opens a floating window that
-  can accept multiple lines. When the window is closed, the lines are sent to
-  the aider REPL.
+*:ReplAiderBufCur*
 
-  If an argument is provided, works like :ReplSend.
-
-*:AiderBuf*
-
-  Sends commands regarding the current buffer to the attached aider REPL.
+  Adds, or drops, the current buffer from the attached aider REPL.
   Takes 1 argument: either `/add` or `/drop`.
 
-*:AiderBufAll*
+*:ReplAiderBufAll*
 
-  Sends commands regarding all open buffers to the attached aider REPL.
+  Adds, or drops, all open buffers from the attached aider REPL.
   Takes 1 argument: either `/add` or `/drop`.
 
 ==============================================================================
@@ -170,12 +166,13 @@ Pluggable, dot-repeatable mappings are provided for the use to map:
 
   Send the visual selection to the REPL.
 
-Our recommended mappings: >vim
+Some recommended mappings that you may add want to add to your configuration: >vim
 
-  nnoremap <Leader>cc <Cmd>ReplNewCell<CR>
-  nmap <silent> <Leader>cr <Plug>(ReplSendCell)
-  nmap <silent> <Leader>r <Plug>(ReplSendLine)
+  nmap <silent> <Leader>rr <Plug>(ReplSendLine)
   xmap <silent> <Leader>r <Plug>(ReplSendVisual)
+  nmap <silent> <Leader>rc <Plug>(ReplSendCell)
+  nnoremap <Leader>rs <Cmd>ReplSend<CR>
+  nnoremap <Leader>ra <Cmd>ReplAiderBufCur /add<CR>
 
 Note: pluggable mappings require a recursive mapping. Eg, don't try to
 "nnoremap" a pluggable mapping. It won't work.
@@ -224,8 +221,5 @@ Haskell: >haskell
 6. CREDITS~
 
 This plugin was inspired by vim-slime: https://github.com/jpalardy/vim-slime .
-
-Samuel Roeca heavily modified that program to the point where it has become
-its own plugin.
 
 vim:tw=78:ts=8:ft=help:norl:

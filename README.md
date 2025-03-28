@@ -22,8 +22,6 @@ From within Neovim, type:
 
 ### Aider AI
 
-![demo](images/nvim-repl-aider-demo.gif)
-
 ## Installation
 
 Neovim REPL is a [normal Neovim package](https://neovim.io/doc/user/usr_05.html#_adding-a-package).
@@ -41,18 +39,11 @@ Configuration for <https://github.com/folke/lazy.nvim>
     vim.g["repl_filetype_commands"] = {
       bash = "bash",
       javascript = "node",
-      haskell = "ghci",
-      ocaml = {cmd = "utop", repl_type = "utop"},
-      r = "R",
-      sh = "sh",
-      vim = "nvim --clean -ERM",
-      zsh = "zsh",
     }
   end,
   keys = {
-    { "<Leader>cc", "<Cmd>ReplNewCell<CR>",   mode = "n", desc = "Create New Cell" },
-    { "<Leader>cr", "<Plug>(ReplSendCell)",   mode = "n", desc = "Send Repl Cell" },
-    { "<Leader>r",  "<Plug>(ReplSendLine)",   mode = "n", desc = "Send Repl Line" },
+    { "<Leader>rc", "<Plug>(ReplSendCell)",   mode = "n", desc = "Send Repl Cell" },
+    { "<Leader>rr", "<Plug>(ReplSendLine)",   mode = "n", desc = "Send Repl Line" },
     { "<Leader>r",  "<Plug>(ReplSendVisual)", mode = "x", desc = "Send Repl Visual Selection" },
   },
 }
