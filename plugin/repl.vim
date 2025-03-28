@@ -89,18 +89,6 @@ function! s:configure_constants()
   if !s:cmd_exists('Aider')
     command! Aider call repl#aideropen()
   endif
-  if !s:cmd_exists('AiderBufAll')
-    function! s:complete_aider_bufall_add_drop(arglead, cmdline, cursorpos)
-      return ['/add', '/drop']
-    endfunction
-    command! -nargs=1 -complete=customlist,s:complete_aider_bufall_add_drop AiderBufAll call repl#aiderbufall(<f-args>)
-  endif
-  if !s:cmd_exists('AiderBuf')
-    function! s:complete_aider_buf_add_drop(arglead, cmdline, cursorpos)
-      return ['/add', '/drop']
-    endfunction
-    command! -nargs=1 -complete=customlist,s:complete_aider_buf_add_drop AiderBuf call repl#aiderbuf(<f-args>)
-  endif
   if !s:cmd_exists('AiderSend')
     function! s:complete_aider_send(arglead, cmdline, cursorpos)
       return [ '/add',
@@ -147,6 +135,18 @@ function! s:configure_constants()
             \  '/web']
     endfunction
     command! -nargs=? -complete=customlist,s:complete_aider_send AiderSend call repl#aidersend(<f-args>)
+  endif
+  if !s:cmd_exists('AiderBuf')
+    function! s:complete_aider_buf_add_drop(arglead, cmdline, cursorpos)
+      return ['/add', '/drop']
+    endfunction
+    command! -nargs=1 -complete=customlist,s:complete_aider_buf_add_drop AiderBuf call repl#aiderbuf(<f-args>)
+  endif
+  if !s:cmd_exists('AiderBufAll')
+    function! s:complete_aider_bufall_add_drop(arglead, cmdline, cursorpos)
+      return ['/add', '/drop']
+    endfunction
+    command! -nargs=1 -complete=customlist,s:complete_aider_bufall_add_drop AiderBufAll call repl#aiderbufall(<f-args>)
   endif
 endfunction
 

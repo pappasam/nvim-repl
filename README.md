@@ -1,6 +1,12 @@
 # Neovim REPL
 
-Create, use, and remove [interactive REPLs](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim 0.5.0+.
+Create, use, and remove [interactive REPLs](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) within Neovim.
+
+Works with any REPL, but contains custom support for the following REPLs:
+
+- [ipython](https://ipython.readthedocs.io/en/stable): a powerful interactive Python shell
+- [aider](https://aider.chat): AI pair programming in your terminal
+- [utop](https://opam.ocaml.org/blog/about-utop): a much improved interface to the OCaml toplevel
 
 ## Installation
 
