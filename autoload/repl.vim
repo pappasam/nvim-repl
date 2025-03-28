@@ -227,7 +227,7 @@ endfunction
 function! repl#sendline(...)
   if !s:repl_id_job_exists()
     call repl#attach()
-    if !exists("b:repl_id_job")
+    if !s:repl_id_job_exists()
       return
     endif
   endif
@@ -238,7 +238,7 @@ endfunction
 function! repl#sendvisual(mode)
   if !s:repl_id_job_exists()
     call repl#attach()
-    if !exists("b:repl_id_job")
+    if !s:repl_id_job_exists()
       return
     endif
   endif
@@ -293,7 +293,7 @@ endfunction
 function! s:send_block(firstline_num, lastline_num, mode)
   if !s:repl_id_job_exists()
     call repl#attach()
-    if !exists("b:repl_id_job")
+    if !s:repl_id_job_exists()
       return
     endif
   endif
@@ -309,8 +309,24 @@ function! s:send_block(firstline_num, lastline_num, mode)
   call s:chansend_buflines(buflines_chansend)
 endfunction
 
-function! s:create_floating_input(callback, filetype)
+function! s:process_input(input_data)
+  let lines = nvim_buf_get_lines(a:input_data.buf, 0, -1, v:false)
+  if len(lines) > 0
+    let input_text = lines
+    if nvim_win_is_valid(a:input_data.win)
+      call nvim_win_close(a:input_data.win, v:true)
+    endif
+    if nvim_win_is_valid(a:input_data.original_win)
+      call nvim_set_current_win(a:input_data.original_win)
+      call a:input_data.callback(input_text)
+    endif
+  endif
+endfunction
+
+function! s:create_floating_input(callback)
   let parent_repl_id_job = b:repl_id_job
+  let parent_repl = b:repl
+  let parent_filetype = &filetype
   let original_win = win_getid()
   let buf = nvim_create_buf(v:false, v:true)
   call nvim_buf_set_option(buf, 'bufhidden', 'wipe')
@@ -338,38 +354,24 @@ function! s:create_floating_input(callback, filetype)
   cnoreabbrev <buffer> w quit
   cnoreabbrev <buffer> wq quit
   cnoreabbrev <buffer> x quit
-  let b:repl_id_job = parent_repl_id_job
   let b:input_data_store = {
         \ 'win': win,
         \ 'buf': buf,
         \ 'callback': a:callback,
         \ 'original_win': original_win
         \ }
-  execute 'setlocal filetype=' .. a:filetype
+  let b:repl_id_job = parent_repl_id_job
+  let b:repl = parent_repl
+  " set filetype of buffer for highlighting purposes
+  if b:repl.repl_type == 'aider'
+    setlocal filetype=markdown
+  else
+    execute 'setlocal filetype=' .. parent_filetype
+  endif
   startinsert!
 endfunction
 
-function! s:process_input(input_data)
-  let lines = nvim_buf_get_lines(a:input_data.buf, 0, -1, v:false)
-  if len(lines) > 0
-    let input_text = lines
-    if nvim_win_is_valid(a:input_data.win)
-      call nvim_win_close(a:input_data.win, v:true)
-    endif
-    if nvim_win_is_valid(a:input_data.original_win)
-      call nvim_set_current_win(a:input_data.original_win)
-      call a:input_data.callback(input_text)
-    endif
-  endif
-endfunction
-
-function! repl#sendargs(cmd_args)
-  if !s:repl_id_job_exists()
-    call repl#attach()
-    if !exists("b:repl_id_job")
-      return
-    endif
-  endif
+function! s:sendargs_direct(cmd_args)
   let t_cmd_args = type(a:cmd_args)
   if t_cmd_args == v:t_string
     let args = [trim(a:cmd_args, '', 2)]
@@ -383,13 +385,7 @@ function! repl#sendargs(cmd_args)
   call repl#info("sent '" .. trim(join(args, "\n")) .. "'")
 endfunction
 
-function! s:aider_send_float_callback(cmd_args)
-  if !s:repl_id_job_exists()
-    call repl#attach()
-    if !exists("b:repl_id_job")
-      return
-    endif
-  endif
+function! s:sendargs_float_callback(cmd_args)
   let args = []
   let count = 0
   for arg in a:cmd_args
@@ -407,24 +403,20 @@ function! s:aider_send_float_callback(cmd_args)
   endif
 endfunction
 
-function! repl#aidersend(...)
+function! repl#send(...)
   if a:0 == 0
     if !s:repl_id_job_exists()
       call repl#attach()
-      if !exists("b:repl_id_job")
+      if !s:repl_id_job_exists()
         return
       endif
     endif
-    if b:repl.repl_type != 'aider'
-      call repl#warning('Can ony run if attached to aider repl')
-      return
-    endif
-    call s:create_floating_input(function('s:aider_send_float_callback'), 'markdown')
+    call s:create_floating_input(function('s:sendargs_float_callback'))
   elseif a:0 == 1
     let cmd_args = a:1
-    call repl#sendargs(cmd_args)
+    call s:sendargs_direct(cmd_args)
   else
-    call repl#warning('repl#aidersend only takes 0 or 1 arguments')
+    call repl#warning('repl#send only takes 0 or 1 arguments')
   endif
 endfunction
 
@@ -432,6 +424,14 @@ function! repl#aiderbufall(preamble)
   if a:preamble != '/add' && a:preamble != '/drop'
     call repl#warning('unsupported command argument')
     return
+  elseif !s:repl_id_job_exists()
+    call repl#attach()
+    if !s:repl_id_job_exists()
+      return
+    elseif b:repl.repl_type != 'aider'
+      call repl#warning('can ony run if attached to aider repl')
+      return
+    endif
   endif
   try
     let file_args = join(s:buffers_in_gitroot(), ' ')
@@ -439,13 +439,21 @@ function! repl#aiderbufall(preamble)
     call repl#warning(v:exception)
     return
   endtry
-  call repl#sendargs([a:preamble .. ' ' .. file_args])
+  call s:sendargs_direct([a:preamble .. ' ' .. file_args])
 endfunction
 
 function! repl#aiderbuf(preamble)
   if a:preamble != '/add' && a:preamble != '/drop'
     call repl#warning('unsupported command argument')
     return
+  elseif !s:repl_id_job_exists()
+    call repl#attach()
+    if !s:repl_id_job_exists()
+      return
+    elseif b:repl.repl_type != 'aider'
+      call repl#warning('can ony run if attached to aider repl')
+      return
+    endif
   endif
   try
     let path = s:path_relative_to_git_root(expand('%:p'))
@@ -453,7 +461,7 @@ function! repl#aiderbuf(preamble)
     call repl#warning(v:exception)
     return
   endtry
-  call repl#sendargs([a:preamble .. ' ' .. path])
+  call s:sendargs_direct([a:preamble .. ' ' .. path])
 endfunction
 
 function! repl#aider_notifications_command()
@@ -481,7 +489,7 @@ endfunction
 function! repl#sendcell(...)
   if !s:repl_id_job_exists()
     call repl#attach()
-    if !exists("b:repl_id_job")
+    if !s:repl_id_job_exists()
       return
     endif
   endif

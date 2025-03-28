@@ -84,69 +84,22 @@ function! s:configure_constants()
     command! ReplClear call repl#clear()
   endif
   if !s:cmd_exists('ReplSend')
-    command! -nargs=1 ReplSend call repl#sendargs(<f-args>)
+    command! -nargs=? ReplSend call repl#send(<f-args>)
   endif
-  if !s:cmd_exists('Aider')
+  if !s:cmd_exists('ReplAider')
     command! Aider call repl#aideropen()
   endif
-  if !s:cmd_exists('AiderSend')
-    function! s:complete_aider_send(arglead, cmdline, cursorpos)
-      return [ '/add',
-            \  '/architect',
-            \  '/ask',
-            \  '/chat-mode',
-            \  '/clear',
-            \  '/code',
-            \  '/commit',
-            \  '/context',
-            \  '/copy',
-            \  '/copy-context',
-            \  '/diff',
-            \  '/drop',
-            \  '/edit',
-            \  '/editor',
-            \  '/editor-model',
-            \  '/exit',
-            \  '/git',
-            \  '/help',
-            \  '/lint',
-            \  '/load',
-            \  '/ls',
-            \  '/map',
-            \  '/map-refresh',
-            \  '/model',
-            \  '/models',
-            \  '/multiline-mode',
-            \  '/paste',
-            \  '/quit',
-            \  '/read-only',
-            \  '/reasoning-effort',
-            \  '/report',
-            \  '/reset',
-            \  '/run',
-            \  '/save',
-            \  '/settings',
-            \  '/test',
-            \  '/think-tokens',
-            \  '/tokens',
-            \  '/undo',
-            \  '/voice',
-            \  '/weak-model',
-            \  '/web']
-    endfunction
-    command! -nargs=? -complete=customlist,s:complete_aider_send AiderSend call repl#aidersend(<f-args>)
-  endif
-  if !s:cmd_exists('AiderBuf')
+  if !s:cmd_exists('ReplAiderBufCur')
     function! s:complete_aider_buf_add_drop(arglead, cmdline, cursorpos)
       return ['/add', '/drop']
     endfunction
-    command! -nargs=1 -complete=customlist,s:complete_aider_buf_add_drop AiderBuf call repl#aiderbuf(<f-args>)
+    command! -nargs=1 -complete=customlist,s:complete_aider_buf_add_drop ReplAiderBufCur call repl#aiderbuf(<f-args>)
   endif
-  if !s:cmd_exists('AiderBufAll')
+  if !s:cmd_exists('ReplAiderBufAll')
     function! s:complete_aider_bufall_add_drop(arglead, cmdline, cursorpos)
       return ['/add', '/drop']
     endfunction
-    command! -nargs=1 -complete=customlist,s:complete_aider_bufall_add_drop AiderBufAll call repl#aiderbufall(<f-args>)
+    command! -nargs=1 -complete=customlist,s:complete_aider_bufall_add_drop ReplAiderBufAll call repl#aiderbufall(<f-args>)
   endif
 endfunction
 
