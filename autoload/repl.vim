@@ -458,6 +458,7 @@ endfunction
 
 function! repl#aider_notifications_command()
   call repl#info('aider finished, buffers updated!')
+  call s:repl_reset_visual_position()
   let current_bufnr = bufnr('%')
   let current_tabnr = tabpagenr()
   for bufnr in range(1, bufnr('$'))
