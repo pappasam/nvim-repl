@@ -302,8 +302,10 @@ function! s:send_block(firstline_num, lastline_num, mode)
         \ : getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
   let buflines_chansend = []
   for line in buflines_raw
-    if line != "" && line !~ "^\\s*#\\s*%%.*"
-      let buflines_chansend += [line] " remove the empty line and #%% line
+    if b:repl.repl_type == 'aider' " send all text to aider
+      let buflines_chansend += [line]
+    elseif line != "" && line !~ "^\\s*#\\s*%%.*" " remove the empty line and #%% line
+      let buflines_chansend += [line]
     endif
   endfor
   call s:chansend_buflines(buflines_chansend)
@@ -390,10 +392,14 @@ function! s:sendargs_float_callback(cmd_args)
   let count = 0
   for arg in a:cmd_args
     let trimmed = trim(arg, '', 2)
-    if trimmed != ''
+    if trimmed == ''
+      if b:repl.repl_type == 'aider'
+        call add(args, trimmed) " keep newlines for aider
+      endif
+    else
+      call add(args, trimmed)
       let count += 1
     endif
-    call add(args, trimmed)
   endfor
   if count > 0
     call s:chansend_buflines(args)
