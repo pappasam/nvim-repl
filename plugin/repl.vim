@@ -62,8 +62,8 @@ function! s:configure_constants()
   if !s:cmd_exists(':Repl')
     command! -nargs=? -complete=shellcmd Repl call repl#open(<f-args>)
   endif
-  if !s:cmd_exists(':ReplOpen')
-    command! -nargs=? -complete=shellcmd ReplOpen call repl#open(<f-args>)
+  if !s:cmd_exists('ReplAider')
+    command! ReplAider call repl#aideropen()
   endif
   if !s:cmd_exists(':ReplAttach')
     command! ReplAttach call repl#attach()
@@ -85,9 +85,6 @@ function! s:configure_constants()
   endif
   if !s:cmd_exists('ReplSend')
     command! -nargs=? ReplSend call repl#send(<f-args>)
-  endif
-  if !s:cmd_exists('ReplAider')
-    command! Aider call repl#aideropen()
   endif
   if !s:cmd_exists('ReplAiderBufCur')
     function! s:complete_aider_buf_add_drop(arglead, cmdline, cursorpos)
