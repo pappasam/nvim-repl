@@ -165,16 +165,11 @@ Pluggable, dot-repeatable mappings are provided for the use to map:
 
   Send the visual selection to the REPL.
 
-Some recommended mappings that you may add want to add to your configuration: >vim
+Mappings that you may add want to add to your configuration: >vim
 
-  nmap <silent> <Leader>rr <Plug>(ReplSendLine)
+  nmap <silent> <Leader>r <Plug>(ReplSendLine)
   xmap <silent> <Leader>r <Plug>(ReplSendVisual)
-  nmap <silent> <Leader>rc <Plug>(ReplSendCell)
-  nnoremap <Leader>rs <Cmd>ReplSend<CR>
-  nnoremap <Leader>ra <Cmd>ReplAiderBufCur /add<CR>
-
-Note: pluggable mappings require a recursive mapping. Eg, don't try to
-"nnoremap" a pluggable mapping. It won't work.
+  nmap <silent> <Leader>c <Plug>(ReplSendCell)
 
 ==============================================================================
                                                                   *repl_cells*
