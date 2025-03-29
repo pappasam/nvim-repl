@@ -501,7 +501,7 @@ function! repl#aider_notifications_command()
 endfunction
 
 function! repl#aideropen()
-  let cmd = "aider --notifications --notifications-command=\"nvim --server $NVIM --remote-send '<C-\\><C-n>:call repl#aider_notifications_command()<CR>'\""
+  let cmd = "aider --multiline --notifications --notifications-command=\"nvim --server $NVIM --remote-send '<C-\\><C-n>:call repl#aider_notifications_command()<CR>'\""
   call repl#open(#{cmd: cmd, open_window: 'tabnew', repl_type: 'aider'})
 endfunction
 
