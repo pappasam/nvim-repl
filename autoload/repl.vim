@@ -127,7 +127,7 @@ endfunction
 
 function! repl#open(...) " takes 0 or 1 arguments (dict)
   if s:repl_id_job_exists()
-    call repl#warning('already open. To close existing repl, run ":ReplClose"')
+    call repl#warning('already open, try `:ReplDetach` or `:ReplClose`')
     return
   endif
   if a:0 == 0
@@ -159,7 +159,11 @@ function! repl#attach()
   let inputs_tail = []
   let jobs = []
   for [jobid, value] in items(s:active_repls)
-    call add(inputs_tail, '(jobid ' .. jobid .. ') opened by ' .. value[0])
+    let select_id = printf('%s :: %s :: %s',
+          \ value[1].repl_type != '' ? value[1].repl_type : value[1].cmd,
+          \ jobid,
+          \ value[0])
+    call add(inputs_tail, select_id)
     call add(jobs, [str2nr(jobid), value[1]])
   endfor
   if len(jobs) == 0
@@ -171,7 +175,7 @@ function! repl#attach()
     call sort(inputs_tail)
     call sort(jobs)
     call map(inputs_tail, '  (v:key + 1) .. ". " .. v:val')
-    let choice = inputlist(extendnew(['Select repl:'], inputs_tail))
+    let choice = inputlist(extendnew(['Select REPL (name :: jobid :: creator):'], inputs_tail))
     redraw!
     if choice > len(jobs) || choice < 1
       call repl#warning('no valid choice selected, not attatched')
@@ -181,6 +185,16 @@ function! repl#attach()
   let b:repl_id_job = jobs[choice - 1][0]
   let b:repl = jobs[choice - 1][1]
   call repl#info('attached')
+endfunction
+
+function! repl#detach()
+  if exists('b:repl_id_job')
+    unlet b:repl_id_job
+  endif
+  if exists('b:repl')
+    unlet b:repl
+  endif
+  call repl#info('detached buffer from existing REPL')
 endfunction
 
 function! repl#close()

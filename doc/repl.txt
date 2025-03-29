@@ -28,7 +28,7 @@ Works with any REPL, but contains custom support for the following REPLs:
 
 *g:repl_filetype_commands*
 Type: Dictionary[String, String | Dict[String | String]]
-Default: defined in plugin/repl.vim
+Default: defined in `plugin/repl.vim`
 
 Map a filetype to a REPL starting command using this configuration variable.
 Your configuration might look like this: >vim
@@ -100,9 +100,15 @@ Unless otherwise specified, assume a command takes 0 arguments.
   Attach to an existing, open terminal. Enables multiple buffers to
   communicate with one terminal.
 
+*:ReplDetach*
+
+  Detach buffer from a previously-attached terminal. Open terminals are not
+  closed, buffer is merely detached.
+
 *:ReplClose*
 
-  Close the REPL, if open.
+  Close the REPL attached to the current buffer, if open. If run while in a
+  REPL buffer, closes the REPL.
 
 *:ReplToggle*
 

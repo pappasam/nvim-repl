@@ -69,6 +69,9 @@ function! s:configure_constants()
   if !s:cmd_exists(':ReplAttach')
     command! ReplAttach call repl#attach()
   endif
+  if !s:cmd_exists(':ReplDetach')
+    command! ReplDetach call repl#detach()
+  endif
   if !s:cmd_exists('ReplClose')
     command! ReplClose call repl#close()
   endif
