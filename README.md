@@ -4,17 +4,11 @@ Create, use, and remove [interactive REPLs](https://en.wikipedia.org/wiki/Read%E
 
 Works with any REPL, but contains custom support for the following REPLs:
 
-- [ipython](https://ipython.readthedocs.io/en/stable): a powerful interactive Python shell
 - [aider](https://aider.chat): AI pair programming in your terminal
+- [ipython](https://ipython.readthedocs.io/en/stable): a powerful interactive Python shell
 - [utop](https://opam.ocaml.org/blog/about-utop): a much improved interface to the OCaml toplevel
 
-Documentation is available here: <https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt>
-
-From within Neovim, type:
-
-```vim
-:help repl
-```
+Default REPL implementations are defined in [plugin/repl.vim(s:default_commands)](https://github.com/pappasam/nvim-repl/blob/main/plugin/repl.vim).
 
 ## Demo
 
@@ -40,9 +34,9 @@ Configuration for <https://github.com/folke/lazy.nvim>
     }
   end,
   keys = {
-    { "<Leader>rc", "<Plug>(ReplSendCell)",   mode = "n", desc = "Send Repl Cell" },
-    { "<Leader>rr", "<Plug>(ReplSendLine)",   mode = "n", desc = "Send Repl Line" },
-    { "<Leader>r",  "<Plug>(ReplSendVisual)", mode = "x", desc = "Send Repl Visual Selection" },
+    { "<Leader>c", "<Plug>(ReplSendCell)",   mode = "n", desc = "Send Repl Cell" },
+    { "<Leader>r", "<Plug>(ReplSendLine)",   mode = "n", desc = "Send Repl Line" },
+    { "<Leader>r", "<Plug>(ReplSendVisual)", mode = "x", desc = "Send Repl Visual Selection" },
   },
 }
 ```
@@ -63,3 +57,9 @@ The built-in aider integration overrides aider's `--notifications` and `--notifi
 
 1. Use `$AIDER_MODEL` to specify your preferred model before opening Neovim.
 2. For other settings, please reference the Author's current [aider configuration](https://github.com/pappasam/config/blob/main/dotfiles/.aider.conf.yml) for inspiration.
+
+### Where's the documentation?
+
+Documentation is in a standard Neovim documentation file. You can [read it online here](https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt).
+
+From within Neovim, type `:help repl`.

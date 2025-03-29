@@ -26,9 +26,16 @@ endfunction
 
 " Configuration:
 
-let s:default_commands = {
-      \ 'python': #{repl_type: 'ipython', cmd: 'ipython --TerminalInteractiveShell.editing_mode=emacs --quiet --no-autoindent -i -c "%config InteractiveShell.ast_node_interactivity=\"last_expr_or_assign\""'},
-      \ 'ocaml': #{repl_type: 'utop', cmd: 'utop'},
+let s:default_commands = #{
+      \ bash: 'bash',
+      \ haskell: 'ghci',
+      \ javascript: 'node',
+      \ ocaml: #{repl_type: 'utop', cmd: 'utop'},
+      \ python: #{repl_type: 'ipython', cmd: 'ipython --TerminalInteractiveShell.editing_mode=emacs --quiet --no-autoindent -i -c "%config InteractiveShell.ast_node_interactivity=\"last_expr_or_assign\""'},
+      \ r: 'R',
+      \ sh: 'sh',
+      \ vim: 'nvim --clean -ERM',
+      \ zsh: 'zsh',
       \ }
 
 " User configuration
