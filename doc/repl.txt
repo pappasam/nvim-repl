@@ -33,14 +33,8 @@ Default: defined in `plugin/repl.vim`
 Map a filetype to a REPL starting command using this configuration variable.
 Your configuration might look like this: >vim
 
-  let g:repl_filetype_commands = {
-        \ 'bash': 'bash',
-        \ 'javascript': 'node',
-        \ 'haskell': 'ghci',
-        \ 'r': 'R',
-        \ 'sh': 'sh',
-        \ 'vim': 'nvim --clean -ERM',
-        \ 'zsh': 'zsh',
+  let g:repl_filetype_commands = #{
+        \ javascript: 'deno repl',
         \ }
 
 A filetype's REPL value can be a String or a Dict. If it's a Dict, acceptable
