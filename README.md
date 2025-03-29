@@ -24,13 +24,27 @@ Neovim REPL is a [normal Neovim package](https://neovim.io/doc/user/usr_05.html#
 
 Configuration for <https://github.com/folke/lazy.nvim>
 
+### Basic
+
+```lua
+{
+  "pappasam/nvim-repl",
+  keys = {
+    { "<Leader>c", "<Plug>(ReplSendCell)",   mode = "n", desc = "Send Repl Cell" },
+    { "<Leader>r", "<Plug>(ReplSendLine)",   mode = "n", desc = "Send Repl Line" },
+    { "<Leader>r", "<Plug>(ReplSendVisual)", mode = "x", desc = "Send Repl Visual Selection" },
+  },
+}
+```
+
+### Custom
+
 ```lua
 {
   "pappasam/nvim-repl",
   init = function()
     vim.g["repl_filetype_commands"] = {
-      bash = "bash",
-      javascript = "node",
+      javascript = "deno repl",
     }
   end,
   keys = {
