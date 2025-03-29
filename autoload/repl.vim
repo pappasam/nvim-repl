@@ -353,9 +353,9 @@ function! s:create_floating_input(callback)
   let row = (win_height - height) / 2
   let col = (win_width - width) / 2
   let opts = {
-        \ 'title': [['REPL: ' .. parent_repl.repl_type, 'NormalFloat']],
+        \ 'title': [[' REPL: ' .. parent_repl.repl_type .. ' ', 'FloatTitle']],
         \ 'title_pos': 'center',
-        \ 'footer': [['&ft=' .. parent_filetype, 'NormalFloat']],
+        \ 'footer': [[' &ft=' .. parent_filetype .. ' ', 'FloatFooter']],
         \ 'footer_pos': 'center',
         \ 'relative': 'editor',
         \ 'width': width,
