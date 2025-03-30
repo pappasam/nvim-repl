@@ -26,15 +26,15 @@ endfunction
 " Configuration:
 
 let s:default_commands = #{
-      \ bash: 'bash',
-      \ haskell: 'ghci',
-      \ javascript: 'node',
+      \ bash: #{cmd: 'bash'},
+      \ haskell: #{cmd: 'ghci'},
+      \ javascript: #{cmd: 'node'},
       \ ocaml: #{repl_type: 'utop', cmd: 'utop'},
       \ python: #{repl_type: 'ipython', cmd: 'ipython --TerminalInteractiveShell.editing_mode=emacs --quiet --no-autoindent -i -c "%config InteractiveShell.ast_node_interactivity=\"last_expr_or_assign\""'},
-      \ r: 'R',
-      \ sh: 'sh',
-      \ vim: 'nvim --clean -ERM',
-      \ zsh: 'zsh',
+      \ r: #{cmd: 'R'},
+      \ sh: #{cmd: 'sh'},
+      \ vim: #{cmd: 'nvim --clean -ERM'},
+      \ zsh: #{cmd: 'zsh'},
       \ }
 
 " User configuration
