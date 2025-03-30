@@ -2,7 +2,6 @@
 " OriginalAuthor: Samuel Roeca
 " Maintainer:     Samuel Roeca samuel.roeca@gmail.com
 " Description:    nvim-repl: configure and work with a repl
-" License:        MIT License
 " Website:        https://github.com/pappasam/nvim-repl
 " License:        MIT
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -576,6 +575,31 @@ function! repl#newcell()
   else
     silent execute "put =['','" .. substitute(&commentstring, '%s', '%%', '') .. "','','']"
   endif
+endfunction
+
+function! repl#current()
+  if !s:repl_id_job_exists()
+    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
+    return
+  endif
+  echohl DiagnosticInfo
+  echom 'repl:'
+  echom '  cmd  : ' .. b:repl.cmd
+  echom '  type : ' .. (b:repl.repl_type == '' ? 'default' : b:repl.repl_type)
+  echom '  jobid: ' .. b:repl_id_job
+  echohl None
+endfunction
+
+function! repl#focus()
+  if !s:repl_id_job_exists()
+    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
+    return
+  endif
+  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_id_job})
+  for win in repl_windows
+    call win_gotoid(win.winid)
+    call cursor(line('$'), 0)
+  endfor
 endfunction
 
 function! repl#clear()

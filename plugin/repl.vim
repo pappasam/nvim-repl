@@ -85,6 +85,12 @@ function! s:configure_constants()
   if !s:cmd_exists(':ReplRunCell')
     command! ReplRunCell call repl#sendcell()
   endif
+  if !s:cmd_exists(':ReplCurrent')
+    command! ReplCurrent call repl#current()
+  endif
+  if !s:cmd_exists(':ReplFocus')
+    command! ReplFocus call repl#focus()
+  endif
   if !s:cmd_exists(':ReplClear')
     command! ReplClear call repl#clear()
   endif

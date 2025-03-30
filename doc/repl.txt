@@ -109,6 +109,14 @@ Unless otherwise specified, assume a command takes 0 arguments.
   If REPL is open, close it. If REPL is closed, open it using either the
   filetype-associated REPL or the configured default REPL.
 
+*:ReplCurrent*
+
+  Display information about the REPL attached to the current buffer.
+
+*:ReplFocus*
+
+  Move the cursor's focus to the REPL attached to the current buffer.
+
 *:ReplClear*
 
   Clear on open REPL's screen. Similar to the bash command clear(1). Note:
