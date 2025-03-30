@@ -74,6 +74,6 @@ The built-in aider integration overrides aider's `--multiline`, `--notifications
 
 ### Where's the documentation?
 
-Documentation is in a standard Neovim documentation file. You can [read it online here](https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt).
+Documentation is in a normal Neovim help file. You can [read it online here](https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt).
 
 From within Neovim, type `:help repl`.
