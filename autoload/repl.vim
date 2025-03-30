@@ -160,8 +160,8 @@ function! repl#attach()
   let jobs = []
   for [jobid, value] in items(s:active_repls)
     let select_id = printf('%s :: %s :: %s',
-          \ value[1].repl_type != '' ? value[1].repl_type : value[1].cmd,
           \ jobid,
+          \ value[1].repl_type != '' ? value[1].repl_type : value[1].cmd,
           \ value[0])
     call add(inputs_tail, select_id)
     call add(jobs, [str2nr(jobid), value[1]])
@@ -269,12 +269,7 @@ function! s:alt_enter()
   return "\x1b\r"
 endfunction
 
-" Handler registry for different REPL types
-let s:repl_type_handlers = {}
-
-function! s:register_repl_handler(repl_type, handler_func)
-  let s:repl_type_handlers[a:repl_type] = a:handler_func
-endfunction
+let s:repl_type_handlers = {} " Handler registry for different REPL types
 
 function! s:ipython_handler(job_id, lines)
   let buflines = copy(a:lines)
@@ -290,7 +285,7 @@ function! s:ipython_handler(job_id, lines)
   endif
   call chansend(a:job_id, "\r")
 endfunction
-call s:register_repl_handler('ipython', function('s:ipython_handler'))
+let s:repl_type_handlers['ipython'] = function('s:ipython_handler')
 
 function! s:utop_handler(job_id, lines)
   let buflines = copy(a:lines)
@@ -299,7 +294,7 @@ function! s:utop_handler(job_id, lines)
   endif
   call chansend(a:job_id, buflines + [""])
 endfunction
-call s:register_repl_handler('utop', function('s:utop_handler'))
+let s:repl_type_handlers['utop'] = function('s:utop_handler')
 
 function! s:aider_handler(job_id, lines)
   let buflines = copy(a:lines)
@@ -308,7 +303,7 @@ function! s:aider_handler(job_id, lines)
   endif
   call chansend(a:job_id, buflines)
 endfunction
-call s:register_repl_handler('aider', function('s:aider_handler'))
+let s:repl_type_handlers['aider'] = function('s:aider_handler')
 
 function! s:default_handler(job_id, lines)
   let buflines = copy(a:lines)
@@ -441,7 +436,7 @@ function! s:sendargs_float_callback(cmd_args)
   endfor
   if count > 0
     call s:chansend_buflines(args)
-    call repl#info('sent text to aider')
+    call repl#info('sent text to REPL')
   else
     call repl#warning('send cancelled')
   endif
