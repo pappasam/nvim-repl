@@ -269,37 +269,62 @@ function! s:alt_enter()
   return "\x1b\r"
 endfunction
 
-function! s:chansend_buflines(buflines)
-  let buflines_chansend = a:buflines
-  if b:repl.repl_type == 'ipython'
-    if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
-      let buflines_chansend += [""] " If last line has leading whitespace, add 1 line
-    endif
-    if len(buflines_chansend) == 1
-      call chansend(b:repl_id_job, buflines_chansend)
-    else
-      call chansend(b:repl_id_job, "\<C-o>")
-      call chansend(b:repl_id_job, buflines_chansend)
-      call chansend(b:repl_id_job, s:arrow_down())
-    endif
-    call chansend(b:repl_id_job, "\r")
-  elseif b:repl.repl_type == 'utop'
-    if len(buflines_chansend) > 0
-      let buflines_chansend[-1] = buflines_chansend[-1] .. ' ;;'
-    endif
-    call chansend(b:repl_id_job, buflines_chansend + [""])
-  elseif b:repl.repl_type == 'aider'
-    if len(buflines_chansend) > 0
-      let buflines_chansend[-1] = buflines_chansend[-1] .. s:alt_enter()
-    endif
-    call chansend(b:repl_id_job, buflines_chansend)
+" Handler registry for different REPL types
+let s:repl_type_handlers = {}
+
+function! s:register_repl_handler(repl_type, handler_func)
+  let s:repl_type_handlers[a:repl_type] = a:handler_func
+endfunction
+
+function! s:ipython_handler(job_id, lines)
+  let buflines = copy(a:lines)
+  if len(buflines) > 0 && buflines[-1] =~ "^\\s\\+.*"
+    let buflines += [""] " If last line has leading whitespace, add 1 line
+  endif
+  if len(buflines) == 1
+    call chansend(a:job_id, buflines)
   else
-    if len(buflines_chansend) > 0 && buflines_chansend[-1] =~ "^\\s\\+.*"
-      let buflines_chansend += ["", ""] " If last line has leading whitespace, add 2 lines
-    else
-      let buflines_chansend += [""] " Otherwise, add 1
-    endif
-    call chansend(b:repl_id_job, buflines_chansend)
+    call chansend(a:job_id, "\<C-o>")
+    call chansend(a:job_id, buflines)
+    call chansend(a:job_id, s:arrow_down())
+  endif
+  call chansend(a:job_id, "\r")
+endfunction
+call s:register_repl_handler('ipython', function('s:ipython_handler'))
+
+function! s:utop_handler(job_id, lines)
+  let buflines = copy(a:lines)
+  if len(buflines) > 0
+    let buflines[-1] = buflines[-1] .. ' ;;'
+  endif
+  call chansend(a:job_id, buflines + [""])
+endfunction
+call s:register_repl_handler('utop', function('s:utop_handler'))
+
+function! s:aider_handler(job_id, lines)
+  let buflines = copy(a:lines)
+  if len(buflines) > 0
+    let buflines[-1] = buflines[-1] .. s:alt_enter()
+  endif
+  call chansend(a:job_id, buflines)
+endfunction
+call s:register_repl_handler('aider', function('s:aider_handler'))
+
+function! s:default_handler(job_id, lines)
+  let buflines = copy(a:lines)
+  if len(buflines) > 0 && buflines[-1] =~ "^\\s\\+.*"
+    let buflines += ["", ""] " If last line has leading whitespace, add 2 lines
+  else
+    let buflines += [""] " Otherwise, add 1
+  endif
+  call chansend(a:job_id, buflines)
+endfunction
+
+function! s:chansend_buflines(buflines)
+  if has_key(s:repl_type_handlers, b:repl.repl_type)
+    call s:repl_type_handlers[b:repl.repl_type](b:repl_id_job, a:buflines)
+  else
+    call s:default_handler(b:repl_id_job, a:buflines)
   endif
   call s:repl_reset_visual_position()
 endfunction
