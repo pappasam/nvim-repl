@@ -76,8 +76,6 @@ Examples: >
   - Left split: `leftabove vertical split new`
   - See `:help opening-window` for additional options
 
-Set REPL window's width(number of columns) if `g:repl_split` set `left` / `right`.
-
 ==============================================================================
                                                                 *repl_commands*
 3. COMMANDS~
