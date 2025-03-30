@@ -26,12 +26,10 @@ Works with any REPL, but contains custom support for the following REPLs:
                                                            *repl_configuration*
 2. CONFIGURATION~
 
-*g:repl_filetype_commands*
-Type: Dictionary[String, String | Dict[String | String]]
-Default: defined in `plugin/repl.vim`
+                                                *g:repl_filetype_commands*
 
-Map a filetype to a REPL starting command using this configuration variable.
-Your configuration might look like this: >vim
+A |Dictionary| or a |String|. Maps a filetype to a REPL starting command using
+this configuration variable. Your configuration might look like this: >vim
 
   let g:repl_filetype_commands = #{
         \ javascript: 'deno repl',
@@ -49,25 +47,27 @@ keys are:
   - `'ipython'`: similar to default, but enters ipython's special multiline mode
     with <C-o> if more than 1 line is sent to the REPL.
   - `'utop'`: adds `;;` to the end of the text that is sent to the REPL.
-- `open_window` same as `g:repl_open_window_default`, but specific to
+- `open_window` same as |g:repl_open_window_default|, but specific to
   configured REPL.
 
 If its value is a String, the value is the `cmd`. All other options are `''`.
 
-*g:repl_default*
-Type: String | Dict[String | Dict]
-Default: &shell
+Default: see `s:default_commands` in `plugin/repl.vim`.
 
-The default REPL selected. Used when no configured REPL is found for a
-particular filetype. This has the same type and behavior as the values for
-`g:repl_filetype_commands`.
+                                                *g:repl_default*
 
-*g:repl_open_window_default*
-Type: String
-Default: `vertical split new`
+A |Dictionary| or a |String|. The default REPL selected. Used when no
+configured REPL is found for a particular filetype. This has the same type and
+behavior as the values for |g:repl_filetype_commands|.
 
-Default Vim command used to open the REPL window. Uses Vim's built-in commands
-for maximum flexibility.
+Default: >vim
+
+  let g:repl_filetype_commands = &shell
+
+                                                *g:repl_open_window_default*
+
+A |String|. Default Vim command used to open the REPL window. Uses Vim's
+built-in commands for maximum flexibility.
 
 Examples: >
 
@@ -76,82 +76,102 @@ Examples: >
   - Left split: `leftabove vertical split new`
   - See `:help opening-window` for additional options
 
+Default: >vim
+
+  let g:repl_open_window_default = 'vertical split new'
+
 ==============================================================================
                                                                 *repl_commands*
 3. COMMANDS~
 
-Unless otherwise specified, assume a command takes 0 arguments.
+                                                          *:Repl*
+:Repl
 
-*:Repl*
+  Open a new terminal with the default REPL for current buffer's filetype, and
+  attach it to the current buffer.
 
-  Open a terminal and run the REPL. Takes 0 or 1 arguments. If provided, the
-  argument has the same type as non-key values in `g:repl_filetype_commands`.
+:Repl {repl}
 
-*:ReplAttach*
+  Open a new terminal with the specified {repl}, and attach it to the current
+  buffer. For {repl}'s type, see |g:repl_filetype_commands|'s non-key values.
+
+                                                          *:ReplAttach*
+:ReplAttach
 
   Attach to an existing, open terminal. Enables multiple buffers to
   communicate with one terminal.
 
-*:ReplDetach*
+                                                          *:ReplDetach*
+:ReplDetach
 
   Detach buffer from a previously-attached terminal. Open terminals are not
   closed, buffer is merely detached.
 
-*:ReplClose*
+                                                          *:ReplClose*
+:ReplClose
 
   Close the REPL attached to the current buffer, if open. If run while in a
   REPL buffer, closes the REPL.
 
-*:ReplToggle*
+                                                          *:ReplToggle*
+:ReplToggle
 
   If REPL is open, close it. If REPL is closed, open it using either the
   filetype-associated REPL or the configured default REPL.
 
-*:ReplCurrent*
+                                                          *:ReplCurrent*
+:ReplCurrent
 
   Display information about the REPL attached to the current buffer.
 
-*:ReplFocus*
+                                                          *:ReplFocus*
+:ReplFocus
 
   Move the cursor's focus to the REPL attached to the current buffer.
 
-*:ReplClear*
+                                                          *:ReplClear*
+:ReplClear
 
-  Clear on open REPL's screen. Similar to the bash command clear(1). Note:
-  only works if the REPL supports "<C-l>" as a screen-clearning mechanism.
+  Clear on open REPL's screen. Similar to the bash command clear(1).
 
-*:ReplRunCell*
+  Only works if the REPL supports "<C-l>" as a screen-clearning mechanism.
+
+                                                          *:ReplRunCell*
+:ReplRunCell
 
   Run the cell, and jump the cursor the next cell.
 
-*:ReplNewCell*
+                                                          *:ReplNewCell*
+:ReplNewCell
 
   Create a new cell.
 
-*:ReplSend*
+                                                          *:ReplSend*
+:ReplSend
 
-  Send the arguments passed to the command directly to the REPL. Takes 0 or 1
-  arguments.
+  Opens a floating window that can accept multiple lines. When the window is
+  closed, the lines are sent to the REPL.
 
-  If no arguments are provided, opens a floating window that can accept
-  multiple lines. When the window is closed, the lines are sent to the REPL.
+:ReplSend {text}
 
-  If an argument is provided, then the full text of the argument is sent to
-  the REPL.
+  Send {text} directly to the REPL from the cmdline.
 
-*:ReplAider*
+                                                          *:ReplAider*
+:ReplAider
 
   Like :Repl, but only open an aider repl.
 
-*:ReplAiderBufCur*
+                                                          *:ReplAiderBufCur*
+:ReplAiderBufCur {cmd}
 
-  Adds, or drops, the current buffer from the attached aider REPL.
-  Takes 1 argument: either `/add` or `/drop`.
+  Send {cmd} to aider with the current buffer as its argument. Currently
+  supports `/add` and `/drop`.
 
-*:ReplAiderBufAll*
+                                                          *:ReplAiderBufAll*
+:ReplAiderBufAll {cmd}
 
-  Adds, or drops, all open buffers from the attached aider REPL.
-  Takes 1 argument: either `/add` or `/drop`.
+  Send {cmd} to aider with all open buffers as its arguments. Currently
+  supports `/add` and `/drop`.
 
 ==============================================================================
                                                                 *repl_mappings*
