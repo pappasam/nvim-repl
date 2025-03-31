@@ -59,6 +59,12 @@ Configuration for <https://github.com/folke/lazy.nvim>
 
 ## FAQ
 
+### Where's the documentation?
+
+Documentation is in a normal Neovim help file. You can [read it online here](https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt).
+
+From within Neovim, type `:help repl`.
+
 ### Escape doesn't work in Terminal mode
 
 If you find yourself in Terminal mode, use `<C-\><C-n>` instead of `<Esc>` to return to Normal mode.
@@ -72,8 +78,8 @@ The built-in aider integration overrides aider's `--multiline`, `--notifications
 1. Use `$AIDER_MODEL` to specify your preferred model before opening Neovim.
 2. For other settings, please reference the Author's current [aider configuration](https://github.com/pappasam/config/blob/main/dotfiles/.aider.conf.yml) for inspiration.
 
-### Where's the documentation?
+### My tabline is really long
 
-Documentation is in a normal Neovim help file. You can [read it online here](https://github.com/pappasam/nvim-repl/blob/main/doc/repl.txt).
+Sometimes, terminal commands (like aider) can be long. If your tabline is annoyingly long, you can customize it.
 
-From within Neovim, type `:help repl`.
+[Click here for an example](https://github.com/pappasam/config/blob/main/dotfiles/.config/nvim/lua/settings.lua)
