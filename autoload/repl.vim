@@ -144,11 +144,7 @@ function! repl#open(...) " takes 0 or 1 arguments (dict)
     set shell=cmd
   endif
   let job_id = jobstart(repl_config.cmd, {'term': v:true})
-  " Create the repl_data structure
-  let repl_data = #{
-        \ job_id: job_id,
-        \ config: repl_config
-        \ }
+  let repl_data = #{job_id: job_id, config: repl_config}
   let b:repl_data = repl_data " set in terminal buffer
   setlocal nonumber nornu nobuflisted
   autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
@@ -186,10 +182,7 @@ function! repl#attach()
       return
     endif
   endif
-  let b:repl_data = #{
-        \ job_id: jobs[choice - 1][0],
-        \ config: jobs[choice - 1][1]
-        \ }
+  let b:repl_data = #{job_id: jobs[choice - 1][0], config: jobs[choice - 1][1]}
   call repl#info('attached')
 endfunction
 
@@ -203,7 +196,7 @@ endfunction
 function! repl#close()
   let current_window_id = win_getid()
   let current_tab = tabpagenr()
-  if !exists('b:repl_data') || !has_key(b:repl_data, 'job_id')
+  if !exists('b:repl_data')
     return
   endif
   let current_repl_id = b:repl_data.job_id
