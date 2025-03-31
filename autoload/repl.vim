@@ -142,15 +142,14 @@ function! repl#open(...) " takes 0 or 1 arguments (dict)
   if old_shell == 'powershell'
     set shell=cmd
   endif
-  let job_id = jobstart(repl_config.cmd, {'term': v:true})
-  let repl_data = #{job_id: job_id, config: repl_config}
+  let repl_data = #{job_id: jobstart(repl_config.cmd, {'term': v:true}), config: repl_config}
   let b:repl_data = repl_data " set in terminal buffer
   setlocal nonumber nornu nobuflisted
   autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
   call win_gotoid(current_window_id)
   let b:repl_data = repl_data " set in repl buffer
   let &shell = old_shell
-  let s:active_repls[job_id] = [expand('%:.'), repl_config]
+  let s:active_repls[repl_data.job_id] = [expand('%:.'), repl_config]
   call repl#info('opened!')
 endfunction
 
