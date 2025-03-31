@@ -50,15 +50,14 @@ function! s:cleanup(bufnr) abort
   if empty(repl_data)
     return
   endif
-  let job_id = repl_data.job_id
-  call jobstop(job_id)
-  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == job_id})
+  call jobstop(repl_data.job_id)
+  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == repl_data.job_id})
   let current_window_id = win_getid()
   for win in repl_windows
     call win_gotoid(win.winid)
     quit
   endfor
-  unlet s:active_repls[job_id]
+  unlet s:active_repls[repl_data.job_id]
   call repl#info('closed!')
 endfunction
 
@@ -199,13 +198,12 @@ function! repl#close()
   if !exists('b:repl_data')
     return
   endif
-  let current_repl_id = b:repl_data.job_id
   set lazyredraw
   let tab_count = tabpagenr('$')
   for t in range(1, tab_count)
     if t <= tabpagenr('$')
       execute 'tabnext ' .. t
-      let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == current_repl_id})
+      let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_data.job_id})
       for win in repl_windows
         call win_gotoid(win.winid)
         quit
