@@ -109,16 +109,19 @@ function! s:get_repl(config)
       let parsed = eval(a:config)
       return #{cmd: parsed.cmd,
             \ repl_type: get(parsed, 'repl_type', ''),
-            \ open_window: get(parsed, 'open_window', g:repl_open_window_default)}
+            \ open_window: get(parsed, 'open_window', g:repl_open_window_default),
+            \ filetype: get(parsed, 'filetype', '')}
     else
       return #{cmd: a:config,
             \ repl_type: '',
-            \ open_window: g:repl_open_window_default}
+            \ open_window: g:repl_open_window_default,
+            \ filetype: ''}
     endif
   elseif t_config == v:t_dict
     return #{cmd: a:config.cmd,
           \ repl_type: get(a:config, 'repl_type', ''),
-          \ open_window: get(a:config, 'open_window', g:repl_open_window_default)}
+          \ open_window: get(a:config, 'open_window', g:repl_open_window_default),
+          \ filetype: get(a:config, 'filetype', '')}
   else
     throw 'nvim-repl config for ' .. &filetype .. 'is neither a String nor a Dict'
   endif
@@ -347,7 +350,7 @@ endfunction
 
 function! s:create_floating_input(callback)
   let parent_repl_data = b:repl_data
-  let parent_filetype = &filetype
+  let filetype = parent_repl_data.config.filetype == '' ? &filetype : parent_repl_data.config.filetype
   let original_win = win_getid()
   let buf = nvim_create_buf(v:false, v:true)
   call nvim_buf_set_option(buf, 'bufhidden', 'wipe')
@@ -360,7 +363,7 @@ function! s:create_floating_input(callback)
   let opts = {
         \ 'title': [[' REPL: ' .. parent_repl_data.config.repl_type .. ' ', 'FloatTitle']],
         \ 'title_pos': 'center',
-        \ 'footer': [[' &ft=' .. parent_filetype .. ' ', 'FloatFooter']],
+        \ 'footer': [[' &ft=' .. filetype .. ' ', 'FloatFooter']],
         \ 'footer_pos': 'center',
         \ 'relative': 'editor',
         \ 'width': width,
@@ -381,12 +384,7 @@ function! s:create_floating_input(callback)
         \ 'original_win': original_win
         \ }
   let b:repl_data = parent_repl_data
-  " set filetype of buffer for highlighting purposes
-  if b:repl_data.config.repl_type == 'aider'
-    setlocal filetype=markdown
-  else
-    execute 'setlocal filetype=' .. parent_filetype
-  endif
+  execute 'setlocal filetype=' .. filetype
   startinsert!
 endfunction
 
@@ -506,7 +504,7 @@ endfunction
 
 function! repl#aideropen()
   let cmd = "aider --multiline --notifications --notifications-command=\"nvim --server $NVIM --remote-send '<C-\\><C-n>:call repl#aider_notifications_command()<CR>'\""
-  call repl#open(#{cmd: cmd, open_window: 'tabnew', repl_type: 'aider'})
+  call repl#open(#{cmd: cmd, open_window: 'tabnew', repl_type: 'aider', filetype: 'markdown'})
 endfunction
 
 function! repl#sendcell(...)
@@ -569,9 +567,10 @@ function! repl#current()
   endif
   echohl DiagnosticInfo
   echom 'repl:'
-  echom '  cmd  : ' .. b:repl_data.config.cmd
-  echom '  type : ' .. (b:repl_data.config.repl_type == '' ? 'default' : b:repl_data.config.repl_type)
-  echom '  jobid: ' .. b:repl_data.job_id
+  echom '  cmd      : ' .. b:repl_data.config.cmd
+  echom '  type     : ' .. (b:repl_data.config.repl_type == '' ? 'default' : b:repl_data.config.repl_type)
+  echom '  filetype : ' .. b:repl_data.config.filetype
+  echom '  jobid    : ' .. b:repl_data.job_id
   echohl None
 endfunction
 

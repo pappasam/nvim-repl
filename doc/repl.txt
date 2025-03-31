@@ -32,23 +32,22 @@ A |Dictionary| or a |String|. Maps a filetype to a REPL starting command using
 this configuration variable. Your configuration might look like this: >vim
 
   let g:repl_filetype_commands = #{
-        \ javascript: 'deno repl',
+        \ javascript: #{cmd: 'deno repl', filetype: 'javascript'},
         \ }
 
 A filetype's REPL value can be a String or a Dict. If it's a Dict, acceptable
-keys are:
+keys are `cmd`, `repl_type`, `open_window`, and `filetype`.
 
-- `cmd` the command to start the REPL. The command can be multiple words (for
-  example, including `conda activate`) if escaped properly.
-- `repl_type` unlocks different REPL behaviors ('' uses default behavior).
-  Supported REPL types are:
-  - `''`: the default. Sends lines, 1 at a time, to the REPL for evaluation.
+  `cmd` the command to start the REPL.
+  `repl_type` unlocks different REPL behaviors ('' uses default behavior).
+  - `'default'` sends lines, 1 at a time, to the REPL for evaluation.
   - `'aider'`: an AI REPL. Supports additional aider-specific commands.
-  - `'ipython'`: similar to default, but enters ipython's special multiline mode
-    with <C-o> if more than 1 line is sent to the REPL.
+  - `'ipython'`: similar to default, but uses <C-o> multiline mode.
   - `'utop'`: adds `;;` to the end of the text that is sent to the REPL.
-- `open_window` same as |g:repl_open_window_default|, but specific to
-  configured REPL.
+  `open_window` like |g:repl_open_window_default|, but specific to REPL.
+  `filetype` filetype of the repl's input buffer. If not set, defaults to
+             the filetype of the current buffer that is sending input to the
+             REPL.
 
 If its value is a String, the value is the `cmd`. All other options are `''`.
 
@@ -69,7 +68,7 @@ Default: >vim
 A |String|. Default Vim command used to open the REPL window. Uses Vim's
 built-in commands for maximum flexibility.
 
-Examples: >
+Examples:
 
   - Vertical split (default): `vertical split new`
   - Vertical split with width of 79 specified: `vertical 79split new`

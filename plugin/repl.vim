@@ -26,15 +26,16 @@ endfunction
 " Configuration:
 
 let s:default_commands = #{
-      \ bash: #{cmd: 'bash'},
-      \ haskell: #{cmd: 'ghci'},
-      \ javascript: #{cmd: 'node'},
-      \ ocaml: #{repl_type: 'utop', cmd: 'utop'},
-      \ python: #{repl_type: 'ipython', cmd: 'ipython --TerminalInteractiveShell.editing_mode=emacs --quiet --no-autoindent -i -c "%config InteractiveShell.ast_node_interactivity=\"last_expr_or_assign\""'},
-      \ r: #{cmd: 'R'},
-      \ sh: #{cmd: 'sh'},
-      \ vim: #{cmd: 'nvim --clean -ERM'},
-      \ zsh: #{cmd: 'zsh'},
+      \ bash: #{cmd: 'bash', filetype: 'bash'},
+      \ haskell: #{cmd: 'ghci', filetype: 'haskell'},
+      \ javascript: #{cmd: 'node', filetype: 'javascript'},
+      \ ocaml: #{cmd: 'utop', repl_type: 'utop', filetype: 'ocaml'},
+      \ python: #{cmd: 'ipython --TerminalInteractiveShell.editing_mode=emacs --quiet --no-autoindent -i -c "%config InteractiveShell.ast_node_interactivity=\"last_expr_or_assign\""',
+      \           repl_type: 'ipython', filetype: 'python'},
+      \ r: #{cmd: 'R', filetype: 'r'},
+      \ sh: #{cmd: 'sh', filetype: 'sh'},
+      \ vim: #{cmd: 'nvim --clean -ERM', filetype: 'vim'},
+      \ zsh: #{cmd: 'zsh', filetype: 'zsh'},
       \ }
 
 " User configuration
@@ -48,10 +49,8 @@ function! s:configure_constants()
   let g:repl_filetype_commands = extendnew(s:default_commands, g:repl_filetype_commands)
 
   if !exists('g:repl_default')
-    let g:repl_default = #{cmd: &shell, repl_type: ''}
-  elseif type(g:repl_default) == v:t_dict
-    let g:repl_default = extendnew(#{cmd: &shell, repl_type: ''}, g:repl_default)
-  elseif type(g:repl_default) != v:t_string
+    let g:repl_default = #{cmd: 'bash', filetype: 'bash'}
+  elseif type(g:repl_default) != v:t_dict && type(g:repl_default) != v:t_string
     throw 'g:repl_default must be a String or a Dict'
   endif
 
