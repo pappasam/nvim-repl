@@ -273,8 +273,16 @@ function! s:alt_enter()
 endfunction
 
 let s:repl_type_handlers = {} " Handler registry for different REPL types
-
-function! s:ipython_handler(job_id, lines)
+function! s:repl_type_handlers.default(job_id, lines)
+  let buflines = copy(a:lines)
+  if len(buflines) > 0 && buflines[-1] =~ "^\\s\\+.*"
+    let buflines += ["", ""] " If last line has leading whitespace, add 2 lines
+  else
+    let buflines += [""] " Otherwise, add 1
+  endif
+  call chansend(a:job_id, buflines)
+endfunction
+function! s:repl_type_handlers.ipython(job_id, lines)
   let buflines = copy(a:lines)
   if len(buflines) > 0 && buflines[-1] =~ "^\\s\\+.*"
     let buflines += [""] " If last line has leading whitespace, add 1 line
@@ -288,32 +296,17 @@ function! s:ipython_handler(job_id, lines)
   endif
   call chansend(a:job_id, "\r")
 endfunction
-let s:repl_type_handlers['ipython'] = function('s:ipython_handler')
-
-function! s:utop_handler(job_id, lines)
+function! s:repl_type_handlers.utop(job_id, lines)
   let buflines = copy(a:lines)
   if len(buflines) > 0
     let buflines[-1] = buflines[-1] .. ' ;;'
   endif
   call chansend(a:job_id, buflines + [""])
 endfunction
-let s:repl_type_handlers['utop'] = function('s:utop_handler')
-
-function! s:aider_handler(job_id, lines)
+function! s:repl_type_handlers.aider(job_id, lines)
   let buflines = copy(a:lines)
   if len(buflines) > 0
     let buflines[-1] = buflines[-1] .. s:alt_enter()
-  endif
-  call chansend(a:job_id, buflines)
-endfunction
-let s:repl_type_handlers['aider'] = function('s:aider_handler')
-
-function! s:default_handler(job_id, lines)
-  let buflines = copy(a:lines)
-  if len(buflines) > 0 && buflines[-1] =~ "^\\s\\+.*"
-    let buflines += ["", ""] " If last line has leading whitespace, add 2 lines
-  else
-    let buflines += [""] " Otherwise, add 1
   endif
   call chansend(a:job_id, buflines)
 endfunction
@@ -322,7 +315,7 @@ function! s:chansend_buflines(buflines)
   if has_key(s:repl_type_handlers, b:repl_data.config.repl_type)
     call s:repl_type_handlers[b:repl_data.config.repl_type](b:repl_data.job_id, a:buflines)
   else
-    call s:default_handler(b:repl_data.job_id, a:buflines)
+    call s:repl_type_handlers.default(b:repl_data.job_id, a:buflines)
   endif
   call s:repl_reset_visual_position()
 endfunction
