@@ -80,6 +80,6 @@ The built-in aider integration overrides aider's `--multiline`, `--notifications
 
 ### My tabline is really long
 
-Sometimes, terminal commands (like aider) can be long. If your tabline is annoyingly long, you can customize it.
+Sometimes, terminal commands (like aider) can be long. If your tabline is long, you can customize it.
 
 [Click here for an example](https://github.com/pappasam/config/blob/main/dotfiles/.config/nvim/lua/settings.lua)
