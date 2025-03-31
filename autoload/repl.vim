@@ -30,19 +30,19 @@ function! s:path_relative_to_git_root(path)
 endfunction
 
 function! s:buffers_in_gitroot()
-  let l:git_root = trim(system('git rev-parse --show-toplevel 2>/dev/null'))
-  if l:git_root == '' || v:shell_error != 0
+  let git_root = trim(system('git rev-parse --show-toplevel 2>/dev/null'))
+  if git_root == '' || v:shell_error != 0
     throw 'not in a git repository'
   endif
-  let l:git_root = l:git_root .. '/'
-  let l:buffers = map(
+  let git_root = git_root .. '/'
+  let buffers = map(
         \ filter(
         \   filter(range(0, bufnr('$')), 'buflisted(v:val)'),
         \   'fnamemodify(bufname(v:val), ":p") =~ "^" .. escape(l:git_root, "\\[].$^") .. ".*"'
         \ ),
         \ 'strpart(fnamemodify(bufname(v:val), ":p"), len(l:git_root))'
         \ )
-  return uniq(sort(l:buffers))
+  return uniq(sort(buffers))
 endfunction
 
 function! s:cleanup(bufnr) abort
