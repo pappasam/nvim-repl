@@ -18,7 +18,7 @@ function! repl#warning(msg)
   echohl None
 endfunction
 
-let s:active_repls = {} " type: {jobid: [filepath, repl]}
+let s:active_repls = {} " type: {jobid: [filepath, repl_config]}
 
 function! s:path_relative_to_git_root(path)
   let git_root = trim(system('git rev-parse --show-toplevel 2>/dev/null'))
@@ -46,10 +46,11 @@ function! s:buffers_in_gitroot()
 endfunction
 
 function! s:cleanup(bufnr) abort
-  let job_id = getbufvar(str2nr(a:bufnr), 'repl_id_job', 0)
-  if !job_id
+  let repl_data = getbufvar(str2nr(a:bufnr), 'repl_data', {})
+  if empty(repl_data) || !has_key(repl_data, 'job_id')
     return
   endif
+  let job_id = repl_data.job_id
   call jobstop(job_id)
   let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == job_id})
   let current_window_id = win_getid()
@@ -62,7 +63,7 @@ function! s:cleanup(bufnr) abort
 endfunction
 
 function! s:repl_reset_visual_position()
-  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_id_job})
+  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_data.job_id})
   let current_window_id = win_getid()
   for win in repl_windows
     call win_gotoid(win.winid)
@@ -72,11 +73,11 @@ function! s:repl_reset_visual_position()
 endfunction
 
 function! s:repl_id_job_exists()
-  if !exists('b:repl_id_job')
+  if !exists('b:repl_data')
     return 0
   endif
   try
-    call jobpid(b:repl_id_job)
+    call jobpid(b:repl_data.job_id)
     return 1
   catch /.*/
     return 0
@@ -130,27 +131,31 @@ function! repl#open(...) " takes 0 or 1 arguments (dict)
     return
   endif
   if a:0 == 0
-    let repl = s:get_repl(get(g:repl_filetype_commands, &filetype, g:repl_default))
+    let repl_config = s:get_repl(get(g:repl_filetype_commands, &filetype, g:repl_default))
   elseif a:0 == 1
-    let repl = s:get_repl(a:1)
+    let repl_config = s:get_repl(a:1)
   else
     throw 'nvim-repl: repl#open only takes 0 or 1 arguments'
   endif
   let current_window_id = win_getid()
-  execute repl.open_window
+  execute repl_config.open_window
   let old_shell = &shell
   if old_shell == 'powershell'
     set shell=cmd
   endif
-  let id_job = jobstart(repl.cmd, {'term': v:true})
-  let b:repl_id_job = id_job " set in terminal buffer
+  let job_id = jobstart(repl_config.cmd, {'term': v:true})
+  " Create the repl_data structure
+  let repl_data = #{
+        \ job_id: job_id,
+        \ config: repl_config
+        \ }
+  let b:repl_data = repl_data " set in terminal buffer
   setlocal nonumber nornu nobuflisted
   autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
   call win_gotoid(current_window_id)
-  let b:repl_id_job = id_job " set in repl buffer
-  let b:repl = repl
+  let b:repl_data = repl_data " set in repl buffer
   let &shell = old_shell
-  let s:active_repls[id_job] = [expand('%:.'), repl]
+  let s:active_repls[job_id] = [expand('%:.'), repl_config]
   call repl#info('opened!')
 endfunction
 
@@ -181,17 +186,16 @@ function! repl#attach()
       return
     endif
   endif
-  let b:repl_id_job = jobs[choice - 1][0]
-  let b:repl = jobs[choice - 1][1]
+  let b:repl_data = #{
+        \ job_id: jobs[choice - 1][0],
+        \ config: jobs[choice - 1][1]
+        \ }
   call repl#info('attached')
 endfunction
 
 function! repl#detach()
-  if exists('b:repl_id_job')
-    unlet b:repl_id_job
-  endif
-  if exists('b:repl')
-    unlet b:repl
+  if exists('b:repl_data')
+    unlet b:repl_data
   endif
   call repl#info('detached buffer from existing REPL')
 endfunction
@@ -199,10 +203,10 @@ endfunction
 function! repl#close()
   let current_window_id = win_getid()
   let current_tab = tabpagenr()
-  let current_repl_id = get(b:, 'repl_id_job', '')
-  if empty(current_repl_id)
+  if !exists('b:repl_data') || !has_key(b:repl_data, 'job_id')
     return
   endif
+  let current_repl_id = b:repl_data.job_id
   set lazyredraw
   let tab_count = tabpagenr('$')
   for t in range(1, tab_count)
@@ -315,10 +319,10 @@ function! s:default_handler(job_id, lines)
 endfunction
 
 function! s:chansend_buflines(buflines)
-  if has_key(s:repl_type_handlers, b:repl.repl_type)
-    call s:repl_type_handlers[b:repl.repl_type](b:repl_id_job, a:buflines)
+  if has_key(s:repl_type_handlers, b:repl_data.config.repl_type)
+    call s:repl_type_handlers[b:repl_data.config.repl_type](b:repl_data.job_id, a:buflines)
   else
-    call s:default_handler(b:repl_id_job, a:buflines)
+    call s:default_handler(b:repl_data.job_id, a:buflines)
   endif
   call s:repl_reset_visual_position()
 endfunction
@@ -335,7 +339,7 @@ function! s:send_block(firstline_num, lastline_num, mode)
         \ : getbufline(bufnr('%'), a:firstline_num, a:lastline_num)
   let buflines_chansend = []
   for line in buflines_raw
-    if b:repl.repl_type == 'aider' " send all text to aider
+    if b:repl_data.config.repl_type == 'aider' " send all text to aider
       let buflines_chansend += [line]
     elseif line != "" && line !~ "^\\s*#\\s*%%.*" " remove the empty line and #%% line
       let buflines_chansend += [line]
@@ -359,8 +363,7 @@ function! s:process_input(input_data)
 endfunction
 
 function! s:create_floating_input(callback)
-  let parent_repl_id_job = b:repl_id_job
-  let parent_repl = b:repl
+  let parent_repl_data = b:repl_data
   let parent_filetype = &filetype
   let original_win = win_getid()
   let buf = nvim_create_buf(v:false, v:true)
@@ -372,7 +375,7 @@ function! s:create_floating_input(callback)
   let row = (win_height - height) / 2
   let col = (win_width - width) / 2
   let opts = {
-        \ 'title': [[' REPL: ' .. parent_repl.repl_type .. ' ', 'FloatTitle']],
+        \ 'title': [[' REPL: ' .. parent_repl_data.config.repl_type .. ' ', 'FloatTitle']],
         \ 'title_pos': 'center',
         \ 'footer': [[' &ft=' .. parent_filetype .. ' ', 'FloatFooter']],
         \ 'footer_pos': 'center',
@@ -394,10 +397,9 @@ function! s:create_floating_input(callback)
         \ 'callback': a:callback,
         \ 'original_win': original_win
         \ }
-  let b:repl_id_job = parent_repl_id_job
-  let b:repl = parent_repl
+  let b:repl_data = parent_repl_data
   " set filetype of buffer for highlighting purposes
-  if b:repl.repl_type == 'aider'
+  if b:repl_data.config.repl_type == 'aider'
     setlocal filetype=markdown
   else
     execute 'setlocal filetype=' .. parent_filetype
@@ -425,7 +427,7 @@ function! s:sendargs_float_callback(cmd_args)
   for arg in a:cmd_args
     let trimmed = trim(arg, '', 2)
     if trimmed == ''
-      if b:repl.repl_type == 'aider'
+      if b:repl_data.config.repl_type == 'aider'
         call add(args, trimmed) " keep newlines for aider
       endif
     else
@@ -466,7 +468,7 @@ function! repl#aiderbufall(preamble)
     call repl#attach()
     if !s:repl_id_job_exists()
       return
-    elseif b:repl.repl_type != 'aider'
+    elseif b:repl_data.config.repl_type != 'aider'
       call repl#warning('can ony run if attached to aider repl')
       return
     endif
@@ -488,7 +490,7 @@ function! repl#aiderbuf(preamble)
     call repl#attach()
     if !s:repl_id_job_exists()
       return
-    elseif b:repl.repl_type != 'aider'
+    elseif b:repl_data.config.repl_type != 'aider'
       call repl#warning('can ony run if attached to aider repl')
       return
     endif
@@ -584,9 +586,9 @@ function! repl#current()
   endif
   echohl DiagnosticInfo
   echom 'repl:'
-  echom '  cmd  : ' .. b:repl.cmd
-  echom '  type : ' .. (b:repl.repl_type == '' ? 'default' : b:repl.repl_type)
-  echom '  jobid: ' .. b:repl_id_job
+  echom '  cmd  : ' .. b:repl_data.config.cmd
+  echom '  type : ' .. (b:repl_data.config.repl_type == '' ? 'default' : b:repl_data.config.repl_type)
+  echom '  jobid: ' .. b:repl_data.job_id
   echohl None
 endfunction
 
@@ -595,7 +597,7 @@ function! repl#focus()
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
-  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_id_job})
+  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_data.job_id})
   for win in repl_windows
     call win_gotoid(win.winid)
     call cursor(line('$'), 0)
@@ -607,5 +609,5 @@ function! repl#clear()
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
   endif
-  call chansend(b:repl_id_job, "\<c-l>")
+  call chansend(b:repl_data.job_id, "\<c-l>")
 endfunction
