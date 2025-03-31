@@ -47,7 +47,7 @@ endfunction
 
 function! s:cleanup(bufnr) abort
   let repl_data = getbufvar(str2nr(a:bufnr), 'repl_data', {})
-  if empty(repl_data) || !has_key(repl_data, 'job_id')
+  if empty(repl_data)
     return
   endif
   let job_id = repl_data.job_id
