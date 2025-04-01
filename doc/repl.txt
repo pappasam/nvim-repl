@@ -31,11 +31,11 @@ this project through traditional lua set.
 
 For an explicit default initialization (optional): >lua
 
-  require('repl').setup()
+  require("repl").setup()
 
 A setup function with all arguments: >lua
 
-  require('repl').setup({
+  require("repl").setup({
       filetype_commands = {
         javascript = {cmd = "deno repl"},
       },
