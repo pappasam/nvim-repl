@@ -26,17 +26,25 @@ Works with any REPL, but contains custom support for the following REPLs:
                                                            *repl_configuration*
 2. CONFIGURATION~
 
-                                                *g:repl_filetype_commands*
+Although optional (defaults work without any configuration), you may customize
+this project through traditional lua set.
 
-A |Dictionary| or a |String|. Maps a filetype to a REPL starting command using
-this configuration variable. Your configuration might look like this: >vim
+For an explicit default initialization (optional): >lua
 
-  let g:repl_filetype_commands = #{
-        \ javascript: #{cmd: 'deno repl', filetype: 'javascript'},
-        \ }
+  require('repl').setup()
 
-A filetype's REPL value can be a String or a Dict. If it's a Dict, acceptable
-keys are `cmd`, `repl_type`, `open_window`, and `filetype`.
+A setup function with all arguments: >lua
+
+  require('repl').setup({
+      filetype_commands = {
+        javascript = {cmd = "deno repl"},
+      },
+      default = {cmd = "zsh", filetype = "zsh"},
+      open_window_default = "vertical split new",
+  })
+
+`filetype_commands`: filetypes with a filetype's REPL value, as a table, with
+the following keys:
 
   `cmd` the command to start the REPL.
   `repl_type` unlocks different REPL behaviors ('' uses default behavior).
@@ -49,23 +57,10 @@ keys are `cmd`, `repl_type`, `open_window`, and `filetype`.
              the filetype of the current buffer that is sending input to the
              REPL.
 
-If its value is a String, the value is the `cmd`. All other options are `''`.
+`default`: The default REPL is used when no configured REPL is found for a particular
+filetype.
 
-Default: see `s:default_commands` in `plugin/repl.vim`.
-
-                                                *g:repl_default*
-
-A |Dictionary| or a |String|. The default REPL selected. Used when no
-configured REPL is found for a particular filetype. This has the same type and
-behavior as the values for |g:repl_filetype_commands|.
-
-Default: >vim
-
-  let g:repl_filetype_commands = &shell
-
-                                                *g:repl_open_window_default*
-
-A |String|. Default Vim command used to open the REPL window. Uses Vim's
+`open_window_default`: The default Vim command used to open the REPL window. Uses Vim's
 built-in commands for maximum flexibility.
 
 Examples:
@@ -74,10 +69,6 @@ Examples:
   - Vertical split with width of 79 specified: `vertical 79split new`
   - Left split: `leftabove vertical split new`
   - See `:help opening-window` for additional options
-
-Default: >vim
-
-  let g:repl_open_window_default = 'vertical split new'
 
 ==============================================================================
                                                                 *repl_commands*

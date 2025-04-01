@@ -102,6 +102,7 @@ function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
   return lines
 endfunction
 
+" accepts a string value for compatibility with the commandline
 function! s:get_repl(config)
   let t_config = type(a:config)
   if t_config == v:t_string && len(a:config) > 0

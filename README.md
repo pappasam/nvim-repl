@@ -8,7 +8,7 @@ Works with any REPL, but contains custom support for the following REPLs:
 - [ipython](https://ipython.readthedocs.io/en/stable): a powerful interactive Python shell
 - [utop](https://opam.ocaml.org/blog/about-utop): a much improved interface to the OCaml toplevel
 
-Default REPL implementations are defined in [plugin/repl.vim(s:default_commands)](https://github.com/pappasam/nvim-repl/blob/main/plugin/repl.vim).
+Default REPL settings are defined in [lua/repl/init.lua:defaults](https://github.com/pappasam/nvim-repl/blob/main/lua/repl/init.lua).
 
 ## Demo
 
@@ -42,15 +42,17 @@ Configuration for <https://github.com/folke/lazy.nvim>
 ```lua
 {
   "pappasam/nvim-repl",
-  init = function()
-    vim.g["repl_filetype_commands"] = {
-      javascript = "deno repl",
-    }
-  end,
+  opts = {
+    filetype_commands = {
+      javascript = {cmd = "deno repl", filetype = "javascript"},
+    },
+    default = {cmd = "bash", filetype = "bash"},
+    open_window_default = "vertical split new",
+  },
   keys = {
-    { "<Leader>c", "<Plug>(ReplSendCell)",   mode = "n", desc = "Send Repl Cell" },
-    { "<Leader>r", "<Plug>(ReplSendLine)",   mode = "n", desc = "Send Repl Line" },
-    { "<Leader>r", "<Plug>(ReplSendVisual)", mode = "x", desc = "Send Repl Visual Selection" },
+    { "<Leader>c", "<Plug>(ReplSendCell)",   mode = "n", desc = "ReplSendCell" },
+    { "<Leader>r", "<Plug>(ReplSendLine)",   mode = "n", desc = "ReplSendLine" },
+    { "<Leader>r", "<Plug>(ReplSendVisual)", mode = "x", desc = "ReplSendVisual" },
   },
 }
 ```

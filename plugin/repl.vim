@@ -23,43 +23,10 @@ function! s:cmd_exists(name)
   return _exists
 endfunction
 
-" Configuration:
-
-let s:default_commands = #{
-      \ bash: #{cmd: 'bash', filetype: 'bash'},
-      \ haskell: #{cmd: 'ghci', filetype: 'haskell'},
-      \ javascript: #{cmd: 'node', filetype: 'javascript'},
-      \ ocaml: #{cmd: 'utop', repl_type: 'utop', filetype: 'ocaml'},
-      \ python: #{cmd: 'ipython --TerminalInteractiveShell.editing_mode=emacs --quiet --no-autoindent -i -c "%config InteractiveShell.ast_node_interactivity=\"last_expr_or_assign\""',
-      \           repl_type: 'ipython', filetype: 'python'},
-      \ r: #{cmd: 'R', filetype: 'r'},
-      \ sh: #{cmd: 'sh', filetype: 'sh'},
-      \ vim: #{cmd: 'nvim --clean -ERM', filetype: 'vim'},
-      \ zsh: #{cmd: 'zsh', filetype: 'zsh'},
-      \ }
-
 " User configuration
 
 function! s:configure_constants()
-  if !exists('g:repl_filetype_commands')
-    let g:repl_filetype_commands = {}
-  elseif type(g:repl_filetype_commands) != v:t_dict
-    throw 'g:repl_filetype_commands must be Dict'
-  endif
-  let g:repl_filetype_commands = extendnew(s:default_commands, g:repl_filetype_commands)
-
-  if !exists('g:repl_default')
-    let g:repl_default = #{cmd: 'bash', filetype: 'bash'}
-  elseif type(g:repl_default) != v:t_dict && type(g:repl_default) != v:t_string
-    throw 'g:repl_default must be a String or a Dict'
-  endif
-
-  if !exists('g:repl_open_window_default')
-    let g:repl_open_window_default = 'vertical split new'
-  elseif type(g:repl_open_window_default) != v:t_string
-    throw 'g:repl_open_window_default must be a String'
-  endif
-
+  lua require('repl').setup() -- worry not; this only runs once, globally
   if !s:cmd_exists(':Repl')
     command! -nargs=? -complete=shellcmd Repl call repl#open(<f-args>)
   endif
