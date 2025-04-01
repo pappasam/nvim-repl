@@ -158,7 +158,12 @@ Default: >vim
                                                           *:ReplAider*
 :ReplAider
 
-  Like :Repl, but only open an aider repl.
+  Like |:Repl|, but only open an aider repl.
+
+                                                          *:ReplAiderRestore*
+:ReplAiderRestore
+
+  Like |:ReplAider|, but restore previous chat history and loaded files.
 
                                                           *:ReplAiderBufCur*
 :ReplAiderBufCur {cmd}

@@ -64,7 +64,10 @@ function! s:configure_constants()
     command! -nargs=? -complete=shellcmd Repl call repl#open(<f-args>)
   endif
   if !s:cmd_exists(':ReplAider')
-    command! ReplAider call repl#aideropen()
+    command! ReplAider call repl#aideropen([])
+  endif
+  if !s:cmd_exists(':ReplAiderRestore')
+    command! ReplAiderRestore call repl#aideropen(['--restore-chat-history'])
   endif
   if !s:cmd_exists(':ReplAttach')
     command! ReplAttach call repl#attach()
