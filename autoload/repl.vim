@@ -110,18 +110,18 @@ function! s:get_repl(config)
       let parsed = eval(a:config)
       return #{cmd: parsed.cmd,
             \ repl_type: get(parsed, 'repl_type', ''),
-            \ open_window: get(parsed, 'open_window', g:repl_open_window_default),
+            \ open_window: get(parsed, 'open_window', g:repl.open_window_default),
             \ filetype: get(parsed, 'filetype', '')}
     else
       return #{cmd: a:config,
             \ repl_type: '',
-            \ open_window: g:repl_open_window_default,
+            \ open_window: g:repl.open_window_default,
             \ filetype: ''}
     endif
   elseif t_config == v:t_dict
     return #{cmd: a:config.cmd,
           \ repl_type: get(a:config, 'repl_type', ''),
-          \ open_window: get(a:config, 'open_window', g:repl_open_window_default),
+          \ open_window: get(a:config, 'open_window', g:repl.open_window_default),
           \ filetype: get(a:config, 'filetype', '')}
   else
     throw 'nvim-repl config for ' .. &filetype .. 'is neither a String nor a Dict'
@@ -134,7 +134,7 @@ function! repl#open(...) " takes 0 or 1 arguments (dict)
     return
   endif
   if a:0 == 0
-    let repl_config = s:get_repl(get(g:repl_filetype_commands, &filetype, g:repl_default))
+    let repl_config = s:get_repl(get(g:repl.filetype_commands, &filetype, g:repl.default))
   elseif a:0 == 1
     let repl_config = s:get_repl(a:1)
   else
