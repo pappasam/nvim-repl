@@ -43,8 +43,8 @@ A setup function with all arguments: >lua
       open_window_default = "vertical split new",
   })
 
-`filetype_commands`: filetypes with a filetype's REPL value, as a table, with
-the following keys:
+`filetype_commands`: keys are filetypes associated to a default REPL value for
+                     that filetype. Values are as follows:
 
   `cmd` the command to start the REPL.
   `repl_type` unlocks different REPL behaviors ('' uses default behavior).
@@ -58,10 +58,10 @@ the following keys:
              REPL.
 
 `default`: The default REPL is used when no configured REPL is found for a particular
-filetype.
+           filetype.
 
 `open_window_default`: The default Vim command used to open the REPL window. Uses Vim's
-built-in commands for maximum flexibility.
+                       built-in commands for maximum flexibility.
 
 Examples:
 
@@ -83,7 +83,7 @@ Examples:
 :Repl {repl}
 
   Open a new terminal with the specified {repl}, and attach it to the current
-  buffer. For {repl}'s type, see |g:repl_filetype_commands|'s non-key values.
+  buffer. For {repl}'s type, see `filetype_commands` within |repl_configuration|.
 
                                                           *:ReplAttach*
 :ReplAttach
