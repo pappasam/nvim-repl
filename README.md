@@ -77,7 +77,7 @@ Type `:help Terminal-mode` and `:help CTRL-\_CTRL-N` for more information.
 
 The built-in aider integration overrides aider's `--multiline`, `--notifications`, and `--notifications-command` for a smooth Neovim integration. All other settings default to the user's aider configuration file and environment. To that end, we recommend:
 
-1. Use `$AIDER_MODEL` to specify your preferred model before opening Neovim.
+1. Use [$AIDER_MODEL](https://aider.chat/docs/config/options.html#main-model) to specify your preferred model before opening Neovim.
 2. For other settings, please reference the Author's current [aider configuration](https://github.com/pappasam/config/blob/main/dotfiles/.aider.conf.yml) for inspiration.
 
 ### My tabline is really long
