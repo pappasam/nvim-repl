@@ -26,7 +26,9 @@ endfunction
 " User configuration
 
 function! s:configure_constants()
-  lua require('repl').setup() -- worry not; this only runs once, globally
+  if !exists('g:repl')
+    lua require('repl').setup()
+  endif
   if !s:cmd_exists(':Repl')
     command! -nargs=? -complete=shellcmd Repl call repl#open(<f-args>)
   endif

@@ -41,18 +41,13 @@ local defaults = {
 ---@field default ReplCmd? set default ReplCmd
 ---@field open_window_default string? command to open repl window. See :help opening-window
 
----Configure nvim-repl's global constants. Can only be called once
+---Configure nvim-repl's global constants
 ---@param opts SetupOptions?
 function M.setup(opts)
-  if setup_done then
-    return
-  end
   opts = opts or {}
 
   ---@type ReplGlobalConfig
   vim.g.repl = vim.tbl_deep_extend("force", defaults, opts)
-
-  setup_done = true
 end
 
 return M
