@@ -1,7 +1,5 @@
 local M = {}
 
-local setup_done = false
-
 ---@alias ReplType "utop" | "ipython" | "aider"
 
 ---@class ReplCmd
