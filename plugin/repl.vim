@@ -5,9 +5,6 @@
 " Website:        https://github.com/pappasam/nvim-repl
 " License:        MIT
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Setup:
-
 if exists("g:loaded_repl")
   finish
 endif
