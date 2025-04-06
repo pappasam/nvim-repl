@@ -6,6 +6,8 @@
 " License:        MIT
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+lua require('repl').setup() -- lazy-load global constants
+
 function! repl#info(msg)
   echohl DiagnosticInfo
   echom 'repl: ' .. a:msg

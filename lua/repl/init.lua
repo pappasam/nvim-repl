@@ -45,7 +45,7 @@ function M.setup(opts)
   opts = opts or {}
 
   ---@type ReplGlobalConfig
-  vim.g.repl = vim.tbl_deep_extend("force", defaults, opts)
+  vim.g.repl = vim.tbl_deep_extend("force", defaults, vim.g.repl or {}, opts)
 end
 
 return M
