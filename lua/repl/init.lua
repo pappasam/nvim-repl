@@ -31,7 +31,7 @@ local defaults = {
     zsh = { cmd = "zsh", filetype = "zsh" },
   },
   default = { cmd = "bash", filetype = "bash" },
-  open_window_default = "vertical split new",
+  open_window_default = "vnew",
 }
 
 ---@class SetupOptions
