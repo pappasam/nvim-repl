@@ -9,13 +9,11 @@
 lua require('repl').setup() -- lazy-load global constants
 
 function! repl#info(msg)
-  echohl DiagnosticInfo
   echom 'repl: ' .. a:msg
-  echohl None
 endfunction
 
 function! repl#warning(msg)
-  echohl WarningMsg
+  echohl ErrorMsg
   echom 'repl: ' .. a:msg
   echohl None
 endfunction
