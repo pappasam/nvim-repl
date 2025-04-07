@@ -40,7 +40,7 @@ A setup function with all arguments: >lua
         javascript = {cmd = "deno repl"},
       },
       default = {cmd = "zsh", filetype = "zsh"},
-      open_window_default = "vertical split new",
+      open_window_default = "vnew",
   })
 
 `filetype_commands`: keys are filetypes associated to a default REPL value for
@@ -65,9 +65,9 @@ A setup function with all arguments: >lua
 
 Examples:
 
-  - Vertical split (default): `vertical split new`
-  - Vertical split with width of 79 specified: `vertical 79split new`
-  - Left split: `leftabove vertical split new`
+  - Vertical split (default): `vnew`
+  - Vertical split with width of 79 specified: `79vnew`
+  - Left split: `leftabove vnew`
   - See `:help opening-window` for additional options
 
 ==============================================================================
