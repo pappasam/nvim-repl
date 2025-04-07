@@ -5,6 +5,14 @@
 " Website:        https://github.com/pappasam/nvim-repl
 " License:        MIT
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if !has('nvim-0.11.0')
+  echohl WarningMsg
+  echom 'nvim-repl: fatal error, cannot load'
+  echom '           requires nvim 0.11.0 or later'
+  echom '           check version: `nvim --version`'
+  echohl None
+  finish
+endif
 if exists("g:loaded_repl")
   finish
 endif
