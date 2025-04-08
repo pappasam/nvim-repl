@@ -1,0 +1,240 @@
+*repl.txt* A Neovim REPL manager
+
+Author: Samuel Roeca
+
+Table of Contents
+
+1. Introduction ... |repl_intro|
+2. Configuration .. |repl_configuration|
+3. Commands ....... |repl_commands|
+4. Mappings ....... |repl_mappings|
+5. Credits ........ |repl_credits|
+
+==============================================================================
+                                                                   *repl_intro*
+1. INTRODUCTION~
+
+Create, use, and remove interactive REPLs within Neovim.
+
+Works with any REPL, but contains custom support for the following REPLs:
+
+- ipython: https://ipython.readthedocs.io/en/stable
+- aider: https://aider.chat
+- utop: https://opam.ocaml.org/blog/about-utop
+
+==============================================================================
+                                                           *repl_configuration*
+2. CONFIGURATION~
+
+Although optional (defaults work without any configuration), you may customize
+this project through traditional lua set.
+
+For an explicit default initialization (optional): >lua
+
+  require("repl").setup()
+
+A setup function with all arguments: >lua
+
+  require("repl").setup({
+      filetype_commands = {
+        javascript = {cmd = "deno repl"},
+      },
+      default = {cmd = "zsh", filetype = "zsh"},
+      open_window_default = "vnew",
+  })
+
+`filetype_commands`: keys are filetypes associated to a default REPL value for
+                     that filetype. Values are as follows:
+
+  `cmd` the command to start the REPL.
+  `repl_type` unlocks different REPL behaviors ('' uses default behavior).
+  - `'default'` sends lines, 1 at a time, to the REPL for evaluation.
+  - `'aider'`: an AI REPL. Supports additional aider-specific commands.
+  - `'ipython'`: similar to default, but uses <C-o> multiline mode.
+  - `'utop'`: adds `;;` to the end of the text that is sent to the REPL.
+  `open_window` like |g:repl_open_window_default|, but specific to REPL.
+  `filetype` filetype of the repl's input buffer. If not set, defaults to
+             the filetype of the current buffer that is sending input to the
+             REPL.
+
+`default`: The default REPL is used when no configured REPL is found for a particular
+           filetype.
+
+`open_window_default`: The default Vim command used to open the REPL window. Uses Vim's
+                       built-in commands for maximum flexibility.
+
+Examples:
+
+  - Vertical split (default): `vnew`
+  - Vertical split with width of 79 specified: `79vnew`
+  - Left split: `leftabove vnew`
+  - See `:help opening-window` for additional options
+
+==============================================================================
+                                                                *repl_commands*
+3. COMMANDS~
+
+                                                          *:Repl*
+:Repl
+
+  Open a new terminal with the default REPL for current buffer's filetype, and
+  attach it to the current buffer.
+
+:Repl {repl}
+
+  Open a new terminal with the specified {repl}, and attach it to the current
+  buffer. For {repl}'s type, see `filetype_commands` within |repl_configuration|.
+
+                                                          *:ReplAttach*
+:ReplAttach
+
+  Attach to an existing, open terminal. Enables multiple buffers to
+  communicate with one terminal.
+
+                                                          *:ReplDetach*
+:ReplDetach
+
+  Detach buffer from a previously-attached terminal. Open terminals are not
+  closed, buffer is merely detached.
+
+                                                          *:ReplClose*
+:ReplClose
+
+  Close the REPL attached to the current buffer, if open. If run while in a
+  REPL buffer, closes the REPL.
+
+                                                          *:ReplToggle*
+:ReplToggle
+
+  If REPL is open, close it. If REPL is closed, open it using either the
+  filetype-associated REPL or the configured default REPL.
+
+                                                          *:ReplCurrent*
+:ReplCurrent
+
+  Display information about the REPL attached to the current buffer.
+
+                                                          *:ReplFocus*
+:ReplFocus
+
+  Move the cursor's focus to the REPL attached to the current buffer.
+
+                                                          *:ReplClear*
+:ReplClear
+
+  Clear on open REPL's screen. Similar to the bash command clear(1).
+
+  Only works if the REPL supports "<C-l>" as a screen-clearning mechanism.
+
+                                                          *:ReplRunCell*
+:ReplRunCell
+
+  Run the cell, and jump the cursor the next cell.
+
+                                                          *:ReplNewCell*
+:ReplNewCell
+
+  Create a new cell.
+
+                                                          *:ReplSend*
+:ReplSend
+
+  Opens a floating window that can accept multiple lines. When the window is
+  closed, the lines are sent to the REPL.
+
+:ReplSend {text}
+
+  Send {text} directly to the REPL from the cmdline.
+
+                                                          *:ReplAider*
+:ReplAider
+
+  Like |:Repl|, but only open an aider repl.
+
+                                                          *:ReplAiderRestore*
+:ReplAiderRestore
+
+  Like |:ReplAider|, but restore previous chat history and loaded files.
+
+                                                          *:ReplAiderBufCur*
+:ReplAiderBufCur {cmd}
+
+  Send {cmd} to aider with the current buffer as its argument. Currently
+  supports `/add` and `/drop`.
+
+                                                          *:ReplAiderBufAll*
+:ReplAiderBufAll {cmd}
+
+  Send {cmd} to aider with all open buffers as its arguments. Currently
+  supports `/add` and `/drop`.
+
+==============================================================================
+                                                                *repl_mappings*
+4. MAPPINGS~
+
+Pluggable, dot-repeatable mappings are provided for the use to map:
+
+<Plug>(ReplSendLine)                                      *<Plug>(ReplSendLine)*
+
+  Send the current line to the REPL.
+
+<Plug>(ReplSendVisual)                                  *<Plug>(ReplSendVisual)*
+
+  Send the current cell to the REPL.
+
+<Plug>(ReplSendCell)                                      *<Plug>(ReplSendCell)*
+
+  Send the visual selection to the REPL.
+
+Mappings that you may add want to add to your configuration: >vim
+
+  nmap <silent> <Leader>r <Plug>(ReplSendLine)
+  xmap <silent> <Leader>r <Plug>(ReplSendVisual)
+  nmap <silent> <Leader>c <Plug>(ReplSendCell)
+
+==============================================================================
+                                                                  *repl_cells*
+5. CELLS~
+
+Cells are denoted by full-line comments that begin with the characters `%%`.
+
+Comments are identified by your buffer's filetype's 'commentstring'.
+
+See some examples below:
+
+Python: >python
+
+  # %%
+  print("I am the first cell")
+  print("I am still the first cell")
+
+  # %% anything can follow
+  print("I am the second cell")
+  print("I am still the second cell")
+  print("I am still, still the second cell")
+  # %%
+
+  print("I am the third cell")
+
+Haskell: >haskell
+
+  -- %%
+  putStrLn "I am the first cell"
+  putStrLn "I am still the first cell"
+
+  -- %% anything can follow
+  putStrLn "I am the second cell"
+  putStrLn "I am still the second cell"
+  putStrLn "I am still, still the second cell"
+  -- %%
+
+  putStrLn "I am the third cell"
+
+
+==============================================================================
+                                                                 *repl_credits*
+6. CREDITS~
+
+This plugin was inspired by vim-slime: https://github.com/jpalardy/vim-slime .
+
+vim:tw=78:ts=8:ft=help:norl:
