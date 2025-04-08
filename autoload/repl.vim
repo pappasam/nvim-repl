@@ -134,33 +134,30 @@ function! repl#open(...) " takes 0 or 1 arguments (dict)
     return
   endif
   if a:0 == 0
-    let repl_config = s:get_repl(get(g:repl.filetype_commands, &filetype, g:repl.default))
+    let config = s:get_repl(get(g:repl.filetype_commands, &filetype, g:repl.default))
   elseif a:0 == 1
-    let repl_config = s:get_repl(a:1)
+    let config = s:get_repl(a:1)
   else
     throw 'nvim-repl: repl#open only takes 0 or 1 arguments'
   endif
   let current_window_id = win_getid()
-  execute repl_config.open_window
+  execute config.open_window
   let old_shell = &shell
   if old_shell == 'powershell'
     set shell=cmd
   endif
-  let jobstart_opts = #{term: v:true}
-  if repl_config.repl_type == 'aider'
-    let jobstart_opts.on_stdout = luaeval('require("repl.jobstart").on_stdout_aider')
+  let jobopts = #{term: v:true}
+  if config.repl_type == 'aider'
+    let jobopts.on_stdout = luaeval('require("repl.jobstart").on_stdout_aider')
   endif
-  let repl_data = #{
-        \ job_id: jobstart(repl_config.cmd, jobstart_opts),
-        \ config: repl_config,
-        \ }
+  let repl_data = #{job_id: jobstart(config.cmd, jobopts), config: config}
   let b:repl_data = repl_data " set in terminal buffer
   setlocal nonumber nornu nobuflisted
   autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
   call win_gotoid(current_window_id)
   let b:repl_data = repl_data " set in repl buffer
   let &shell = old_shell
-  let s:active_repls[repl_data.job_id] = [expand('%:.'), repl_config]
+  let s:active_repls[repl_data.job_id] = [expand('%:.'), config]
   call repl#info('opened!')
 endfunction
 
