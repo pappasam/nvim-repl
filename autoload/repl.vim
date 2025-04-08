@@ -146,7 +146,14 @@ function! repl#open(...) " takes 0 or 1 arguments (dict)
   if old_shell == 'powershell'
     set shell=cmd
   endif
-  let repl_data = #{job_id: jobstart(repl_config.cmd, {'term': v:true}), config: repl_config}
+  let jobstart_opts = #{term: v:true}
+  if repl_config.repl_type == 'aider'
+    let jobstart_opts.on_stdout = luaeval('require("repl.jobstart").on_stdout_aider')
+  endif
+  let repl_data = #{
+        \ job_id: jobstart(repl_config.cmd, jobstart_opts),
+        \ config: repl_config,
+        \ }
   let b:repl_data = repl_data " set in terminal buffer
   setlocal nonumber nornu nobuflisted
   autocmd BufHidden <buffer> call s:cleanup(expand('<abuf>'))
