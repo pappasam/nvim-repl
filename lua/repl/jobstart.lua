@@ -6,7 +6,7 @@ local M = {}
 function M.on_stdout_aider(job_id, data, event)
   for _, item in ipairs(data) do
     if string.find(item, "Processing your request...", 1, true) then
-      vim.fn["repl#info"]("AI comment detected, aider processing...")
+      vim.notify("repl: AI comment detected, aider processing...")
       return
     end
   end
