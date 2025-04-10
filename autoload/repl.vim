@@ -389,7 +389,7 @@ function! s:create_floating_input(callback)
         \ 'original_win': original_win
         \ }
   let b:repl_data = parent_repl_data
-  execute 'setlocal filetype=' .. filetype
+  let &l:filetype = filetype
   startinsert!
 endfunction
 
