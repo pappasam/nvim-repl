@@ -18,9 +18,9 @@ Create, use, and remove interactive REPLs within Neovim.
 
 Works with any REPL, but contains custom support for the following REPLs:
 
-- ipython: https://ipython.readthedocs.io/en/stable
-- aider: https://aider.chat
-- utop: https://opam.ocaml.org/blog/about-utop
+- `aider`: https://aider.chat
+- `ipython`: https://ipython.readthedocs.io/en/stable
+- `utop`: https://opam.ocaml.org/blog/about-utop
 
 ==============================================================================
                                                            *repl_configuration*
@@ -83,7 +83,22 @@ Examples:
 :Repl {repl}
 
   Open a new terminal with the specified {repl}, and attach it to the current
-  buffer. For {repl}'s type, see `filetype_commands` within |repl_configuration|.
+  buffer. For {repl} type, see `filetype_commands` in |repl_configuration|.
+
+                                                          *:ReplAider*
+:ReplAider
+
+  Like |:Repl|, but open an `aider` repl, configured ergonomically.
+
+                                                          *:ReplIpython*
+:ReplIpython
+
+  Like |:Repl|, but open an `ipython` repl, configured ergonomically.
+
+                                                          *:ReplUtop*
+:ReplUtop
+
+  Like |:Repl|, but open a `utop` repl, configured ergonomically.
 
                                                           *:ReplAttach*
 :ReplAttach
@@ -146,26 +161,16 @@ Examples:
 
   Send {text} directly to the REPL from the cmdline.
 
-                                                          *:ReplAider*
-:ReplAider
-
-  Like |:Repl|, but only open an aider repl.
-
-                                                          *:ReplAiderRestore*
-:ReplAiderRestore
-
-  Like |:ReplAider|, but restore previous chat history and loaded files.
-
                                                           *:ReplAiderBufCur*
 :ReplAiderBufCur {cmd}
 
-  Send {cmd} to aider with the current buffer as its argument. Currently
+  Send {cmd} to `aider` with the current buffer as its argument. Currently
   supports `/add` and `/drop`.
 
                                                           *:ReplAiderBufAll*
 :ReplAiderBufAll {cmd}
 
-  Send {cmd} to aider with all open buffers as its arguments. Currently
+  Send {cmd} to `aider` with all open buffers as its arguments. Currently
   supports `/add` and `/drop`.
 
 ==============================================================================

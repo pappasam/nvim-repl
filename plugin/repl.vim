@@ -20,25 +20,26 @@ let g:loaded_repl = v:true
 let s:save_cpo = &cpo
 set cpo&vim
 
-function s:complete_aider(arglead, cmdline, cursorpos)
+function s:cmpAider(arglead, cmdline, cursorpos)
   return ['/add', '/drop']
 endfunction
 
-command -nargs=? -complete=shellcmd                     Repl call repl#open(<f-args>)
-command                                                 ReplAider call repl#aideropen([])
-command                                                 ReplAiderRestore call repl#aideropen(['--restore-chat-history'])
-command                                                 ReplAttach call repl#attach()
-command                                                 ReplDetach call repl#detach()
-command                                                 ReplClose call repl#close()
-command                                                 ReplToggle call repl#toggle()
-command                                                 ReplNewCell call repl#newcell()
-command                                                 ReplRunCell call repl#sendcell()
-command                                                 ReplCurrent call repl#current()
-command                                                 ReplFocus call repl#focus()
-command                                                 ReplClear call repl#clear()
-command -nargs=?                                        ReplSend call repl#send(<f-args>)
-command -nargs=1 -complete=customlist,s:complete_aider  ReplAiderBufCur call repl#aiderbuf(<f-args>)
-command -nargs=1 -complete=customlist,s:complete_aider  ReplAiderBufAll call repl#aiderbufall(<f-args>)
+command -nargs=? -complete=shellcmd               Repl call repl#open(<f-args>)
+command                                           ReplIpython call repl#open(v:lua.require('repl').get_special_repl('ipython'))
+command                                           ReplUtop call repl#open(v:lua.require('repl').get_special_repl('utop'))
+command                                           ReplAider call repl#open(v:lua.require('repl').get_special_repl('aider'))
+command                                           ReplAttach call repl#attach()
+command                                           ReplDetach call repl#detach()
+command                                           ReplClose call repl#close()
+command                                           ReplToggle call repl#toggle()
+command                                           ReplNewCell call repl#newcell()
+command                                           ReplRunCell call repl#sendcell()
+command                                           ReplCurrent call repl#current()
+command                                           ReplFocus call repl#focus()
+command                                           ReplClear call repl#clear()
+command -nargs=?                                  ReplSend call repl#send(<f-args>)
+command -nargs=1 -complete=customlist,s:cmpAider  ReplAiderBufCur call repl#aiderbuf(<f-args>)
+command -nargs=1 -complete=customlist,s:cmpAider  ReplAiderBufAll call repl#aiderbufall(<f-args>)
 
 nnoremap <silent> <Plug>(ReplSendLine) <Cmd>execute 'set operatorfunc=repl#noop'<CR><Cmd>call repl#sendline()<CR>g@l<Cmd>execute 'set operatorfunc=repl#sendline'<CR>
 nnoremap <silent> <Plug>(ReplSendCell) <Cmd>execute 'set operatorfunc=repl#noop'<CR><Cmd>call repl#sendcell()<CR>g@l<Cmd>execute 'set operatorfunc=repl#sendcell'<CR>

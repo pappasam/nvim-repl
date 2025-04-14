@@ -507,13 +507,6 @@ function! repl#aider_notifications_command()
   endif
 endfunction
 
-function! repl#aideropen(cmdOpts) " [list[str]]
-  let args = len(a:cmdOpts) == 0 ? ' ' : ' ' .. join(a:cmdOpts, ' ') .. ' '
-  let cmd = 'aider ' .. args .. ' --multiline --notifications '
-        \ .. " --notifications-command=\"nvim --server $NVIM --remote-send '<C-\\><C-n>:call repl#aider_notifications_command()<CR>'\""
-  call repl#open(#{cmd: cmd, open_window: 'tabnew', repl_type: 'aider', filetype: 'markdown'})
-endfunction
-
 function! repl#sendcell(...)
   if !s:repl_id_job_exists()
     call repl#attach()
