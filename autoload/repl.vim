@@ -195,8 +195,10 @@ endfunction
 function! repl#detach() abort
   if exists('b:repl_data')
     unlet b:repl_data
+    call repl#info('detached buffer from existing REPL')
+  else
+    call repl#warning('no REPL attached to current buffer')
   endif
-  call repl#info('detached buffer from existing REPL')
 endfunction
 
 function! repl#close() abort
@@ -206,25 +208,30 @@ function! repl#close() abort
     return
   endif
   set lazyredraw
-  let tab_count = tabpagenr('$')
-  for t in range(1, tab_count)
-    if t <= tabpagenr('$')
-      execute 'tabnext ' .. t
-      let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_data.job_id})
-      for win in repl_windows
-        call win_gotoid(win.winid)
-        quit
-      endfor
+  try
+    let tab_count = tabpagenr('$')
+    for t in range(1, tab_count)
+      if t <= tabpagenr('$')
+        execute 'tabnext ' .. t
+        let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_data.job_id})
+        for win in repl_windows
+          call win_gotoid(win.winid)
+          quit
+        endfor
+      endif
+    endfor
+    if current_tab <= tabpagenr('$')
+      execute 'tabnext ' .. current_tab
     endif
-  endfor
-  if current_tab <= tabpagenr('$')
-    execute 'tabnext ' .. current_tab
-  endif
-  if win_id2tabwin(current_window_id)[0] > 0
-    call win_gotoid(current_window_id)
-  endif
-  set nolazyredraw
-  redraw
+    if win_id2tabwin(current_window_id)[0] > 0
+      call win_gotoid(current_window_id)
+    endif
+  catch /.*/
+    call repl#warning(v:exception)
+  finally
+    set nolazyredraw
+    redraw
+  endtry
 endfunction
 
 function! repl#toggle() abort
