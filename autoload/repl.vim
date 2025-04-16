@@ -8,11 +8,11 @@
 
 lua require('repl').setup() -- lazy-load global constants
 
-function! repl#info(msg)
+function! repl#info(msg) abort
   echom 'repl: ' .. a:msg
 endfunction
 
-function! repl#warning(msg)
+function! repl#warning(msg) abort
   echohl ErrorMsg
   echom 'repl: ' .. a:msg
   echohl None
@@ -20,7 +20,7 @@ endfunction
 
 let s:active_repls = {} " type: {jobid: [filepath, repl_config]}
 
-function! s:path_relative_to_git_root(path)
+function! s:path_relative_to_git_root(path) abort
   let git_root = trim(system('git rev-parse --show-toplevel 2>/dev/null'))
   if git_root == '' || v:shell_error != 0
     throw 'not in a git repository'
@@ -29,7 +29,7 @@ function! s:path_relative_to_git_root(path)
   return escape(strpart(a:path, len(git_root) + 1), ' ')
 endfunction
 
-function! s:buffers_in_gitroot()
+function! s:buffers_in_gitroot() abort
   let git_root = trim(system('git rev-parse --show-toplevel 2>/dev/null'))
   if git_root == '' || v:shell_error != 0
     throw 'not in a git repository'
@@ -61,7 +61,7 @@ function! s:cleanup(bufnr) abort
   call repl#info('closed!')
 endfunction
 
-function! s:repl_reset_visual_position()
+function! s:repl_reset_visual_position() abort
   let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_data.job_id})
   let current_window_id = win_getid()
   for win in repl_windows
@@ -71,7 +71,7 @@ function! s:repl_reset_visual_position()
   call win_gotoid(current_window_id)
 endfunction
 
-function! s:repl_id_job_exists()
+function! s:repl_id_job_exists() abort
   if !exists('b:repl_data')
     return 0
   endif
@@ -83,7 +83,7 @@ function! s:repl_id_job_exists()
   endtry
 endfunction
 
-function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
+function! s:get_visual_selection(mode) abort " https://stackoverflow.com/a/61486601
   if a:mode !=? 'v' && a:mode !=? "\<c-v>"
     throw 'Mode "' .. a:mode .. '" is not a valid Visual mode.'
   endif
@@ -103,7 +103,7 @@ function! s:get_visual_selection(mode) " https://stackoverflow.com/a/61486601
 endfunction
 
 " accepts a string value for compatibility with the commandline
-function! s:get_repl(config)
+function! s:get_repl(config) abort
   let t_config = type(a:config)
   if t_config == v:t_string && len(a:config) > 0
     if a:config[0] == '#' || a:config[0] == '{'
@@ -128,7 +128,7 @@ function! s:get_repl(config)
   endif
 endfunction
 
-function! repl#open(...) " takes 0 or 1 arguments (dict)
+function! repl#open(...) abort " takes 0 or 1 arguments (dict)
   if s:repl_id_job_exists()
     call repl#warning('already open, try `:ReplDetach` or `:ReplClose`')
     return
@@ -161,7 +161,7 @@ function! repl#open(...) " takes 0 or 1 arguments (dict)
   call repl#info('opened!')
 endfunction
 
-function! repl#attach()
+function! repl#attach() abort
   let inputs_tail = []
   let jobs = []
   for [jobid, value] in items(s:active_repls)
@@ -192,14 +192,14 @@ function! repl#attach()
   call repl#info('attached')
 endfunction
 
-function! repl#detach()
+function! repl#detach() abort
   if exists('b:repl_data')
     unlet b:repl_data
   endif
   call repl#info('detached buffer from existing REPL')
 endfunction
 
-function! repl#close()
+function! repl#close() abort
   let current_window_id = win_getid()
   let current_tab = tabpagenr()
   if !exists('b:repl_data')
@@ -227,7 +227,7 @@ function! repl#close()
   redraw
 endfunction
 
-function! repl#toggle()
+function! repl#toggle() abort
   if !s:repl_id_job_exists()
     call repl#open()
   else
@@ -235,11 +235,11 @@ function! repl#toggle()
   endif
 endfunction
 
-function! repl#noop(...)
+function! repl#noop(...) abort
   return
 endfunction
 
-function! repl#sendline(...)
+function! repl#sendline(...) abort
   if !s:repl_id_job_exists()
     call repl#attach()
     if !s:repl_id_job_exists()
@@ -250,7 +250,7 @@ function! repl#sendline(...)
   normal! j0
 endfunction
 
-function! repl#sendvisual(mode)
+function! repl#sendvisual(mode) abort
   if !s:repl_id_job_exists()
     call repl#attach()
     if !s:repl_id_job_exists()
@@ -260,18 +260,18 @@ function! repl#sendvisual(mode)
   call s:send_block('not applicable', 'not applicable', a:mode)
 endfunction
 
-function! s:arrow_down()
+function! s:arrow_down() abort
   " ANSI/VT100-compatible symbol for the Down arrow key
   return "\x1b[B"
 endfunction
 
-function! s:alt_enter()
+function! s:alt_enter() abort
   " Standard escape sequence for Alt+Enter
   return "\x1b\r"
 endfunction
 
 let s:repl_type_handlers = {} " Handler registry for different REPL types
-function! s:repl_type_handlers.default(job_id, lines)
+function! s:repl_type_handlers.default(job_id, lines) abort
   let buflines = copy(a:lines)
   if len(buflines) > 0 && buflines[-1] =~ "^\\s\\+.*"
     let buflines += ["", ""] " If last line has leading whitespace, add 2 lines
@@ -280,7 +280,7 @@ function! s:repl_type_handlers.default(job_id, lines)
   endif
   call chansend(a:job_id, buflines)
 endfunction
-function! s:repl_type_handlers.ipython(job_id, lines)
+function! s:repl_type_handlers.ipython(job_id, lines) abort
   let buflines = copy(a:lines)
   if len(buflines) > 0 && buflines[-1] =~ "^\\s\\+.*"
     let buflines += [""] " If last line has leading whitespace, add 1 line
@@ -294,14 +294,14 @@ function! s:repl_type_handlers.ipython(job_id, lines)
   endif
   call chansend(a:job_id, "\r")
 endfunction
-function! s:repl_type_handlers.utop(job_id, lines)
+function! s:repl_type_handlers.utop(job_id, lines) abort
   let buflines = copy(a:lines)
   if len(buflines) > 0
     let buflines[-1] = buflines[-1] .. ' ;;'
   endif
   call chansend(a:job_id, buflines + [""])
 endfunction
-function! s:repl_type_handlers.aider(job_id, lines)
+function! s:repl_type_handlers.aider(job_id, lines) abort
   let buflines = copy(a:lines)
   if len(buflines) > 0
     let buflines[-1] = buflines[-1] .. s:alt_enter()
@@ -309,7 +309,7 @@ function! s:repl_type_handlers.aider(job_id, lines)
   call chansend(a:job_id, buflines)
 endfunction
 
-function! s:chansend_buflines(buflines)
+function! s:chansend_buflines(buflines) abort
   if has_key(s:repl_type_handlers, b:repl_data.config.repl_type)
     call s:repl_type_handlers[b:repl_data.config.repl_type](b:repl_data.job_id, a:buflines)
   else
@@ -318,7 +318,7 @@ function! s:chansend_buflines(buflines)
   call s:repl_reset_visual_position()
 endfunction
 
-function! s:send_block(firstline_num, lastline_num, mode)
+function! s:send_block(firstline_num, lastline_num, mode) abort
   if !s:repl_id_job_exists()
     call repl#attach()
     if !s:repl_id_job_exists()
@@ -339,7 +339,7 @@ function! s:send_block(firstline_num, lastline_num, mode)
   call s:chansend_buflines(buflines_chansend)
 endfunction
 
-function! s:process_input(input_data)
+function! s:process_input(input_data) abort
   let lines = nvim_buf_get_lines(a:input_data.buf, 0, -1, v:false)
   if len(lines) > 0
     let input_text = lines
@@ -353,7 +353,7 @@ function! s:process_input(input_data)
   endif
 endfunction
 
-function! s:create_floating_input(callback)
+function! s:create_floating_input(callback) abort
   let parent_repl_data = b:repl_data
   let filetype = parent_repl_data.config.filetype == '' ? &filetype : parent_repl_data.config.filetype
   let original_win = win_getid()
@@ -393,7 +393,7 @@ function! s:create_floating_input(callback)
   startinsert!
 endfunction
 
-function! s:sendargs_direct(cmd_args)
+function! s:sendargs_direct(cmd_args) abort
   let t_cmd_args = type(a:cmd_args)
   if t_cmd_args == v:t_string
     let args = [trim(a:cmd_args, '', 2)]
@@ -407,7 +407,7 @@ function! s:sendargs_direct(cmd_args)
   call repl#info("sent '" .. trim(join(args, "\n")) .. "'")
 endfunction
 
-function! s:sendargs_float_callback(cmd_args)
+function! s:sendargs_float_callback(cmd_args) abort
   let args = []
   let count = 0
   for arg in a:cmd_args
@@ -429,7 +429,7 @@ function! s:sendargs_float_callback(cmd_args)
   endif
 endfunction
 
-function! repl#send(...)
+function! repl#send(...) abort
   if a:0 == 0
     if !s:repl_id_job_exists()
       call repl#attach()
@@ -446,7 +446,7 @@ function! repl#send(...)
   endif
 endfunction
 
-function! repl#aiderbufall(preamble)
+function! repl#aiderbufall(preamble) abort
   if a:preamble != '/add' && a:preamble != '/drop'
     call repl#warning('unsupported command argument')
     return
@@ -468,7 +468,7 @@ function! repl#aiderbufall(preamble)
   call s:sendargs_direct([a:preamble .. ' ' .. file_args])
 endfunction
 
-function! repl#aiderbuf(preamble)
+function! repl#aiderbuf(preamble) abort
   if a:preamble != '/add' && a:preamble != '/drop'
     call repl#warning('unsupported command argument')
     return
@@ -490,7 +490,7 @@ function! repl#aiderbuf(preamble)
   call s:sendargs_direct([a:preamble .. ' ' .. path])
 endfunction
 
-function! repl#aider_notifications_command()
+function! repl#aider_notifications_command() abort
   call repl#info('aider finished, buffers updated!')
   call s:repl_reset_visual_position()
   let current_bufnr = bufnr('%')
@@ -507,7 +507,7 @@ function! repl#aider_notifications_command()
   endif
 endfunction
 
-function! repl#sendcell(...)
+function! repl#sendcell(...) abort
   if !s:repl_id_job_exists()
     call repl#attach()
     if !s:repl_id_job_exists()
@@ -551,7 +551,7 @@ function! repl#sendcell(...)
   call s:send_block(cell_begin_line_num + 1, cell_end_line_num, mode())
 endfunction
 
-function! repl#newcell()
+function! repl#newcell() abort
   if getline('.') =~ '^\s*$' && (line('.') == 1 || getline(line('.') - 1) =~ '^\s*$')
     silent call setline('.', substitute(&commentstring, '%s', '%%', ''))
     silent put =['','']
@@ -560,7 +560,7 @@ function! repl#newcell()
   endif
 endfunction
 
-function! repl#current()
+function! repl#current() abort
   if !s:repl_id_job_exists()
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
@@ -574,7 +574,7 @@ function! repl#current()
   echohl None
 endfunction
 
-function! repl#focus()
+function! repl#focus() abort
   if !s:repl_id_job_exists()
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
@@ -586,7 +586,7 @@ function! repl#focus()
   endfor
 endfunction
 
-function! repl#clear()
+function! repl#clear() abort
   if !s:repl_id_job_exists()
     call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
     return
