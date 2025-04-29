@@ -471,10 +471,11 @@ function! repl#aiderbufall(preamble) abort
     call repl#attach()
     if !s:repl_id_job_exists()
       return
-    elseif b:repl_data.config.repl_type != 'aider'
-      call repl#warning('can ony run if attached to aider repl')
-      return
     endif
+  endif
+  if b:repl_data.config.repl_type != 'aider'
+    call repl#warning('can ony run if attached to aider repl')
+    return
   endif
   try
     let file_args = join(s:buffers_in_gitroot(), ' ')
@@ -493,10 +494,11 @@ function! repl#aiderbuf(preamble) abort
     call repl#attach()
     if !s:repl_id_job_exists()
       return
-    elseif b:repl_data.config.repl_type != 'aider'
-      call repl#warning('can ony run if attached to aider repl')
-      return
     endif
+  endif
+  if b:repl_data.config.repl_type != 'aider'
+    call repl#warning('can ony run if attached to aider repl')
+    return
   endif
   try
     let path = s:path_relative_to_git_root(expand('%:p'))
