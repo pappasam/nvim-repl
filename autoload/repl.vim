@@ -204,8 +204,18 @@ endfunction
 function! repl#close() abort
   let current_window_id = win_getid()
   let current_tab = tabpagenr()
-  if !exists('b:repl_data')
-    return
+  if exists('b:repl_data')
+    let job_id = b:repl_data.job_id
+  else
+    if len(s:active_repls) == 0
+      call repl#warning('no active repls')
+      return
+    elseif len(s:active_repls) > 1
+      call repl#warning('more than 1 active repls, and current repl not attached')
+      return
+    else " 1 active repl
+      let job_id = keys(s:active_repls)[0]
+    endif
   endif
   set lazyredraw
   try
@@ -213,7 +223,7 @@ function! repl#close() abort
     for t in range(1, tab_count)
       if t <= tabpagenr('$')
         execute 'tabnext ' .. t
-        let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_data.job_id})
+        let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == job_id})
         for win in repl_windows
           call win_gotoid(win.winid)
           quit
