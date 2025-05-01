@@ -62,7 +62,11 @@ function! s:cleanup(bufnr) abort
 endfunction
 
 function! s:repl_reset_visual_position() abort
-  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_data.job_id})
+  let repl_data = getbufvar(str2nr(a:bufnr), 'repl_data', {})
+  if empty(repl_data)
+    return
+  endif
+  let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == repl_data.job_id})
   let current_window_id = win_getid()
   for win in repl_windows
     call win_gotoid(win.winid)
