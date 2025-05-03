@@ -9,13 +9,11 @@
 lua require('repl').setup() -- lazy-load global constants
 
 function! repl#info(msg) abort
-  echom 'repl: ' .. a:msg
+  call luaeval('vim.notify(_A[1], vim.log.levels.INFO)', ['repl: ' .. a:msg])
 endfunction
 
 function! repl#warning(msg) abort
-  echohl ErrorMsg
-  echom 'repl: ' .. a:msg
-  echohl None
+  call luaeval('vim.notify(_A[1], vim.log.levels.WARN)', ['repl: ' .. a:msg])
 endfunction
 
 let s:active_repls = {} " type: {jobid: [filepath, repl_config]}
