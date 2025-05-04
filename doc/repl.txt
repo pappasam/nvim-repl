@@ -16,11 +16,11 @@ Table of Contents
 
 Create, use, and remove interactive REPLs within Neovim.
 
-Works with any REPL, but contains custom support for the following REPLs:
+Suggested keymappings (we suggest you add this to your `init.vim`): >vim
 
-- `aider`: https://aider.chat
-- `ipython`: https://ipython.readthedocs.io/en/stable
-- `utop`: https://opam.ocaml.org/blog/about-utop
+  nmap <silent> <Leader>r <Plug>(ReplSendLine)
+  xmap <silent> <Leader>r <Plug>(ReplSendVisual)
+  nmap <silent> <Leader>c <Plug>(ReplSendCell)
 
 ==============================================================================
                                                            *repl_configuration*
@@ -190,12 +190,6 @@ Pluggable, dot-repeatable mappings are provided for the use to map:
 <Plug>(ReplSendCell)                                      *<Plug>(ReplSendCell)*
 
   Send the visual selection to the REPL.
-
-Mappings that you may add want to add to your configuration: >vim
-
-  nmap <silent> <Leader>r <Plug>(ReplSendLine)
-  xmap <silent> <Leader>r <Plug>(ReplSendVisual)
-  nmap <silent> <Leader>c <Plug>(ReplSendCell)
 
 ==============================================================================
                                                                   *repl_cells*
