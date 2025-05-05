@@ -581,7 +581,7 @@ endfunction
 
 function! repl#current() abort
   if !s:repl_id_job_exists()
-    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
+    call repl#warning('no open repl attached to buffer. Run ":Repl" or ":ReplAttach"')
     return
   endif
   echohl DiagnosticInfo
@@ -595,7 +595,7 @@ endfunction
 
 function! repl#focus() abort
   if !s:repl_id_job_exists()
-    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
+    call repl#warning('no open repl attached to buffer. Run ":Repl" or ":ReplAttach"')
     return
   endif
   let repl_windows = filter(getwininfo(), {_, v -> get(get(getbufinfo(v.bufnr)[0], 'variables', {}), 'terminal_job_id', '') == b:repl_data.job_id})
@@ -607,7 +607,7 @@ endfunction
 
 function! repl#clear() abort
   if !s:repl_id_job_exists()
-    call repl#warning('no open repl attached to buffer. Run ":ReplOpen" or ":ReplAttach"')
+    call repl#warning('no open repl attached to buffer. Run ":Repl" or ":ReplAttach"')
     return
   endif
   call chansend(b:repl_data.job_id, "\<c-l>")
